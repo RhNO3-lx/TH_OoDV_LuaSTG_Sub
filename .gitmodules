@@ -22,3 +22,6 @@
 [submodule "external/beautiful-win32-api"]
 	path = external/beautiful-win32-api
 	url = https://github.com/Demonese/beautiful-win32-api
+[submodule "luastg_aex/Bundle-After-Ex-Plus"]
+	path = luastg_aex/Bundle-After-Ex-Plus
+	url = https://github.com/Legacy-LuaSTG-Engine/Bundle-After-Ex-Plus.git
