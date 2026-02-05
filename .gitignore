@@ -17,3 +17,7 @@ packages/*
 LuaSTG/backup/*
 LuaSTG/custom/*
 DirectX/DirectXSDK/backup/*
+
+#test
+data
+doc
