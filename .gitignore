@@ -21,3 +21,13 @@ DirectX/DirectXSDK/backup/*
 #test
 data
 doc
+luastg_aex/Bundle-After-Ex-Plus/game/engine.log
+luastg_aex/Bundle-After-Ex-Plus/game/userdata/setting.json
+luastg_aex/Bundle-After-Ex-Plus/game/userdata/setting.keymap.json
+luastg_aex/Bundle-After-Ex-Plus/game/plugins/plugins.json
+luastg_aex/Bundle-After-Ex-Plus/game/userdata/config.launch.json.bak
+luastg_aex/Bundle-After-Ex-Plus/game/userdata/config.launch.json
+luastg_aex/Bundle-After-Ex-Plus/game/userdata/imgui.ini
+luastg_aex/Bundle-After-Ex-Plus/game/userdata/setting.keymap.json.bak
+luastg_aex/Bundle-After-Ex-Plus/game/userdata/logs/engine-2026-02-07-13-44-58-901.log
+luastg_aex/Bundle-After-Ex-Plus/game/userdata/setting.json.bak
