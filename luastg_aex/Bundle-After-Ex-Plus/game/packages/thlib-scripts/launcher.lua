@@ -375,7 +375,9 @@ function Main:init(exit_f, entries)
         end
 
         local ws_ = {}
-        --- traverse all 
+        --- traverse all entries, given when launcher_scene oncreate.
+        --- entries is a table contains table.
+        --- v[1] is json_text key.
         for _, v in ipairs(entries) do
             if v[1] == "$lang" then
                 local lci = 1
@@ -406,6 +408,7 @@ function Main:init(exit_f, entries)
                 table.insert(ws_, w_simpleselector_lang)
             else
                 local val = v
+                --- here to load json_text in launcher.json
                 local w_button = subui.widget.Button(i18n_str(val[1]), function()
                     val[2]()
                 end)
@@ -444,6 +447,8 @@ function Main:render()
 end
 
 ---@param exit_f fun()
+---@param entries table 
+---which is generated when created(defined by keys, to get name(value) use i18n later)
 ---@return launcher.menu.MainMenu
 function Main.create(exit_f, entries)
     return lstg.New(Main, exit_f, entries)
@@ -1564,6 +1569,10 @@ function LauncherScene:onCreate()
             menu_main._view:setCursorIndex(#menu_main._view._widget)
         end
     end
+
+    --- define all widgets here(key of json_text)
+    --- including their name, and triggered callback functions,
+    --- such as sounds, special behavior, trace(saved in stackslots) 
     local main_widgets = {
         { "launcher.menu.start", function()
             subui.sound.playConfirm()
