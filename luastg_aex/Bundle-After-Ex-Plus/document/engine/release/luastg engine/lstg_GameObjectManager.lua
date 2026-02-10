@@ -3,6 +3,9 @@
 --- 璀境石
 --------------------------------------------------------------------------------
 
+--- note: lua only have reference of obj pool,
+--- the underlying management(delete, new, etc) is decided by c++
+--- so here we just obtain cpp interface to manipulate
 ---@diagnostic disable: missing-return
 
 --------------------------------------------------------------------------------

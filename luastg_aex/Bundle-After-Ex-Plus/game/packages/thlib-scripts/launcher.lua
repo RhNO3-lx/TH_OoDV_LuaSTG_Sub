@@ -1425,8 +1425,12 @@ function LauncherScene:onCreate()
     subui.loadResources()
 
     -- 菜单栈，用来简化菜单跳转
+    --- actually no need to use graph, we only need stack to implement traceback.
+    --- each menu contains all menuitem(we considered), see in def of each menu.
     local empty_menu_obj = lstg.New(object)
     local menu_stack = {}
+
+    -- here to define menu in and out behavior
     local function menuFlyIn(self, dir)
         self.alpha = 1
         if dir == 'left' then
@@ -1467,6 +1471,11 @@ function LauncherScene:onCreate()
             end)
         end
     end
+
+    -- when switch or init, it means that pushMenuStack.
+    -- flyout current menu if there still have menu, which means switching.
+    -- otherwise, not fly out,
+    -- instead, just load new menu and add it to stack, in case traceback.
     local function pushMenuStack(obj)
         obj = obj or empty_menu_obj
         if #menu_stack > 0 then
@@ -1475,6 +1484,9 @@ function LauncherScene:onCreate()
         table.insert(menu_stack, obj)
         menuFlyIn(obj, 'right')
     end
+    
+    --- pop, as the same reason,
+    --- means traceback
     local function popMenuStack()
         if #menu_stack > 0 then
             menuFlyOut(menu_stack[#menu_stack], 'right')
@@ -1484,6 +1496,10 @@ function LauncherScene:onCreate()
             menuFlyIn(menu_stack[#menu_stack], 'left')
         end
     end
+
+    --- when select mode, jump to launcher loading scene
+    --- triggered by this func.
+    --- researched deeper will find that it will be binded to init callback func 
     function setMod(mod_name)
         setting.mod = mod_name
         saveConfigure()
@@ -1495,6 +1511,7 @@ function LauncherScene:onCreate()
         end)
     end
 
+
     -- Mod 选择菜单
     local menu_mod = SelectMod.create(function()
         subui.sound.playConfirm()
@@ -1505,6 +1522,8 @@ function LauncherScene:onCreate()
     local menu_textinput = TextInput.create()
 
     -- 按键设置菜单
+    --- when jump to new menu(complete), pop old menu in stack
+    --- looking at @param comment of create, the parameter means exit lambda expression.
     local menu_key_setting = InputSetting.create(function()
         popMenuStack()
     end)
