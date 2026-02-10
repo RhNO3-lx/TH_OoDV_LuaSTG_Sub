@@ -375,6 +375,7 @@ function Main:init(exit_f, entries)
         end
 
         local ws_ = {}
+        --- traverse all 
         for _, v in ipairs(entries) do
             if v[1] == "$lang" then
                 local lci = 1
