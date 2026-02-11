@@ -1,25 +1,15 @@
 
 ----------------------------------------------------------------
-local function _clamp(v)
-    if v < 0 then
-        return 0
-    end
-    if v > 1 then
-        return 1
-    end
-    return v
-end
 function img_class:del()
     New(bubble2, 'preimg' .. self._index, self.x, self.y, self.dx, self.dy, 11, self.imgclass.size, 0, Color(0xFFFFFFFF), Color(0xFFFFFFFF), self.layer, 'mul+add')
 end
 function img_class:render()
-    local k = _clamp(self.timer / 11)
     if self._blend then
-        SetImageState('preimg' .. self._index, self._blend, Color(255 * k, 255, 255, 255))
+        SetImageState('preimg' .. self._index, self._blend, Color(255 * self.timer / 11, 255, 255, 255))
     else
-        SetImageState('preimg' .. self._index, '', Color(255 * k, 255, 255, 255))
+        SetImageState('preimg' .. self._index, '', Color(255 * self.timer / 11, 255, 255, 255))
     end
-    Render('preimg' .. self._index, self.x, self.y, self.rot, ((1 - k) * 3 + 1) * self.imgclass.size)
+    Render('preimg' .. self._index, self.x, self.y, self.rot, ((11 - self.timer) / 11 * 3 + 1) * self.imgclass.size)
 end
 ----------------------------------------------------------------
 particle_img = Class(object)
@@ -159,9 +149,8 @@ function ball_huge:frame()
     end
 end
 function ball_huge:render()
-    local k = _clamp(self.timer / 11)
-    SetImageState('fade_' .. self.img, 'mul+add', Color(255 * k, 255, 255, 255))
-    Render('fade_' .. self.img, self.x, self.y, self.rot, (1.0 - k) + 1)
+    SetImageState('fade_' .. self.img, 'mul+add', Color(255 * self.timer / 11, 255, 255, 255))
+    Render('fade_' .. self.img, self.x, self.y, self.rot, (11 - self.timer) / 11 + 1)
 end
 function ball_huge:del()
     New(bubble2, 'fade_' .. self.img, self.x, self.y, self.dx, self.dy, 11, 1, 0, Color(0xFFFFFFFF), Color(0x00FFFFFF), self.layer, 'mul+add')
@@ -198,9 +187,8 @@ function ball_huge_dark:frame()
     end
 end
 function ball_huge_dark:render()
-    local k = _clamp(self.timer / 11)
-    SetImageState('fade_' .. self.img, '', Color(255 * k, 255, 255, 255))
-    Render('fade_' .. self.img, self.x, self.y, self.rot, (1.0 - k) + 1)
+    SetImageState('fade_' .. self.img, '', Color(255 * self.timer / 11, 255, 255, 255))
+    Render('fade_' .. self.img, self.x, self.y, self.rot, (11 - self.timer) / 11 + 1)
 end
 function ball_huge_dark:del()
     New(bubble2, 'fade_' .. self.img, self.x, self.y, self.dx, self.dy, 11, 1, 0, Color(0xFFFFFFFF), Color(0x00FFFFFF), self.layer, '')
@@ -237,9 +225,8 @@ function ball_light:frame()
     end
 end
 function ball_light:render()
-    local k = _clamp(self.timer / 11)
-    SetImageState('fade_' .. self.img, 'mul+add', Color(255 * k, 255, 255, 255))
-    Render('fade_' .. self.img, self.x, self.y, self.rot, (1.0 - k) + 1)
+    SetImageState('fade_' .. self.img, 'mul+add', Color(255 * self.timer / 11, 255, 255, 255))
+    Render('fade_' .. self.img, self.x, self.y, self.rot, (11 - self.timer) / 11 + 1)
 end
 function ball_light:del()
     New(bubble2, 'fade_' .. self.img, self.x, self.y, self.dx, self.dy, 11, 1, 0, Color(0xFFFFFFFF), Color(0x00FFFFFF), self.layer, 'mul+add')
@@ -276,9 +263,8 @@ function ball_light_dark:frame()
     end
 end
 function ball_light_dark:render()
-    local k = _clamp(self.timer / 11)
-    SetImageState('fade_' .. self.img, '', Color(255 * k, 255, 255, 255))
-    Render('fade_' .. self.img, self.x, self.y, self.rot, (1.0 - k) + 1)
+    SetImageState('fade_' .. self.img, '', Color(255 * self.timer / 11, 255, 255, 255))
+    Render('fade_' .. self.img, self.x, self.y, self.rot, (11 - self.timer) / 11 + 1)
 end
 function ball_light_dark:del()
     New(bubble2, 'fade_' .. self.img, self.x, self.y, self.dx, self.dy, 11, 1, 0, Color(0xFFFFFFFF), Color(0x00FFFFFF), self.layer, '')
@@ -353,9 +339,8 @@ function water_drop:init(index)
     self.img = 'water_drop' .. index
 end
 function water_drop:render()
-    local k = _clamp(self.timer / 11)
-    SetImageState('preimg' .. self._index, 'mul+add', Color(255 * k, 255, 255, 255))
-    Render('preimg' .. self._index, self.x, self.y, self.rot, ((1.0 - k) * 2 + 1) * self.imgclass.size)
+    SetImageState('preimg' .. self._index, 'mul+add', Color(255 * self.timer / 11, 255, 255, 255))
+    Render('preimg' .. self._index, self.x, self.y, self.rot, ((11 - self.timer) / 11 * 2 + 1) * self.imgclass.size)
 end
 ----------------------------------------------------------------
 water_drop_dark = Class(img_class)   --2 4 6 10 12

@@ -8,7 +8,6 @@
 lstg.included = {}
 lstg.current_script_path = { '' }
 
---problem: why inclode but not require or dofile?
 function Include(filename)
     filename = tostring(filename)
     if string.sub(filename, 1, 1) == '~' then

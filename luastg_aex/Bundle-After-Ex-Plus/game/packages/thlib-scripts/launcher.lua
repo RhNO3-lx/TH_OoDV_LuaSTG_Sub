@@ -93,8 +93,6 @@ function SelectMod:init(exit_f)
     self._back.width = _width / 4
     self._back.height = _w_height
 
-    --- its widgets is defined here, just a scroll bar
-    --- we only need to add mods in scroll bar
     self._view = subui.layout.LinearScrollView(_width, _height)
     self._view.scroll_height = _w_height -- 一次滚轮滚动一个按键
 
@@ -111,9 +109,6 @@ function SelectMod:init(exit_f)
         self.title = i18n_str("launcher.menu.start.select")
         self._back.text = i18n_str("launcher.back_icon")
         local mods_, pos_ = enumMods()
-
-        --- add subbuttons of each mod
-        --- wholesale define its confirm behavior
         local ws_ = {}
         for i, v in ipairs(mods_) do
             local idx = i
@@ -126,8 +121,6 @@ function SelectMod:init(exit_f)
             w_button.height = _w_height
             table.insert(ws_, w_button)
         end
-
-        --- and add to scroll_bar
         self._view:setWidgets(ws_)
         --self._view._index = pos_
         self._view:setCursorIndex(pos_)
@@ -382,9 +375,6 @@ function Main:init(exit_f, entries)
         end
 
         local ws_ = {}
-        --- traverse all entries, given when launcher_scene oncreate.
-        --- entries is a table contains table.
-        --- v[1] is json_text key.
         for _, v in ipairs(entries) do
             if v[1] == "$lang" then
                 local lci = 1
@@ -415,7 +405,6 @@ function Main:init(exit_f, entries)
                 table.insert(ws_, w_simpleselector_lang)
             else
                 local val = v
-                --- here to load json_text in launcher.json
                 local w_button = subui.widget.Button(i18n_str(val[1]), function()
                     val[2]()
                 end)
@@ -454,8 +443,6 @@ function Main:render()
 end
 
 ---@param exit_f fun()
----@param entries table 
----which is generated when created(defined by keys, to get name(value) use i18n later)
 ---@return launcher.menu.MainMenu
 function Main.create(exit_f, entries)
     return lstg.New(Main, exit_f, entries)
@@ -1438,12 +1425,8 @@ function LauncherScene:onCreate()
     subui.loadResources()
 
     -- 菜单栈，用来简化菜单跳转
-    --- actually no need to use graph, we only need stack to implement traceback.
-    --- each menu contains all menuitem(we considered), see in def of each menu.
     local empty_menu_obj = lstg.New(object)
     local menu_stack = {}
-
-    -- here to define menu in and out behavior
     local function menuFlyIn(self, dir)
         self.alpha = 1
         if dir == 'left' then
@@ -1484,11 +1467,6 @@ function LauncherScene:onCreate()
             end)
         end
     end
-
-    -- when switch or init, it means that pushMenuStack.
-    -- flyout current menu if there still have menu, which means switching.
-    -- otherwise, not fly out,
-    -- instead, just load new menu and add it to stack, in case traceback.
     local function pushMenuStack(obj)
         obj = obj or empty_menu_obj
         if #menu_stack > 0 then
@@ -1497,9 +1475,6 @@ function LauncherScene:onCreate()
         table.insert(menu_stack, obj)
         menuFlyIn(obj, 'right')
     end
-    
-    --- pop, as the same reason,
-    --- means traceback
     local function popMenuStack()
         if #menu_stack > 0 then
             menuFlyOut(menu_stack[#menu_stack], 'right')
@@ -1509,11 +1484,6 @@ function LauncherScene:onCreate()
             menuFlyIn(menu_stack[#menu_stack], 'left')
         end
     end
-
-    --- when select mode, jump to launcher loading scene
-    --- triggered by this func.
-    --- researched deeper will find that it will be binded to init callback func 
-    --- @todo may beautify the loading scene?
     function setMod(mod_name)
         setting.mod = mod_name
         saveConfigure()
@@ -1525,7 +1495,6 @@ function LauncherScene:onCreate()
         end)
     end
 
-
     -- Mod 选择菜单
     local menu_mod = SelectMod.create(function()
         subui.sound.playConfirm()
@@ -1536,10 +1505,6 @@ function LauncherScene:onCreate()
     local menu_textinput = TextInput.create()
 
     -- 按键设置菜单
-    --- when jump to new menu(complete), pop old menu in stack
-    --- looking at @param comment of create, the parameter means exit lambda expression.
-    --- exit_func is defined when created
-    --- menu item is defined later in widgets
     local menu_key_setting = InputSetting.create(function()
         popMenuStack()
     end)
@@ -1579,10 +1544,6 @@ function LauncherScene:onCreate()
             menu_main._view:setCursorIndex(#menu_main._view._widget)
         end
     end
-
-    --- define all widgets here(key of json_text)
-    --- including their name, and triggered callback functions,
-    --- such as sounds, special behavior, trace(saved in stackslots) 
     local main_widgets = {
         { "launcher.menu.start", function()
             subui.sound.playConfirm()
@@ -1702,9 +1663,6 @@ function LauncherLoadingScene:onCreate()
     --ResetScreen()
 
     lstg.SetResourceStatus("global")
-    
-    --- load root script in zip
-    --- therefore we need to dig in a mod file to look
     Include("root.lua")
     lstg.plugin.DispatchEvent("afterMod")
     lstg.RegisterAllGameObjectClass()
@@ -1712,10 +1670,6 @@ function LauncherLoadingScene:onCreate()
 
     InitScoreData()
     ext.reload()
-
-    --- init menu is also a stage?
     stage.Set("init", "none")
-    --- dive into ext.lua
-    --- looks like regular gamemode check and state maintainance?
     SceneManager.setNext("GameScene") -- 此时 ext 也加载了，使用 GameScene 会更好
 end

@@ -131,7 +131,6 @@ function M.refresh()
         end
     end
     ---@type string[]
-    ---launcher ui path defined here
     local lang_path_list = {
         "assets/lang/",
         "data/assets/lang/",

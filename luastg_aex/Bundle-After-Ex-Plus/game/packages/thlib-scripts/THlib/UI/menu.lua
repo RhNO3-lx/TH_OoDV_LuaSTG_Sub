@@ -1,7 +1,4 @@
-﻿local input = require("foundation.input.core")
-local key_repeated_activate = input.isBooleanActionRepeatedActivate
-
-menu = {}
+﻿menu = {}
 
 function menu:FlyIn(dir)
     self.alpha = 1
@@ -92,29 +89,29 @@ function sc_pr_menu:frame()
     if self.pos_changed > 0 then
         self.pos_changed = self.pos_changed - 1
     end
-    if key_repeated_activate("up") then
+    if GetLastKey() == setting.keys.up then
         self.pos = self.pos - 1
         PlaySound('select00', 0.3)
         self.pos_changed = ui.menu.shake_time
     end
-    if key_repeated_activate("down") then
+    if GetLastKey() == setting.keys.down then
         self.pos = self.pos + 1
         PlaySound('select00', 0.3)
         self.pos_changed = ui.menu.shake_time
     end
     self.pos = (self.pos + ui.menu.sc_pr_line_per_page - 1) % ui.menu.sc_pr_line_per_page + 1
-    if key_repeated_activate("left") then
+    if GetLastKey() == setting.keys.left then
         self.page = self.page - 1
         self.pos_changed = ui.menu.shake_time
         PlaySound('select00', 0.3)
     end
-    if key_repeated_activate("right") then
+    if GetLastKey() == setting.keys.right then
         self.page = self.page + 1
         self.pos_changed = ui.menu.shake_time
         PlaySound('select00', 0.3)
     end
     self.page = (self.page + self.npage) % self.npage
-    if MenuKeyIsPressed 'shoot' then
+    if KeyIsPressed 'shoot' then
         local index = self.pos + self.page * ui.menu.sc_pr_line_per_page
         if _sc_table[index] then
             if self.exit_func then
@@ -124,7 +121,7 @@ function sc_pr_menu:frame()
         else
             PlaySound('invalid', 0.5)
         end
-    elseif MenuKeyIsPressed 'spell' then
+    elseif KeyIsPressed 'spell' then
         PlaySound('cancel00', 0.3)
         if self.exit_func then
             self.exit_func(nil)
@@ -198,19 +195,19 @@ function simple_menu:frame()
     if self.locked then
         return
     end
-    if key_repeated_activate("up") and (not self.no_pos_change) then
+    if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
         self.pos = self.pos - 1
         PlaySound('select00', 0.3)
     end
-    if key_repeated_activate("down") and (not self.no_pos_change) then
+    if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
         self.pos = self.pos + 1
         PlaySound('select00', 0.3)
     end
     self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
-    if MenuKeyIsPressed('shoot') and self.func[self.pos] then
+    if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
         self.func[self.pos]()
         PlaySound('ok00', 0.3)
-    elseif MenuKeyIsPressed('spell') and self.exit_func then
+    elseif KeyIsPressed('spell', self.keyslot) and self.exit_func then
         self.exit_func()
         PlaySound('cancel00', 0.3)
     end
@@ -367,15 +364,16 @@ function replay_saver:frame()
 
     -- 控制逻辑
     if self.state == 0 then
-        if key_repeated_activate("up") then
+        local lastKey = GetLastKey()
+        if lastKey == setting.keys.up then
             self.state1Selected = max(1, self.state1Selected - 1)
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif key_repeated_activate("down") then
+        elseif lastKey == setting.keys.down then
             self.state1Selected = min(ext.replay.GetSlotCount(), self.state1Selected + 1)
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif MenuKeyIsPressed("shoot") then
+        elseif KeyIsPressed("shoot") then
             -- 跳转到录像保存状态
             self.state = 1
             --self.state2CursorX = 0
@@ -393,30 +391,31 @@ function replay_saver:frame()
                 self.state2CursorX = 0
                 self.state2CursorY = 0
             end
-        elseif MenuKeyIsPressed("spell") then
+        elseif KeyIsPressed("spell") then
             if self.exitCallback then
                 self.exitCallback()
             end
             PlaySound('cancel00', 0.3)
         end
     elseif self.state == 1 then
-        if key_repeated_activate("up") then
+        local lastKey = GetLastKey()
+        if lastKey == setting.keys.up then
             self.state2CursorY = self.state2CursorY - 1
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif key_repeated_activate("down") then
+        elseif lastKey == setting.keys.down then
             self.state2CursorY = self.state2CursorY + 1
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif key_repeated_activate("left") then
+        elseif lastKey == setting.keys.left then
             self.state2CursorX = self.state2CursorX - 1
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif key_repeated_activate("right") then
+        elseif lastKey == setting.keys.right then
             self.state2CursorX = self.state2CursorX + 1
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif MenuKeyIsPressed("shoot") then
+        elseif KeyIsPressed("shoot") then
             if self.state2CursorX == 12 and self.state2CursorY == 6 then
                 if self.state2UserName == "" then
                     self.state2UserName = "Anonymous"
@@ -454,7 +453,7 @@ function replay_saver:frame()
                 self.state2UserName = self.state2UserName .. char
                 PlaySound('ok00', 0.3)
             end
-        elseif MenuKeyIsPressed("spell") then
+        elseif KeyIsPressed("spell") then
             if #self.state2UserName == 0 then
                 self.state = 0
             else
@@ -574,15 +573,16 @@ function replay_loader:frame()
 
     -- 控制逻辑
     if self.state == 0 then
-        if key_repeated_activate("up") then
+        local lastKey = GetLastKey()
+        if lastKey == setting.keys.up then
             self.state1Selected = max(1, self.state1Selected - 1)
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif key_repeated_activate("down") then
+        elseif lastKey == setting.keys.down then
             self.state1Selected = min(ext.replay.GetSlotCount(), self.state1Selected + 1)
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif MenuKeyIsPressed("shoot") then
+        elseif KeyIsPressed("shoot") then
             -- 构造关卡列表
             local slot = ext.replay.GetSlot(self.state1Selected)
             if slot ~= nil then
@@ -598,7 +598,7 @@ function replay_loader:frame()
                 end
                 PlaySound('ok00', 0.3)
             end
-        elseif MenuKeyIsPressed("spell") then
+        elseif KeyIsPressed("spell") then
             if self.exitCallback then
                 self.exitCallback()
             end
@@ -606,22 +606,23 @@ function replay_loader:frame()
         end
     elseif self.state == 1 then
         local slot = ext.replay.GetSlot(self.state1Selected)
-        if key_repeated_activate("up") then
+        local lastKey = GetLastKey()
+        if lastKey == setting.keys.up then
             self.state2Selected = max(1, self.state2Selected - 1)
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif key_repeated_activate("down") then
+        elseif lastKey == setting.keys.down then
             self.state2Selected = min(#slot.stages, self.state2Selected + 1)
             self.shakeValue = ui.menu.shake_time
             PlaySound('select00', 0.3)
-        elseif MenuKeyIsPressed("shoot") then
+        elseif KeyIsPressed("shoot") then
             -- 转场
             local slot = ext.replay.GetSlot(self.state1Selected)
             if self.exitCallback then
                 self.exitCallback(slot.path, slot.stages[self.state2Selected].stageName)
             end
             PlaySound('ok00', 0.3)
-        elseif MenuKeyIsPressed("spell") then
+        elseif KeyIsPressed("spell") then
             self.shakeValue = ui.menu.shake_time
             self.state = 0
         end

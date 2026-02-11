@@ -1,7 +1,6 @@
 local debugger = require("lib.Ldebug")
 local SceneManager = require("foundation.SceneManager")
 local LocalFileStorage = require("foundation.LocalFileStorage")
-require("foundation.input.compat")
 
 function GameInit()
 end
@@ -27,7 +26,8 @@ function RenderFunc()
     lstg.EndScene()
     -- TODO: 整理一下这里的代码
     -- 截图
-    if MenuKeyIsPressed("snapshot") then
+    ---@diagnostic disable-next-line: deprecated
+    if setting and setting.keysys and lstg.GetLastKey() == setting.keysys.snapshot then
         LocalFileStorage.snapshot()
     end
 end

@@ -7,10 +7,6 @@ local SceneManager = require("foundation.SceneManager")
 local IntersectionDetectionManager = require("foundation.IntersectionDetectionManager")
 local gameEventDispatcher = lstg.globalEventDispatcher
 
--- input system
-local input = require("foundation.input.core")
-local input_rep = require("foundation.input.replay")
-
 ----------------------------------------
 ---ext加强库
 
@@ -48,8 +44,6 @@ ext.debug_data = {
     request_once_update = false,
     --- 更新计时器
     timer = -1,
-    --- 第二代游戏循环
-    game_loop_v2 = true,
 }
 
 --- [调试功能] 是否启用了更新速率调试
@@ -107,7 +101,7 @@ end
 --把暂停菜单相关操作移到gameEventDispatcher里完成
 --按键弹出菜单
 gameEventDispatcher:RegisterEvent("GameState.BeforeDoFrame", "pop_pause_menu", 0, function ()
-    if ext.pause_menu:IsKilled() and (MenuKeyIsPressed("menu") or ext.pop_pause_menu) and (not stage.current_stage.is_menu) then
+    if ext.pause_menu:IsKilled() and (GetLastKey() == setting.keysys.menu or ext.pop_pause_menu) and (not stage.current_stage.is_menu) then
         ext.pause_menu:FlyIn()
     end
 end)
@@ -219,128 +213,75 @@ function ChangeGameStage()
 end
 
 --- 获取输入
-local framedata = {}
 function GetInput()
     if stage.next_stage then
-        input.clear()
-        input_rep.clear()
+        KeyStatePre = {}
+    elseif ext.pause_menu:IsKilled() then
+        -- 刷新KeyStatePre
+        for k, _ in pairs(setting.keys) do
+            KeyStatePre[k] = KeyState[k]
+        end
     end
-    input.update()
+
+    -- 不是录像时更新按键状态
+    if not ext.replay.IsReplay() then
+        for k, v in pairs(setting.keys) do
+            KeyState[k] = GetKeyState(v)
+        end
+    end
 
     if ext.pause_menu:IsKilled() then
-        -- 不是录像且非暂停时更新按键状态
-        if not ext.replay.IsReplay() then
-            input_rep.update()
-        end
         if ext.replay.IsRecording() then
             -- 录像模式下记录当前帧的按键
-            replayWriter:Record(input_rep.encodeToString())
+            replayWriter:Record(KeyState)
         elseif ext.replay.IsReplay() then
             -- 回放时载入按键状态
-            framedata = {}
-            if not replayReader:Next(framedata) then
-                ext.PushPauseMenuOrder("Replay Again")
-                ext.pause_menu:FlyIn()
-            else
-                input_rep.decodeFromString(framedata.keystate)
-            end
+            replayReader:Next(KeyState)
         end
     end
 end
-
-gameEventDispatcher:RegisterEvent("GameState.AfterObjRender", "render_replay_fps", 0, function ()
-    if ext.replay.IsReplay() then
-        if framedata.extra and framedata.extra.fps then
-            SetViewMode("ui")
-            RenderTTF2("menuttf", string.format("Original FPS %0.1f", framedata.extra.fps), screen.width - 10, screen.width - 10, 30, 30, 1, Color(255, 255, 255, 255), "right", "vcenter")
-            SetViewMode("world")
-        end
-    end
-end)
 
 --- 逻辑帧更新，不和 FrameFunc 一一对应
 function DoFrame()
     -- 标题设置
     ChangeGameTitle()
-    if ext.debug_data.game_loop_v2 then
-        -- 上一帧的处理
-        lstg.AfterFrame(2) -- TODO: remove (2)
-        -- 获取输入
-        GetInput()
-        gameEventDispatcher:DispatchEvent("GameState.AfterGetInput")
-        -- 切关处理
-        if stage.NextStageExist() then
-            gameEventDispatcher:DispatchEvent("GameState.BeforeGameStageChange")
-            stage.DestroyCurrentStage()
-            ChangeGameStage()
-            stage.CreateNextStage()
-            gameEventDispatcher:DispatchEvent("GameState.AfterGameStageChange")
-        end
-        -- 关卡更新
-        gameEventDispatcher:DispatchEvent("GameState.BeforeGameStageUpdate")
-        if GetCurrentSuperPause() <= 0 or stage.nopause then
-            ex.Frame()
-            stage.Update()
-            gameEventDispatcher:DispatchEvent("GameState.AfterGameStageUpdate")
-        end
-        -- 游戏对象更新
-        gameEventDispatcher:DispatchEvent("GameState.BeforeObjFrame")
-        lstg.ObjFrame(2) -- TODO: remove (2)
-        gameEventDispatcher:DispatchEvent("GameState.AfterObjFrame")
-        -- 碰撞检测
-        if GetCurrentSuperPause() <= 0 then
-            gameEventDispatcher:DispatchEvent("GameState.BeforeCollisionCheck")
-        end
-        IntersectionDetectionManager.execute()
-        if GetCurrentSuperPause() <= 0 then
-            gameEventDispatcher:DispatchEvent("GameState.AfterCollisionCheck")
-        end
-        -- 出界检测
-        if GetCurrentSuperPause() <= 0 or stage.nopause then
-            gameEventDispatcher:DispatchEvent("GameState.BeforeBoundCheck")
-            lstg.BoundCheck(2) -- TODO: remove (2)
-            gameEventDispatcher:DispatchEvent("GameState.AfterBoundCheck")
-        end
-    else
-        -- 获取输入
-        GetInput()
-        gameEventDispatcher:DispatchEvent("GameState.AfterGetInput")
-        -- 切关处理
-        if stage.NextStageExist() then
-            gameEventDispatcher:DispatchEvent("GameState.BeforeGameStageChange")
-            stage.DestroyCurrentStage()
-            ChangeGameStage()
-            stage.CreateNextStage()
-            gameEventDispatcher:DispatchEvent("GameState.AfterGameStageChange")
-        end
-        -- 关卡更新
-        gameEventDispatcher:DispatchEvent("GameState.BeforeGameStageUpdate")
-        if GetCurrentSuperPause() <= 0 or stage.nopause then
-            ex.Frame()
-            stage.Update()
-            gameEventDispatcher:DispatchEvent("GameState.AfterGameStageUpdate")
-        end
-        -- 游戏对象更新
-        gameEventDispatcher:DispatchEvent("GameState.BeforeObjFrame")
-        lstg.ObjFrame()
-        gameEventDispatcher:DispatchEvent("GameState.AfterObjFrame")
-        -- 出界检测
-        if GetCurrentSuperPause() <= 0 or stage.nopause then
-            gameEventDispatcher:DispatchEvent("GameState.BeforeBoundCheck")
-            lstg.BoundCheck()
-            gameEventDispatcher:DispatchEvent("GameState.AfterBoundCheck")
-        end
-        -- 碰撞检测
-        if GetCurrentSuperPause() <= 0 then
-            gameEventDispatcher:DispatchEvent("GameState.BeforeCollisionCheck")
-        end
-        IntersectionDetectionManager.execute() -- TODO: 并不完全和 V1 一致
-        if GetCurrentSuperPause() <= 0 then
-            gameEventDispatcher:DispatchEvent("GameState.AfterCollisionCheck")
-        end
-        -- 上一帧的处理
-        lstg.UpdateXY()
-        lstg.AfterFrame()
+    -- 上一帧的处理
+    lstg.AfterFrame(2) -- TODO: remove (2)
+    -- 获取输入
+    GetInput()
+    gameEventDispatcher:DispatchEvent("GameState.AfterGetInput")
+    -- 切关处理
+    if stage.NextStageExist() then
+        gameEventDispatcher:DispatchEvent("GameState.BeforeGameStageChange")
+        stage.DestroyCurrentStage()
+        ChangeGameStage()
+        stage.CreateNextStage()
+        gameEventDispatcher:DispatchEvent("GameState.AfterGameStageChange")
+    end
+    -- 关卡更新
+    gameEventDispatcher:DispatchEvent("GameState.BeforeGameStageUpdate")
+    if GetCurrentSuperPause() <= 0 or stage.nopause then
+        ex.Frame()
+        stage.Update()
+        gameEventDispatcher:DispatchEvent("GameState.AfterGameStageUpdate")
+    end
+    -- 游戏对象更新
+    gameEventDispatcher:DispatchEvent("GameState.BeforeObjFrame")
+    lstg.ObjFrame(2) -- TODO: remove (2)
+    gameEventDispatcher:DispatchEvent("GameState.AfterObjFrame")
+    -- 碰撞检测
+    if GetCurrentSuperPause() <= 0 then
+        gameEventDispatcher:DispatchEvent("GameState.BeforeCollisionCheck")
+    end
+    IntersectionDetectionManager.execute()
+    if GetCurrentSuperPause() <= 0 then
+        gameEventDispatcher:DispatchEvent("GameState.AfterCollisionCheck")
+    end
+    -- 出界检测
+    if GetCurrentSuperPause() <= 0 or stage.nopause then
+        gameEventDispatcher:DispatchEvent("GameState.BeforeBoundCheck")
+        lstg.BoundCheck(2) -- TODO: remove (2)
+        gameEventDispatcher:DispatchEvent("GameState.AfterBoundCheck")
     end
 end
 
@@ -409,8 +350,6 @@ function GameScene:onUpdate()
     if ext.pause_menu:IsKilled() then
         --处理录像速度与正常更新逻辑
         DoFrameEx()
-    else
-        GetInput()
     end
     gameEventDispatcher:DispatchEvent("GameState.AfterDoFrame")
 end
