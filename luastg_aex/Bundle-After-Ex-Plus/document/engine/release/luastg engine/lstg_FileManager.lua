@@ -134,6 +134,9 @@ end
 ---@overload fun(searchpath:string)
 ---@overload fun(searchpath:string, extend:string)
 ---@overload fun(searchpath:string, extend:nil, also_enum_archives:boolean)
+---@return table
+---! {table{filename, isfolder(ends with /)}}
+---! inmplemented in cpp
 function M.EnumFiles(searchpath, extend, also_enum_archives)
     return {
         { "sample.ext"          , false },

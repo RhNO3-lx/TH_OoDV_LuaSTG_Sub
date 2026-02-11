@@ -199,6 +199,8 @@ local function processManifestModelPluginArchive(archive_path)
 end
 
 --- 列出插件目录下所有有效的插件（即包含入口点文件）  
+---! note: player is regarded as plugin and loaded here
+---! enum plugins folder to detect mainfest or __init__.lua
 ---@return lstg.plugin.Config.Entry[]
 function lstg.plugin.ListPlugins()
     local list = lstg.FileManager.EnumFiles(PLUGIN_PATH)
@@ -375,6 +377,8 @@ local _ = {
     callback = function() end,
 }
 
+---! blank callback func yet
+---! may defined according to demand
 local _event = {
     ---@type lstg.plugin.Event.Entry[]
     beforeTHlib = {},

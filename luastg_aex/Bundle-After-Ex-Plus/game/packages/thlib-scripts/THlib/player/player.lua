@@ -419,7 +419,9 @@ end
 
 ----------------------------------------
 ---加载自机
-
+---! wtf? abandoned?
+---! change it make no difference
+---@deprecated
 local PLAYER_PATH = "Library/players/"    --自机插件路径
 local ENTRY_POINT_SCRIPT_PATH = ""          --入口点文件路径
 local ENTRY_POINT_SCRIPT = "__init__.lua"   --入口点文件
@@ -475,8 +477,10 @@ end
 ---@param displayname string @显示在菜单中的名字
 ---@param classname string @全局中的自机类名
 ---@param replayname string @显示在rep信息中的名字
----@param pos number @插入的位置
----@param _replace boolean @是否取代该位置
+---@param pos number @插入的位置 --! nill by default 
+---@param _replace boolean @是否取代该位置 --! nill by default
+---! insert player info to global var: player_list
+---@deprecated
 function AddPlayerToPlayerList(displayname, classname, replayname, pos, _replace)
     if _replace then
         player_list[pos] = { displayname, classname, replayname }
@@ -488,6 +492,7 @@ function AddPlayerToPlayerList(displayname, classname, replayname, pos, _replace
 end
 
 ---加载自机包【废弃】
+---@deprecated
 local function LoadPlayerPacks()
     player_list = {}--先清空一次
 

@@ -2,7 +2,7 @@
 ---THlib
 ---Touhou style library
 ---=====================================
-
+---!caution:the inner thlib.lua is loaded before outer thlib.lua
 ----------------------------------------
 ---加载脚本
 
