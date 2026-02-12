@@ -336,6 +336,8 @@ end
 ---extra game call-back function
 
 ---@class game.GameScene : foundation.Scene
+---! in game, we use game scene here
+---! instead of default scene  or launcher scene defined in launcher.lua or core.lua
 local GameScene = SceneManager.add("GameScene")
 
 function GameScene:onCreate()
@@ -344,6 +346,7 @@ end
 function GameScene:onDestroy()
 end
 
+---! main loop defined here(in game)
 function GameScene:onUpdate()
     gameEventDispatcher:DispatchEvent("GameState.BeforeDoFrame")
     --执行场景逻辑

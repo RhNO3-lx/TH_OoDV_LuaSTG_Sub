@@ -4,6 +4,12 @@ local ipairs = ipairs
 local table = table
 local table_sort = require("foundation.QuickSort")
 
+---! the main idea of eventdispatcher is:
+---! 1.create event group, compatible of group concept in object
+---! 2.for certain object that need detailed response, like player move.
+---!   it is better to let himself to decide his behavior, rather than main loop func.
+---!   therefore, register event for it.
+
 if false then
     ---@class foundation.EventDispatcher.Event
     local event = {
@@ -111,6 +117,7 @@ end
 
 ---执行事件组
 ---@param group string @事件组名称
+---! “分发” means execute callback func.
 function M:DispatchEvent(group, ...)
     assert(type(group) == "string", "invalid argument #1 (string expected)")
     if not self.data[group] then

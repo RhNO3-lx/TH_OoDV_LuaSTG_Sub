@@ -4,6 +4,10 @@ local Scene = {}
 --- 该方法由 `foundation.SceneManager` 自动管理  
 --- 每次创建场景实例时，都会被强制定义为返回   
 --- `foundation.SceneManager.add` 时设置的 `scene_name`
+---! scene callback func declared here
+---! when need a new scene, these functions will br rewrote
+---! in onupdate, we define the update procedure( when to call frame callbacks, collide check, etc.)
+---! we can see enample of game scene in ext.lua
 function Scene:getName()
     return "__default__"
 end

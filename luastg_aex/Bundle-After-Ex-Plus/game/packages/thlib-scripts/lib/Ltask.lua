@@ -31,9 +31,11 @@ local co_stack_n = 0
 ---@param target any
 ---@param f fun()
 ---@return thread
+---! may get handle of the task from outside? but it may be not safe
 function task.New(target, f)
     ---@type thread[]?
     local tasks = rawget(target, field)
+    ---! if no tasks, create task table for target(obj), else, directly insert tasks to already haved task table
     if not tasks then
         tasks = {}
         ---@cast tasks -thread[]?, +thread[]
@@ -45,6 +47,10 @@ function task.New(target, f)
 end
 
 ---@param target any
+---! must invoke task.do(self) in frame() if the obj need tasks
+---! the design idea is to:
+---! 1. let developer himself to decide when to dotask or do not dotask
+---! 2. consider tasks' life period, if settle in mainloop, may be troublesome to check obj and task validation 
 function task.Do(target)
     ---@type thread[]?
     local tasks = rawget(target, field)
