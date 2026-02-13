@@ -194,6 +194,9 @@ local function initializeMod()
 
     -- 按需加载启动器包
 
+    ---! the mod~=launcher branch is designed for debug mod 
+    ---! to let luastg sharp editor to pass cmd args when execute luastgplus.exe
+
     lstg.FileManager.CreateDirectory("mod")
     if setting.mod ~= 'launcher' then
         local zip_path = string.format("mod/%s.zip", setting.mod) -- 压缩包文件
