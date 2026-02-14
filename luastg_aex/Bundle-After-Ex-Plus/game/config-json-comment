@@ -6,3 +6,6 @@
 //---!therefore we can modify virtual resource path here
 
 //---!caution: do not add comment in these json files!!!
+
+//---!caution: thlib-v2 script can coexistent with v1,
+//---!caution: due to the namespace is not collided with each other, even if use vitrual resources location
