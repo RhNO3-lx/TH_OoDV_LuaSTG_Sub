@@ -131,6 +131,8 @@ end
 ---@param path string
 local function loadBulletDefinitions(path)
     ---@type string?
+    ---! wherever the path is located in our folder, can the script read correctly?
+    ---! no,it must be in registered path
     local root
     for i = #path, 1, -1 do
         local c = path:sub(i, i)

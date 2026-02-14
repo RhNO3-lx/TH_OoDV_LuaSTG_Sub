@@ -142,6 +142,7 @@ function stage_menu:init()
         menu.FlyIn(last_menu, 'left')
         menu.FlyOut(menu_player_select, 'right')
     end })
+    ---todo: modify the select player menu to add some plot setting and character traits
     menu_player_select = New(simple_menu, 'Select Player', menu_items)
     menu_player_select.pos = scoredata.player_select or 1
     --

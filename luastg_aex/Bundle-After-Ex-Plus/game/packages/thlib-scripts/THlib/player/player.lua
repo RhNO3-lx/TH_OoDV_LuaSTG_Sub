@@ -420,7 +420,7 @@ end
 ----------------------------------------
 ---加载自机
 ---! wtf? abandoned?
----! change it make no difference
+---! change it make no difference, be cautious
 ---@deprecated
 local PLAYER_PATH = "Library/players/"    --自机插件路径
 local ENTRY_POINT_SCRIPT_PATH = ""          --入口点文件路径
@@ -451,6 +451,8 @@ end
 
 ---储存自机的信息表
 ---@type table @{{displayname,classname,replayname}, ... }
+---! it is updated in Lplugin.lua, line 205 -> thlib-legacy-default-players -> __init__.lua
+---! not in this file 
 player_list = {}
 
 ---对自机表进行排序
@@ -480,7 +482,7 @@ end
 ---@param pos number @插入的位置 --! nill by default 
 ---@param _replace boolean @是否取代该位置 --! nill by default
 ---! insert player info to global var: player_list
----@deprecated
+---! execute in thlib-legacy-default-players/THlib/{player_name}.lua
 function AddPlayerToPlayerList(displayname, classname, replayname, pos, _replace)
     if _replace then
         player_list[pos] = { displayname, classname, replayname }

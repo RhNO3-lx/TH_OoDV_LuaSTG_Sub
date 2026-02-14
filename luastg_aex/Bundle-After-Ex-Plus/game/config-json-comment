@@ -1,0 +1,8 @@
+//---!when engine start, 
+//---!it read these path recursively according to "include" segment
+//---!after that, it read mode config infomation and regist virtual resources location,
+//---!the priority is descented acoording to the reading order
+//---!when loading file in lua, it search in these virtual path in order we defined just now
+//---!therefore we can modify virtual resource path here
+
+//---!caution: do not add comment in these json files!!!
