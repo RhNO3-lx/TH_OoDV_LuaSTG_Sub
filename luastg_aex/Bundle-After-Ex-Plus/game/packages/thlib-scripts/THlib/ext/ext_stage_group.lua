@@ -173,8 +173,11 @@ function M.New(name, menu_stage_name, item_init, allow_practice, difficulty, ...
     -- TODO: 兼容代码，早期关卡组创建，第一个参数不是名称
     if type(menu_stage_name) == "table" then
         ---@diagnostic disable-next-line: param-type-mismatch
+        print("enter table menu create")
+        ---! when use editor to create stage, defaultly use this procedure
         return M.OldNew(name, menu_stage_name, item_init, allow_practice, difficulty, ...)
     end
+    print("enter not old new")
     return M.OldNew(menu_stage_name, {}, name, item_init, allow_practice, difficulty)
 end
 

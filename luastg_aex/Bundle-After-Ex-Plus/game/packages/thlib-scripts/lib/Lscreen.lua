@@ -4,6 +4,12 @@
 
 ----------------------------------------
 --- build-in white
+--- 
+---！may use this api to implement 版面扩展
+---todo:联系上吃药图书，问他要代码，或者去找其他涉及到版面丝滑扩大的mod
+---! 但是如何像街机stg那样有大于版面的实际活动范围呢？这个问题还是很trickey
+---todo（重要）:深入研究渲染机制，视口，窗口，世界坐标等概念
+---todo: 考虑在THlib/下创建新文件夹 cunstoized-extension,  在此补充新增添的屏幕扩展功能，因为考虑到他涉及ui，player，screen多各部件的联动配合
 
 lstg.CreateRenderTarget("rt:screen-white", 64, 64)
 lstg.LoadImage("img:screen-white", "rt:screen-white", 16, 16, 16, 16)

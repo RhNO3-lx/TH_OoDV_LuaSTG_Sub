@@ -1,3 +1,7 @@
+---! i think the system is sealed well
+---! therefore, if we want to change player behaviour, like forbid to shoot, change key c behavior
+---! we only need to edit player scripts in plugins folder
+
 local player_lib = player_lib
 ---@class player.system
 ---@return player.system

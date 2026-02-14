@@ -533,6 +533,8 @@ function SetLuaSTGWorld(world,width,height,boundout,sl,sr,sb,st,m)
 end
 
 ---对传入的world表设置world参数
+---! warning: deprecated method that not used in default project
+---@deprecated
 ---@param world table @传入的table
 ---@param width number @world宽度
 ---@param height number @world高度

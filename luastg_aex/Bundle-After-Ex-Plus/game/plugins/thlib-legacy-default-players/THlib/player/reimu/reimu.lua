@@ -1,5 +1,7 @@
+---todo: based on the homing bullet template, design our player
 reimu_player=Class(player_class)
 
+---!todo: add class member var to enable shooting direction locked/released
 function reimu_player:init(slot)
 	LoadTexture('reimu_player','THlib/player/reimu/reimu.png')
 	LoadTexture('reimu_player2p','THlib/player/reimu/reimu_2p.png')
@@ -38,7 +40,15 @@ function reimu_player:init(slot)
 	LoadPS('reimu_bullet_ef','THlib/player/reimu/reimu_bullet_ef.psi','reimu_bullet_ef_img')
 	LoadPS('reimu_sp_ef','THlib/player/reimu/reimu_sp_ef.psi','parimg1',16,16)
 	-----------------------------------------
+	---self.testvar=1
 	player_class.init(self)
+
+	---todo: regist extra frame event here
+	self._playersys:addFrameBeforeEvent("test",1,function()
+		---self.testvar=1+self.testvar;
+		---Print("exetute player addframe logic")
+	end)
+
 	self.name='Reimu'
 	self.hspeed=4.5
 	self.imgs={}
@@ -67,6 +77,10 @@ function reimu_player:init(slot)
 	}
 end
 -------------------------------------------------------
+---
+---!todo: let player be able to shoot towards different dir, not just front
+---!todo: may use key c to switch locked/released state
+---!todo: may fine move func to change dir
 function reimu_player:shoot()
 	PlaySound('plst00',0.3,self.x/1024)
 	self.nextshoot=4
@@ -92,6 +106,8 @@ function reimu_player:shoot()
 		end end
 	end
 end
+
+
 -------------------------------------------------------
 function reimu_player:spell()
 	self.collect_line=self.collect_line-300

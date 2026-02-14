@@ -437,6 +437,9 @@ function EnemyWalkImageSystem:UpdateImage()
     self.hscale = sign(self.lr) * abs(self.hscale)
 end
 
+
+---todo: for convenience, may not modify walkimagesystem to implement 4-dir walking image
+---todo: may even 12-dir... it is too hard
 PlayerWalkImageSystem = plus.Class()
 function PlayerWalkImageSystem:init(obj, intv, leftlr, rightlr)
     self.obj = obj

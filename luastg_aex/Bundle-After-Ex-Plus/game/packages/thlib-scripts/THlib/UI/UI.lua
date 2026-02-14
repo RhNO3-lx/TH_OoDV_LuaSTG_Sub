@@ -3,6 +3,8 @@ Include "THlib/UI/font.lua"
 Include "THlib/UI/title.lua"
 Include "THlib/UI/sc_pr.lua"
 
+
+---! todo: we may learn very simple graphics methods here
 ui = {}
 
 LoadTexture("boss_ui", "THlib/UI/boss_ui.png")
@@ -346,6 +348,9 @@ function lstg_ui:drawFrame1()
             220 + w.scrr, 1, 0.25, "right", "bottom")
     SetViewMode "world"
 end
+
+---! we may not need mode 2 method because the player is probably not use vertical screen
+---! todo: in launcher: resolution options, consider delete these unnecessary options
 function lstg_ui:drawFrame2()
     SetViewMode "ui"
     Render("ui_bg2", 198, 264)
@@ -397,6 +402,10 @@ function lstg_ui:ScoreUpdate()
     self.score = score
     self.score_tmp = score_tmp
 end
+
+---! draw many items and info in below code
+---! todo: add braod scene(宽板面) menu_items and make it can be switched to legacy mode. 
+---! for convenience, we may modify this file directly
 function lstg_ui:drawScore()
     self:ScoreUpdate()
     self["drawScore" .. self.type](self)
