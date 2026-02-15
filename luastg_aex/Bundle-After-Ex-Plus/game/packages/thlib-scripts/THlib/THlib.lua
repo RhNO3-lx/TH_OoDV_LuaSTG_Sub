@@ -27,3 +27,6 @@ Include 'THlib/UI/menu.lua'
 Include 'THlib/editor.lua'
 Include 'THlib/UI/UI.lua'
 Include 'sp/sp.lua'--OLC神的sp加强库
+
+---! 在这里加入自行拓展的各类接口
+Include("THlib/customized-extension/Lscreen_ext.lua")
