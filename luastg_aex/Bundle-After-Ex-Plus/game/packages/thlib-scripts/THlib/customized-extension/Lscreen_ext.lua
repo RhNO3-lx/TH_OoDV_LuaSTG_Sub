@@ -22,22 +22,15 @@ function SetWorldV2(sl, sb,sw,sh, w, h,l3d,r3d,b3d,t3d,bound, m)
     local r=w/2
     local b=-h/2
     local t=h/2
-    print(l3d)
-    print(r3d)
     l3d=l3d or l
     r3d=r3d or r
     b3d=b3d or b
     t3d=t3d or t
     OriginalSetWorld(
-    --l,r,b,t,
             l,r,b,t,
-    --bl,br,bb,bt,
             l - bound, r + bound, b - bound, t + bound,
-    --sl,sr,sb,st,
             sl,sl+sw,sb,sb+sh,
-    --pl,pr,pb,pt
             l,r,b,t,
-    --world mask
             m,
             l3d,r3d,b3d,t3d
     )
