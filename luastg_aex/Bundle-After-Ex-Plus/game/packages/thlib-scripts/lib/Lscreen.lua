@@ -8,8 +8,10 @@
 ---！may use this api to implement 版面扩展
 ---todo(done):联系上吃药图书，问他要代码，或者去找其他涉及到版面丝滑扩大的mod
 ---! 但是如何像街机stg那样有大于版面的实际活动范围呢？这个问题还是很trickey
----todo（重要）:深入研究渲染机制，视口，窗口，世界坐标等概念
----todo: 考虑在THlib/下创建新文件夹 cunstoized-extension,  在此补充新增添的屏幕扩展功能，因为考虑到他涉及ui，player，screen多各部件的联动配合
+---todo(done)(:RhNO3-lx):深入研究渲染机制，视口，窗口，世界坐标等概念
+---todo(done): 考虑在THlib/下创建新文件夹 cunstoized-extension,  在此补充新增添的屏幕扩展功能，因为考虑到他涉及ui，player，screen多各部件的联动配合
+---todo:也许还需要删除菜单项，铲掉残留的屎
+---todo:不太可能需要使得符卡阶段的物件调整至按ui来渲染，因为我估摸着在进行boss战的时候大概不会有额外空间，否则太影响避弹
 
 lstg.CreateRenderTarget("rt:screen-white", 64, 64)
 lstg.LoadImage("img:screen-white", "rt:screen-white", 16, 16, 16, 16)
@@ -80,6 +82,8 @@ local RAW_DEFAULT_WORLD = {--默认的world参数，只读
     scrl = 32, scrr = 416, scrb = 16, scrt = 464,
     pl = -192, pr = 192, pb = -224, pt = 224,
     world = 15,
+    ---! newly added
+    l3d=-192,r3d=192,b3d=-224,t3d=224
 }
 local DEFAULT_WORLD = {--默认的world参数，可更改
     l = -192, r = 192, b = -224, t = 224,
@@ -87,9 +91,13 @@ local DEFAULT_WORLD = {--默认的world参数，可更改
     scrl = 32, scrr = 416, scrb = 16, scrt = 464,
     pl = -192, pr = 192, pb = -224, pt = 224,
     world = 15,
+    ---! newly added
+    l3d=-192,r3d=192,b3d=-224,t3d=224
 }
 
 ---用于设置默认world参数
+---! warning: 暂未将3d世界字段并入设置default world的字段
+---! 我估摸着我们不需要这一功能
 function OriginalSetDefaultWorld(l, r, b, t, bl, br, bb, bt, sl, sr, sb, st, pl, pr, pb, pt, m)
     local w = {}
     w.l = l
@@ -166,7 +174,7 @@ function ResetWorld()
 end
 
 ---用于设置world参数
-function OriginalSetWorld(l, r, b, t, bl, br, bb, bt, sl, sr, sb, st, pl, pr, pb, pt, m)
+function OriginalSetWorld(l, r, b, t, bl, br, bb, bt, sl, sr, sb, st, pl, pr, pb, pt, m,l3d,r3d,b3d,t3d)
     local w = lstg.world
     w.l = l
     w.r = r
@@ -185,6 +193,11 @@ function OriginalSetWorld(l, r, b, t, bl, br, bb, bt, sl, sr, sb, st, pl, pr, pb
     w.pb = pb
     w.pt = pt
     w.world = m
+
+    w.l3d=l3d or l
+    w.r3d=r3d or r
+    w.b3d=b3d or b
+    w.t3d=t3d or t
 end
 
 function SetWorld(l, b, w, h, bound, m)
@@ -259,8 +272,23 @@ end
 function SetViewMode(mode)
     lstg.viewmode = mode
     if mode == '3d' then
+        ---! caution:cx3d and cy3d is added
+        ---! caution: swapped world.scrl with world.l
+        ---! caution: swapped world.l with worle.l3d, allowing developers to define by thenselves
+        ---! equals to world.l by default
+        ---! original codes
+        --[[
         SetViewport(lstg.world.scrl * screen.scale + screen.dx, lstg.world.scrr * screen.scale + screen.dx,
                 lstg.world.scrb * screen.scale + screen.dy, lstg.world.scrt * screen.scale + screen.dy)
+        --]]
+
+        --#region
+        local deltax=screen.dx-lstg.worldoffset.cx3d+(lstg.world.scrl+lstg.world.scrr)/2*screen.scale
+        local deltay=screen.dy-lstg.worldoffset.cy3d+(lstg.world.scrb+lstg.world.scrt)/2*screen.scale
+        SetViewport(lstg.world.l3d * screen.scale + deltax, lstg.world.r3d * screen.scale + deltax,
+                lstg.world.b3d * screen.scale + deltay, lstg.world.t3d * screen.scale + deltay)
+        --#endregion
+
         SetPerspective(
                 lstg.view3d.eye[1], lstg.view3d.eye[2], lstg.view3d.eye[3],
                 lstg.view3d.at[1], lstg.view3d.at[2], lstg.view3d.at[3],
@@ -277,9 +305,19 @@ function SetViewMode(mode)
         --计算world宽高和偏移
         local offset = lstg.worldoffset
         local w = lstg.world
-        local world = {
+
+        ---! original codes
+        --#region
+        --[[local world = {
             height = (w.t - w.b), --world高度
             width = (w.r - w.l), --world宽度
+        }
+        --]]
+        --#endregion
+
+        local world={
+            height=w.scrt-w.scrb,
+            width=w.scrr-w.scrl
         }
         world.setheight = world.height * (1 / offset.vscale)--缩放后的高度
         world.setwidth = world.width * (1 / offset.hscale)--缩放后的宽度
@@ -395,12 +433,22 @@ local DEFAULT_WORLD_OFFSET = {
     centerx = 0, centery = 0, --world中心位置偏移
     hscale = 1, vscale = 1, --world横向、纵向缩放
     dx = 0, dy = 0, --整体偏移
+
+    ---! newly added
+    --#region
+    cx3d=0,cy3d=0
+    --#endregion
 }
 
 lstg.worldoffset = {
     centerx = 0, centery = 0, --world中心位置偏移
     hscale = 1, vscale = 1, --world横向、纵向缩放
     dx = 0, dy = 0, --整体偏移
+
+    ---! newly added
+    --#region
+    cx3d=0,cy3d=0
+    --#endregion
 }
 
 ---重置world偏移
