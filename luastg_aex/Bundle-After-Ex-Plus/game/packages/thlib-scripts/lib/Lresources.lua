@@ -33,6 +33,7 @@ ImageList = {}
 ImageSize = {}--由OLC添加，用于储存加载的图片的大小
 OriginalLoadImage = LoadImage
 
+---! 需要先loadtexture来获取纹理
 function LoadImage(img, ...)
     local arg = { ... }
     ImageList[img] = arg
@@ -55,6 +56,7 @@ function CopyImage(newname, img)
     end
 end
 
+---! 需要先loadtexture来获取纹理
 function LoadImageGroup(prefix, texname, x, y, w, h, cols, rows, a, b, rect)
     for i = 0, cols * rows - 1 do
         LoadImage(prefix .. (i + 1), texname, x + w * (i % cols), y + h * (int(i / cols)), w, h, a or 0, b or 0, rect or false)

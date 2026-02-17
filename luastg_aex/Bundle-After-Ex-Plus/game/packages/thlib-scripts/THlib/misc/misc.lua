@@ -236,6 +236,7 @@ function renderstar(x, y, r, point)
     end
 end
 
+---! 在这里定义玩家死亡动画
 function rendercircle(x, y, r, point)
     --player death effect
     local ang = 360 / (2 * point)

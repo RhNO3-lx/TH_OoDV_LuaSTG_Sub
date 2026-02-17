@@ -216,8 +216,13 @@ function SetWorld(l, b, w, h, bound, m)
             m
     )
     SetBound(lstg.world.boundl, lstg.world.boundr, lstg.world.boundb, lstg.world.boundt)
+    print("in setworld:")
+    local tmp=""
+    for k,v in pairs(lstg.world) do
+        tmp=tmp..k..":"..v..","
+    end
+    print(tmp)
 end
-
 
 ----------------------------------------
 ---3d
@@ -315,6 +320,7 @@ function SetViewMode(mode)
         --]]
         --#endregion
 
+        ---! 我寻思着既然都定义scrl和l了，怎么还在默认取景框拍到整个world
         local world={
             height=w.scrt-w.scrb,
             width=w.scrr-w.scrl
@@ -365,7 +371,10 @@ end
 function WorldToScreen(x, y)
     local w = lstg.world
     if setting.resx > setting.resy then
-        return (setting.resx - setting.resy * screen.width / screen.height) / 2 / screen.scale + w.scrl + (w.scrr - w.scrl) * (x - w.l) / (w.r - w.l), w.scrb + (w.scrt - w.scrb) * (y - w.b) / (w.t - w.b)
+        --return (setting.resx - setting.resy * screen.width / screen.height) / 2 / screen.scale + w.scrl + (w.scrr - w.scrl) * (x - w.l) / (w.r - w.l), w.scrb + (w.scrt - w.scrb) * (y - w.b) / (w.t - w.b)
+                ---!caution: 附加了lstg.worldoffset
+        return (setting.resx - setting.resy * screen.width / screen.height) / 2 / screen.scale + (w.scrr-w.scrl)/2 + (x-lstg.worldoffset.centerx), 
+                (w.scrt-w.scrb)/2 + (y-lstg.worldoffset.centery) 
     else
         return w.scrl + (w.scrr - w.scrl) * (x - w.l) / (w.r - w.l), (setting.resy - setting.resx * screen.height / screen.width) / 2 / screen.scale + w.scrb + (w.scrt - w.scrb) * (y - w.b) / (w.t - w.b)
     end

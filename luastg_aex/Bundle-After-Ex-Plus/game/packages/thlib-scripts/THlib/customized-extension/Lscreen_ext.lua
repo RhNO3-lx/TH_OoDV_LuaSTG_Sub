@@ -1,12 +1,14 @@
 ---! customized Lscreen.lua
-
+---! by:RhNO3-lx
 require("lib.Lscreen")
 
 ---todo(done):扩大实际活动范围配套的3d背景可选操作
 ---! 预先向Lscreen.lua->worldoffset中注入了两个额外字段
 ---! 并在setViewMode->3d->setviewport引入
+---! warning: 千万不要在出现变形类着色器的时候使之超出屏幕
 ---@param cx number
 ---@param cy number
+---@deprecated
 function Set3DOffset(cx,cy)
     lstg.worldoffset.cy3d=cy
     lstg.worldoffset.cx3d=cx
@@ -14,7 +16,7 @@ end
 
 ---! sl,sb,sw,sh ->screen param
 ---! w,h ->world size param
----! l3d,r3d,b3d,t3d ->3d render world rect, 
+---! l3d,r3d,b3d,t3d ->3d render world rect, =scr by default
 function SetWorldV2(sl, sb,sw,sh, w, h,l3d,r3d,b3d,t3d,bound, m)
     bound = bound or 32
     m = m or 15
@@ -22,10 +24,10 @@ function SetWorldV2(sl, sb,sw,sh, w, h,l3d,r3d,b3d,t3d,bound, m)
     local r=w/2
     local b=-h/2
     local t=h/2
-    l3d=l3d or l
-    r3d=r3d or r
-    b3d=b3d or b
-    t3d=t3d or t
+    l3d=l3d or sl
+    r3d=r3d or sl+sw
+    b3d=b3d or sb
+    t3d=t3d or sb+sh
     OriginalSetWorld(
             l,r,b,t,
             l - bound, r + bound, b - bound, t + bound,
@@ -35,10 +37,19 @@ function SetWorldV2(sl, sb,sw,sh, w, h,l3d,r3d,b3d,t3d,bound, m)
             l3d,r3d,b3d,t3d
     )
     SetBound(lstg.world.boundl, lstg.world.boundr, lstg.world.boundb, lstg.world.boundt)
+
+    print("in setworldv2:")
+    local tmp=""
+    for k,v in pairs(lstg.world) do
+        tmp=tmp..k..":"..v..","
+    end
+    print(tmp)
 end
 
----! warning: 3dworld中绘制出的图形会被拉伸，默认以标准竖版为准
+---! warning: 3dworld中绘制出的图形会被拉伸
+---! warning: 千万不要在出现变形类着色器的时候使之超出屏幕
 ---! 虽然在实际操作过程中，背景渲染得差不多就行
+---@deprecated
 function Set3DWorld(l3d,r3d,b3d,t3d)
     local w=lstg.world
     w.l3d=l3d

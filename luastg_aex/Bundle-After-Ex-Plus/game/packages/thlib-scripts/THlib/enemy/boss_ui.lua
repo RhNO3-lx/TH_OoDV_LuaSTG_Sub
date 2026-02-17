@@ -115,8 +115,11 @@ function hpbar:render()
         return
     end
     local alpha1 = 1 - b.hp_flag / 30
+    ---! 血条边框
     SetImageState("base_hp", "", Color(alpha1 * 255, 255, 0, 0))
+    ---! 指示实际生命值的血条
     SetImageState("hpbar1", "", Color(alpha1 * 255, 255, 255, 255))
+    ---! 衬底用的血条
     SetImageState("hpbar2", "", Color(0, 255, 255, 255))
     SetImageState("life_node", "", Color(alpha1 * 255, 255, 255, 255))
 
