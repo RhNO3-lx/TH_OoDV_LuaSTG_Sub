@@ -37,6 +37,8 @@ function SetWorldV2(sl, sb,sw,sh, w, h,l3d,r3d,b3d,t3d,bound, m)
     SetBound(lstg.world.boundl, lstg.world.boundr, lstg.world.boundb, lstg.world.boundt)
 end
 
+---! warning: 3dworld中绘制出的图形会被拉伸，默认以标准竖版为准
+---! 虽然在实际操作过程中，背景渲染得差不多就行
 function Set3DWorld(l3d,r3d,b3d,t3d)
     local w=lstg.world
     w.l3d=l3d
