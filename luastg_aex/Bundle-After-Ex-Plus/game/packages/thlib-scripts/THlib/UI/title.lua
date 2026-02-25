@@ -27,7 +27,16 @@ stage_menu = stage.New('menu', false, true)
 
 function stage_menu:init()
     local stage_menu_self = self
-    local menu_title, menu_player_select, menu_difficulty_select, menu_difficulty_select_pr, menu_replay_loader, menu_replay_saver, menu_items, menu_sc_pr
+    local menu_title,
+    menu_player_select,
+    menu_difficulty_select,
+    menu_difficulty_select_pr,
+    menu_replay_loader,
+    menu_replay_saver,
+    menu_items,
+    menu_sc_pr,
+    menu_options
+    local menu_offset = {}
     local menu_list = {}
     local menu_practice = {}
     if _title_flag == nil then
@@ -73,12 +82,17 @@ function stage_menu:init()
             menu.FlyOut(menu_title, 'left')
         end })
     end
-    table.insert(menu_items, { 'View Replay', function()
+    table.insert(menu_items, { 'Replay', function()
         replay_loader.Refresh(menu_replay_loader)
         menu.FadeIn(menu_replay_loader, 'right')
         menu.FadeOut(menu_title, 'left')
     end })
-
+    table.insert(menu_items, { 'Music Room', function()
+    end})
+    table.insert(menu_items, { 'Option', function ()
+    end})
+    table.insert(menu_items, { 'Manual', function()
+    end})
     table.insert(menu_items, { 'Exit Game', ExitGame })
     table.insert(menu_items, { 'exit', function()
         if menu_title.pos == #menu_title.text then
@@ -87,8 +101,9 @@ function stage_menu:init()
             menu_title.pos = #menu_title.text
         end
     end })
-    menu_title = New(simple_menu, '', menu_items)
-    --
+    menu_offset = { 0, 40, 10, 50, 20, 60, 30, 70 }
+    menu_title = New(title_menu, '', menu_items, '', -(screen.width * 0.45), 0,menu_offset)
+    --todo 优化位置渲染选项
     menu_items = {}
     local difficulty_pos = 1
     for _, name in ipairs(stage.groups) do
@@ -222,8 +237,39 @@ function stage_menu:init()
             end)
         end
     end)
+    --
+    menu_musicroom = New(musicroom, function (index)
+        
+    end)
+    --
+    menu_items = {}
+    table.insert(menu_items, { 'Resolution', function ()
+    end, "selector" })
+    table.insert(menu_items, { 'Fullscreen', function ()
+    end, "checkbox" })
+    table.insert(menu_items, { 'SetBGMVolume', function ()
+
+    end, "selector" })
+    table.insert(menu_items, { 'SetSEVolume', function ()
+        
+    end, "selector" })
+    table.insert(menu_items, { 'AutoShoot', function ()
+    end, "checkbox" })
+    table.insert(menu_items, { 'AutoBomb', function ()
+    end, "checkbox" })
+    table.insert(menu_items, { 'Default', function ()
+    end, "button" })
+    table.insert(menu_items, { 'Quit', function ()
+    end, "button" })
+    table.insert(menu_items, { 'exit', function()
+        menu.FlyIn(menu_title, 'left')
+        menu.FadeOut(menu_options)
+    end })
+    --table.insert()
+    menu_offset = {}
+    menu_options = New(options, '', menu_items)
     local task_menu_init = function()
-        menu.FlyIn(menu_title, 'right')
+        menu.FadeIn(menu_title)
     end
     local sc_init = function()
         --by OLC

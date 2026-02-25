@@ -55,8 +55,8 @@ LoadImage("rank_Lunatic", "ui_rank", 0, 96, 144, 32)
 LoadImage("rank_Extra", "ui_rank", 0, 128, 144, 32)
 
 ui.menu = {
-    font_size = 0.625,
-    line_height = 24,
+    font_size = 0.725,
+    line_height = 28,
     char_width = 20,
     num_width = 12.5,
     title_color = { 255, 255, 255 },
@@ -76,7 +76,8 @@ ui.menu = {
     rep_line_height = 20,
 }
 
-function ui.DrawMenu(title, text, pos, x, y, alpha, timer, shake, align)
+function ui.DrawMenu(title, text, pos, x, y, alpha, timer, shake, text_offx, align)
+    local _text_offx = text_offx
     align = align or "center"
     local yos
     if title == "" then
@@ -87,7 +88,14 @@ function ui.DrawMenu(title, text, pos, x, y, alpha, timer, shake, align)
         RenderText("menu", title, x, y + yos + ui.menu.line_height, ui.menu.font_size, align, "vcenter")
     end
     for i = 1, #text do
+        local _x = x
+        if _text_offx ~= nil then
+            _x = x + _text_offx[i]
+        end
         if i == pos then
+            -- if ui.menu.text_nowoffx[i] * (-1)^(i) >= 0 then
+            --     ui.menu.text_nowoffx[i] = ui.menu.text_nowoffx[i] - (-1)^i
+            -- end
             local color = {}
             local k = cos(timer * ui.menu.blink_speed) ^ 2
             for j = 1, 3 do
@@ -97,19 +105,26 @@ function ui.DrawMenu(title, text, pos, x, y, alpha, timer, shake, align)
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
 
             SetFontState("menu", "", Color(alpha * 255, unpack(color)))
-            RenderText("menu", text[i], x + xos, y - i * ui.menu.line_height + yos, ui.menu.font_size, align, "vcenter")
+            RenderText("menu", text[i], _x + xos, y - i * ui.menu.line_height + yos, ui.menu.font_size, align, "vcenter")
             --	RenderTTF("menuttf",text[i],x+xos+2,x+xos+2,y-i*ui.menu.line_height+yos,y-i*ui.menu.line_height+yos,Color(alpha*255,0,0,0),"centerpoint")
             --	RenderTTF("menuttf",text[i],x+xos,x+xos,y-i*ui.menu.line_height+yos,y-i*ui.menu.line_height+yos,Color(alpha*255,unpack(color)),"centerpoint")
         else
+            -- if math.abs(ui.menu.text_nowoffx[i]) <= math.abs(i - pos) * 5 * ui.menu.text_offx_mul[i] then
+            --     ui.menu.text_nowoffx[i] = ui.menu.text_nowoffx[i] + 0.5 * (-1)^i * ui.menu.text_offx_mul[i]
+            -- end
+            -- if math.abs(ui.menu.text_nowoffx[i]) >= math.abs(i - pos) * 5 * ui.menu.text_offx_mul[i] then
+            --     ui.menu.text_nowoffx[i] = ui.menu.text_nowoffx[i] - 0.5 * (-1)^i * ui.menu.text_offx_mul[i]
+            -- end
             SetFontState("menu", "", Color(alpha * 255, unpack(ui.menu.unfocused_color)))
-            RenderText("menu", text[i], x, y - i * ui.menu.line_height + yos, ui.menu.font_size, align, "vcenter")
+            RenderText("menu", text[i], _x, y - i * ui.menu.line_height + yos, ui.menu.font_size, align, "vcenter")
             --	RenderTTF("menuttf",text[i],x+2,x+2,y-i*ui.menu.line_height+yos,y-i*ui.menu.line_height+yos,Color(alpha*255,0,0,0),"centerpoint")
             --	RenderTTF("menuttf",text[i],x,x,y-i*ui.menu.line_height+yos,y-i*ui.menu.line_height+yos,Color(alpha*255,unpack(ui.menu.unfocused_color)),"centerpoint")
         end
     end
 end
 
-function ui.DrawMenuTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, align)
+function ui.DrawMenuTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, text_offx, align)
+    local _text_offx = text_offx
     align = align or "center"
     local yos
     if title == "" then
@@ -119,6 +134,10 @@ function ui.DrawMenuTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, al
         RenderTTF(ttfname, title, x, x, y + yos + ui.menu.sc_pr_line_height, y + yos + ui.menu.sc_pr_line_height, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
     end
     for i = 1, #text do
+        local _x = x
+        if _text_offx[i] ~= nil then
+            _x = x + _text_offx[i]
+        end
         if i == pos then
             local color = {}
             local k = cos(timer * ui.menu.blink_speed) ^ 2
@@ -126,9 +145,9 @@ function ui.DrawMenuTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, al
                 color[j] = ui.menu.focused_color1[j] * k + ui.menu.focused_color2[j] * (1 - k)
             end
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
-            RenderTTF(ttfname, text[i], x + xos, x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
+            RenderTTF(ttfname, text[i], _x + xos, _x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
         else
-            RenderTTF(ttfname, text[i], x, x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
+            RenderTTF(ttfname, text[i], _x, _x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
         end
     end
 end
@@ -302,7 +321,7 @@ function lstg_ui:reloadUI()
         LoadImageFromFile("logo", "THlib/UI/logo.png")
         SetImageCenter("logo", 0, 0)
         LoadImageFromFile("ui_bg", "THlib/UI/ui_bg.png")
-        LoadImageFromFile("menu_bg", "THlib/UI/menu_bg.png")
+        LoadImageFromFile("menu_bg", "THlib/UI/menu_bg__.png")
     elseif self.type == 2 then
         LoadImageFromFile("logo", "THlib/UI/logo.png")
         SetImageCenter("logo", 0, 0)
@@ -361,7 +380,7 @@ function lstg_ui:drawMenuBG()
 end
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
-    Render("menu_bg", 320, 240)
+    Render("menu_bg", 320, 240, 0, 0.25, 0.25)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
             string.format("%.1ffps", GetFPS()),
