@@ -223,7 +223,7 @@ end
 
 function simple_menu:render()
     SetViewMode('ui')
-    ui.DrawMenu(self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
+    ui.DrawMenuTTF("menuttf", self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
 end
 ------------------------------------------------------------
 title_menu = Class(object)
@@ -793,6 +793,53 @@ local function copyDataFromSetting()
         last_setting.bgmvolume = setting.bgmvolume
 end
 
+--先在这占个位，等我研究出来setting怎么使我就把它扔setting里
+local auto_shoot = false
+local auto_bomb = false
+
+local mode_window_index = 1
+local mode_window_name = {}
+local function updateDisplayMode()
+        local cfg = last_setting
+
+        mode_window_index = 0
+        for i, v in ipairs(mode_window) do
+            if v[1] == cfg.resx and v[2] == cfg.resy then
+                mode_window_index = i
+                break
+            end
+        end
+        if mode_window_index == 0 then
+            for i, v in ipairs(mode_window) do
+                if v[1] == cfg.resx or v[2] == cfg.resy then
+                    mode_window_index = i
+                    break
+                end
+            end
+        end
+        if mode_window_index == 0 then
+            mode_window_index = 1 -- fallback
+        end
+
+        mode_window_name = {}
+        for i, v in ipairs(mode_window) do
+            mode_window_name[i] = string.format("%dx%d", v[1], v[2])
+        end
+end
+
+local function updateData()
+    local data = {}
+    local cfg = last_setting
+    updateDisplayMode()
+    data[1] = mode_window_name[mode_window_index]
+    data[2] = not cfg.windowed
+    data[3] = cfg.bgmvolume
+    data[4] = cfg.sevolume
+    data[5] = auto_shoot
+    data[6] = auto_bomb
+    return data
+end
+
 function options:init(title, content, keyslot, offx)
     self.layer = LAYER_TOP
     self.group = GROUP_GHOST
@@ -806,9 +853,13 @@ function options:init(title, content, keyslot, offx)
     self.content = content
     self.text = {}
     self.func = {}
+    self.type = {}
+    self.data = {}
     for i = 1, #content do
         self.text[i] = content[i][1]
         self.func[i] = content[i][2]
+        self.type[i] = content[i][3]
+        self.data = updateData()
     end
     self.pos = 1
     self.pos_pre = 1
@@ -826,7 +877,7 @@ function options:init(title, content, keyslot, offx)
 end
 
 function options:Refresh()
-    self.state1Text = OptionsRefresh()
+    --self.state1Text = OptionsRefresh()
 end
 
 function options:frame()
@@ -842,6 +893,7 @@ function options:frame()
         self.pos = self.pos + 1
         PlaySound('select00', 0.3)
     end
+    
     self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
     if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
         self.func[self.pos]()
@@ -861,5 +913,6 @@ end
 
 function options:render()
     SetViewMode('ui')
-    ui.DrawMenu(self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
+    updateData()
+    ui.DrawOptionTTF('menuttf', self.title, self.text, self.type, self.data, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
 end
