@@ -34,133 +34,6 @@ end
 
 --------------------------------------------------------------------------------
 
----@return string[], number
-local function enumMods()
-    local list = {}
-    local pos = 1
-    local list_mods = lstg.FileManager.EnumFiles('mod/')
-    for _, v in ipairs(list_mods) do
-        local filename = v[1]
-        local mod_name = ""
-        if string.sub(filename, -4, -1) == ".zip" then
-            -- 压缩包 mod
-            lstg.LoadPack(filename)
-            local archive = lstg.FileManager.GetArchive(filename)
-            if archive then
-                local root_exist = archive:FileExist("root.lua")
-                lstg.UnloadPack(filename)
-                if root_exist then
-                    mod_name = string.sub(filename, 5, -5)
-                end
-            end
-        elseif v[2] then
-            -- 文件夹 mod
-            if lstg.FileManager.FileExist(v[1] .. "root.lua") then
-                mod_name = string.sub(filename, 5, -2)
-            end
-        end
-        if string.len(mod_name) > 0 then
-            if mod_name ~= 'launcher' then
-                table.insert(list, mod_name)
-            end
-            if setting.last_mod == mod_name then
-                pos = #list
-            end
-        end
-    end
-    return list, pos
-end
-
---- 前置声明，实际实现在下方的 launcher_scene
----@param mod_name string
-local function setMod(mod_name) end
-
----@class launcher.menu.SelectMod : launcher.menu.Base
-local SelectMod = Class(object)
-
----@param exit_f fun()
-function SelectMod:init(exit_f)
-    initMenuObjectCommon(self)
-
-    self.title = ""
-    self.exit_func = exit_f
-
-    local _w_height = 16 + 4 * 2 -- 上下都留空隙
-    local _width = screen.width - 16 * 2 -- 两侧留边缘
-    local _height = 18 * _w_height
-
-    self._back = subui.widget.Button("", exit_f)
-    self._back.width = _width / 4
-    self._back.height = _w_height
-
-    self._view = subui.layout.LinearScrollView(_width, _height)
-    self._view.scroll_height = _w_height -- 一次滚轮滚动一个按键
-
-    function self:_updateViewState()
-        self._view.alpha = self.alpha
-        self._view.x = self.x - _width / 2
-        self._view.y = self.y + _height / 2 - _w_height -- 降一个控件高度
-
-        self._back.alpha = self.alpha
-        self._back.x = self.x - _width / 2
-        self._back.y = self.y + _height / 2 + _w_height
-    end
-    function self:refresh()
-        self.title = i18n_str("launcher.menu.start.select")
-        self._back.text = i18n_str("launcher.back_icon")
-        local mods_, pos_ = enumMods()
-        local ws_ = {}
-        for i, v in ipairs(mods_) do
-            local idx = i
-            local mod = v
-            local w_button = subui.widget.Button(string.format("%d. %s", idx, mod), function()
-                subui.sound.playConfirm()
-                setMod(mod)
-            end)
-            w_button.width = _width
-            w_button.height = _w_height
-            table.insert(ws_, w_button)
-        end
-        self._view:setWidgets(ws_)
-        --self._view._index = pos_
-        self._view:setCursorIndex(pos_)
-    end
-
-    self:_updateViewState() -- 先更新一次
-    self:refresh()
-end
-
-function SelectMod:frame()
-    task.Do(self)
-    self:_updateViewState()
-    if not self.locked then
-        if self.exit_func and (subui.keyboard.cancel.down or subui.mouse.xbutton1.down) then
-            self.exit_func()
-        end
-    end
-    self._back:update(not self.locked and subui.isMouseInRect(self._back))
-    self._view:update(not self.locked)
-end
-
-function SelectMod:render()
-    if self.alpha0 >= 0.0001 then
-        SetViewMode("ui")
-        local y = self.y + 9.5 * 24
-        subui.drawTTF("ttf:menu-font", self.title, self.x, self.x, y, y, lstg.Color(self.alpha * 255, 255, 255, 255), "center", "vcenter")
-        self._back:draw()
-        self._view:draw()
-        SetViewMode("world")
-    end
-end
-
----@param exit_f fun()
----@return launcher.menu.SelectMod
-function SelectMod.create(exit_f)
-    return lstg.New(SelectMod, exit_f)
-end
-
---------------------------------------------------------------------------------
-
 ---@class launcher.menu.TextInput : launcher.menu.Base
 local TextInput = Class(object)
 
@@ -450,180 +323,6 @@ end
 
 --------------------------------------------------------------------------------
 
-local api_url_root = "https://api.luastg-sub.com"
-local api_url_latest_framework_version = api_url_root .. "/framework/after-ex-plus/version/latest"
-
-local function isVersionHigher(v, v2)
-    if type(v) ~= "string" or type(v2) ~= "string" then
-        return false
-    end
-    local x1, y1, z1 = string.gmatch(v , "(%d+).(%d+).(%d+)")()
-    local x2, y2, z2 = string.gmatch(v2, "(%d+).(%d+).(%d+)")()
-    if type(x1) ~= "string" or type(y1) ~= "string" or type(z1) ~= "string" then
-        return false
-    end
-    if type(x2) ~= "string" or type(y2) ~= "string" or type(z2) ~= "string" then
-        return false
-    end
-    local x1n, y1n, z1n = tonumber(x1), tonumber(y1), tonumber(z1)
-    local x2n, y2n, z2n = tonumber(x2), tonumber(y2), tonumber(z2)
-    local n1 = x1n * 100000000 + y1n * 10000 + z1n
-    local n2 = x2n * 100000000 + y2n * 10000 + z2n
-    return n1 < n2
-end
-
-local function checkNewVersion()
-    local http = require("socket.http")
-    local ltn12 = require("ltn12")
-    local cjson = require("cjson")
-
-    local t = {}
-    local r, c, h = http.request({
-        url = api_url_root .. "/framework/after-ex-plus/version/latest",
-        method = "GET",
-        sink = ltn12.sink.table(t),
-    })
-
-    if r and c == 200 then
-        local json_text = table.concat(t)
-        local json_data = cjson.decode(json_text)
-        if isVersionHigher(gconfig.bundle_version, json_data.version) then
-            return true, json_data.description
-        end
-    end
-
-    return false, ""
-end
-
----@param t any
-local function validateVersionData(t)
-    return type(t) == "table" and type(t.name) == "string" and type(t.version) == "string" and type(t.description) == "string"
-end
-
-local function getLatestVersion()
-    local result = false
-    local function request()
-        local Request = require("http.Request")
-        return Request.get(api_url_latest_framework_version)
-            :setResolveTimeout(4000)
-            :setConnectTimeout(10000)
-            :setSendTimeout(10000)
-            :setReceiveTimeout(10000)
-            :addHeader("Accept", "application/json")
-            :execute()
-    end
-    local response
-    result, response = pcall(request)
-    if not result then
-        return false, ""
-    end
-    local data
-    result, data = pcall(cjson.decode, response:body())
-    if not result or not validateVersionData(data) then
-        return false, ""
-    end
-    return true, data.description
-end
-
----@class launcher.menu.VersionView : launcher.menu.Base
-local VersionView = Class(object)
-
----@param exit_f fun()
-function VersionView:init(exit_f)
-    initMenuObjectCommon(self)
-
-    self.title = ""
-    self.exit_func = exit_f
-
-    local _w_height = 16 + 4 * 2 -- 上下都留空隙
-    local _width = screen.width - 16 * 2 -- 两侧留边缘
-    local _height = 18 * _w_height
-
-    self._back = subui.widget.Button("", exit_f)
-    self._back.width = _width / 4
-    self._back.height = _w_height
-
-    self._view = subui.layout.LinearScrollView(_width, _height)
-    self._view.scroll_height = _w_height -- 一次滚轮滚动一个按键
-
-    function self:_updateViewState()
-        self._view.alpha = self.alpha
-        self._view.x = self.x - _width / 2
-        self._view.y = self.y + _height / 2 - _w_height -- 降一个控件高度
-
-        self._back.alpha = self.alpha
-        self._back.x = self.x - _width / 2
-        self._back.y = self.y + _height / 2 + _w_height
-    end
-    function self:refresh()
-        self.title = i18n_str("launcher.menu.check_new_version")
-        self._back.text = i18n_str("launcher.back_icon")
-        local check_nv, nv_name = getLatestVersion()
-        if not check_nv then
-            nv_name = i18n_str("launcher.menu.version.fetch_failed")
-        end
-        local widget_list = {
-            { i18n_str("launcher.menu.version.check"), function() self:refresh() end },
-            { "", function() end },
-            { i18n_str("launcher.menu.version.label_current") .. gconfig.window_title, function() end },
-            { i18n_str("launcher.menu.version.label_latest") .. nv_name, function() end },
-            { "", function() end },
-            { i18n_str("launcher.menu.version.download_sources"), function() end },
-            { i18n_str("launcher.menu.version.download_source1"), function() lstg.Execute("https://qm.qq.com/cgi-bin/qm/qr?k=b6VXIK9HauTk33-tiWiMRqfQV1S5aSE_&jump_from=webapi&authKey=9ZNcegQlRo3dVVsMQs5K4R2/DckQYajmO3JnMdzL98/nmdv615q7bXbJCNubFgYi") end },
-            { i18n_str("launcher.menu.version.download_source2"), function() lstg.Execute("https://qm.qq.com/cgi-bin/qm/qr?k=0ScR3LsxhNu1YCrHvpEoodu74J21S1fP&jump_from=webapi&authKey=IoAb/UI23m574Igvg93xidQZ1MU7otUjB6LrHp5+rxiU9nT/jeGuuNVxjgCsmlNJ") end },
-            { i18n_str("launcher.menu.version.download_source3"), function() lstg.Execute("https://qm.qq.com/cgi-bin/qm/qr?k=8M0k3qfYNQu11ptp-_p4WX-24oXA2djt&jump_from=webapi&authKey=B8/uqQh05JTC0Ss0UzFYBk4FLmqBhNS2I0l0CuAt4sho5uW/+ZvKCGZeBWkOa4hN") end },
-            --{ i18n_str("launcher.menu.version.download_source4"), function() lstg.Execute("https://luastg.ritsukage.com") end }, -- R.I.P
-            { i18n_str("launcher.menu.version.download_source5"), function() lstg.Execute("https://files.luastg-sub.com") end },
-            { i18n_str("launcher.menu.version.download_source6"), function() lstg.Execute("https://home.luastg-sub.com") end },
-        }
-        local ws_ = {}
-        for _, v in ipairs(widget_list) do
-            local w_button = subui.widget.Button(v[1], function()
-                v[2]()
-            end)
-            w_button.width = _width
-            w_button.height = _w_height
-            table.insert(ws_, w_button)
-        end
-        self._view:setWidgets(ws_)
-        self._view._index = 1
-    end
-
-    self:_updateViewState() -- 先更新一次
-    --self:refresh() -- 创建时不更新，防止触发流控（1s请求1次）
-end
-
-function VersionView:frame()
-    task.Do(self)
-    self:_updateViewState()
-    if not self.locked then
-        if self.exit_func and (subui.keyboard.cancel.down or subui.mouse.xbutton1.down) then
-            self.exit_func()
-        end
-    end
-    self._back:update(not self.locked and subui.isMouseInRect(self._back))
-    self._view:update(not self.locked)
-end
-
-function VersionView:render()
-    if self.alpha0 >= 0.0001 then
-        SetViewMode("ui")
-        local y = self.y + 9.5 * 24
-        subui.drawTTF("ttf:menu-font", self.title, self.x, self.x, y, y, lstg.Color(self.alpha * 255, 255, 255, 255), "center", "vcenter")
-        self._back:draw()
-        self._view:draw()
-        SetViewMode("world")
-    end
-end
-
----@param exit_f fun()
----@return launcher.menu.VersionView
-function VersionView.create(exit_f)
-    return lstg.New(VersionView, exit_f)
-end
-
---------------------------------------------------------------------------------
-
 ---@class launcher.menu.InputSetting : launcher.menu.Base
 local InputSetting = Class(object)
 
@@ -887,6 +586,7 @@ function GameSetting:init(exit_f)
 
     local _w_height = 16 + 4 * 2 -- 上下都留空隙
     local _width = screen.width - 16 * 2 -- 两侧留边缘
+    local _width_but = 300
     local _height = 18 * _w_height
 
     ---@type ui.widget.Button[]
@@ -1093,9 +793,9 @@ function GameSetting:init(exit_f)
         end
     end
 
-    local w_simpleselector_mode = subui.widget.SimpleSelector()
-        :setText("?")
-        :setRect(0, 0, _width, _w_height)
+    local w_simpleselector_mode = subui.widget.SimpleSelector_Vertical()
+        :setText("launcher.menu.setting.game.display_mode")
+        :setRect(0, 0, _width, _w_height*2)
         :setCallback(function (value)
             -- NO OP
         end, function ()
@@ -1130,7 +830,7 @@ function GameSetting:init(exit_f)
         end, function (value)
             last_setting.vsync = value
         end)
-    table.insert(self._button, w_checkbox_vsync)
+    --table.insert(self._button, w_checkbox_vsync)
 
     -- 音量设置
 
@@ -1147,7 +847,7 @@ function GameSetting:init(exit_f)
         end, function (value)
             last_setting.sevolume = value
         end)
-    table.insert(self._button, w_slider_se)
+    --table.insert(self._button, w_slider_se)
 
     local w_slider_bgm = subui.widget.Slider()
         :setText("launcher.menu.setting.game.music")
@@ -1161,7 +861,7 @@ function GameSetting:init(exit_f)
         end, function (value)
             last_setting.bgmvolume = value
         end)
-    table.insert(self._button, w_slider_bgm)
+    --table.insert(self._button, w_slider_bgm)
 
     -- 应用
 
@@ -1188,6 +888,7 @@ function GameSetting:init(exit_f)
     end)
     w_button_apply.width = _width
     w_button_apply.height = _w_height
+    w_button_apply.halign = "center"
     table.insert(self._button, w_button_apply)
 
     -- 刷新
@@ -1218,35 +919,17 @@ function GameSetting:init(exit_f)
         w_button_back.x = self.x - _width / 2
         w_button_back.y = self.y + _height / 2 + _w_height
 
-        local top_y = self.y + 8 * _w_height
+        local top_y = self.y + 4 * _w_height
 
         w_simpleselector_mode.alpha = self.alpha
         w_simpleselector_mode.x = self.x - _width / 2
         w_simpleselector_mode.y = top_y
 
-        top_y = top_y - _w_height
+        top_y = top_y - 2 * _w_height
 
         w_checkbox_fullscreen.alpha = self.alpha
         w_checkbox_fullscreen.x = self.x - _width / 2
         w_checkbox_fullscreen.y = top_y
-
-        top_y = top_y - _w_height
-
-        w_checkbox_vsync.alpha = self.alpha
-        w_checkbox_vsync.x = self.x - _width / 2
-        w_checkbox_vsync.y = top_y
-
-        top_y = top_y - _w_height
-
-        w_slider_se.alpha = self.alpha
-        w_slider_se.x = self.x - _width / 2
-        w_slider_se.y = top_y
-
-        top_y = top_y - _w_height
-
-        w_slider_bgm.alpha = self.alpha
-        w_slider_bgm.x = self.x - _width / 2
-        w_slider_bgm.y = top_y
 
         top_y = top_y - _w_height
 
@@ -1311,103 +994,6 @@ function GameSetting.create(exit_f)
 end
 
 --------------------------------------------------------------------------------
-
----@class launcher.menu.PluginManager : launcher.menu.Base
-local PluginManager = Class(object)
-
----@param exit_f fun()
-function PluginManager:init(exit_f)
-    initMenuObjectCommon(self)
-
-    self.title = "launcher.menu.plugin_manager"
-    self.exit_func = exit_f
-
-    local _w_height = 16 + 4 * 2 -- 上下都留空隙
-    local _width = screen.width - 16 * 2 -- 两侧留边缘
-    local _height = 18 * _w_height
-
-    self._back = subui.widget.Button("launcher.back_icon", exit_f)
-    self._back.width = _width / 4
-    self._back.height = _w_height
-
-    self._view = subui.layout.LinearScrollView(_width, _height)
-    self._view.scroll_height = _w_height -- 一次滚轮滚动一个按键
-
-    function self:_updateLayout()
-        self._view.alpha = self.alpha
-        self._view.x = self.x - _width / 2
-        self._view.y = self.y + _height / 2 - _w_height -- 降一个控件高度
-
-        self._back.alpha = self.alpha
-        self._back.x = self.x - _width / 2
-        self._back.y = self.y + _height / 2 + _w_height
-    end
-
-    ---@type lstg.plugin.Config.Entry[]
-    self.plugins = {}
-
-    function self:refresh()
-        self.title = i18n_str("launcher.menu.plugin_manager")
-        self._back.text = i18n_str("launcher.back_icon")
-
-        self.plugins = lstg.plugin.LoadConfig()
-        self.plugins = lstg.plugin.FreshConfig(self.plugins)
-        lstg.plugin.SaveConfig(self.plugins)
-
-        local ws_ = {}
-        for i, v in ipairs(self.plugins) do
-            local idx = i
-            local plg = v
-            local w_entry = subui.widget.CheckBox()
-                :setText(plg.name)
-                :setRect(0, 0, _width, _w_height)
-                :setCallback(function (value)
-                    lstg.plugin.SaveConfig(self.plugins)
-                end, function ()
-                    return plg.enable
-                end, function (value)
-                    plg.enable = value
-                end)
-            table.insert(ws_, w_entry)
-        end
-        self._view:setWidgets(ws_)
-        self._view._index = 1
-    end
-
-    self:refresh()
-    self:_updateLayout() -- 先更新一次
-end
-
-function PluginManager:frame()
-    task.Do(self)
-    self:_updateLayout()
-    if not self.locked then
-        if self.exit_func and (subui.keyboard.cancel.down or subui.mouse.xbutton1.down) then
-            self.exit_func()
-        end
-    end
-    self._back:update(not self.locked and subui.isMouseInRect(self._back))
-    self._view:update(not self.locked)
-end
-
-function PluginManager:render()
-    if self.alpha0 >= 0.0001 then
-        SetViewMode("ui")
-        local y = self.y + 9.5 * 24
-        subui.drawTTF("ttf:menu-font", self.title, self.x, self.x, y, y, lstg.Color(self.alpha * 255, 255, 255, 255), "center", "vcenter")
-        self._back:draw()
-        self._view:draw()
-        SetViewMode("world")
-    end
-end
-
----@param exit_f fun()
----@return launcher.menu.PluginManager
-function PluginManager.create(exit_f)
-    return lstg.New(PluginManager, exit_f)
-end
-
---------------------------------------------------------------------------------
 --- 启动器场景
 
 ---@class game.LauncherScene : foundation.Scene
@@ -1427,80 +1013,79 @@ function LauncherScene:onCreate()
     -- 菜单栈，用来简化菜单跳转
     local empty_menu_obj = lstg.New(object)
     local menu_stack = {}
-    local function menuFlyIn(self, dir)
-        self.alpha = 1
-        if dir == 'left' then
-            self.x = screen.width * 0.5 - screen.width
-        elseif dir == 'right' then
-            self.x = screen.width * 0.5 + screen.width
-        end
-        task.Clear(self)
-        task.New(self, function()
-            task.MoveTo(screen.width * 0.5, self.y, 30, 2)
-            self.locked = false
-        end)
-        task.New(self, function()
-            for i = 1, 30 do
-                self.alpha0 = i / 30
-                task.Wait(1)
-            end
-        end)
-    end
-    local function menuFlyOut(self, dir)
-        local x
-        if dir == 'left' then
-            x = screen.width * 0.5 - screen.width
-        elseif dir == 'right' then
-            x = screen.width * 0.5 + screen.width
-        end
-        task.Clear(self)
-        if not self.locked then
-            task.New(self, function()
-                self.locked = true
-                task.MoveTo(x, self.y, 30, 1)
-            end)
-            task.New(self, function()
-                for i = 29, 0, -1 do
-                    self.alpha0 = i / 30
-                    task.Wait(1)
-                end
-            end)
-        end
-    end
-    local function pushMenuStack(obj)
-        obj = obj or empty_menu_obj
-        if #menu_stack > 0 then
-            menuFlyOut(menu_stack[#menu_stack], 'left')
-        end
-        table.insert(menu_stack, obj)
-        menuFlyIn(obj, 'right')
-    end
-    local function popMenuStack()
-        if #menu_stack > 0 then
-            menuFlyOut(menu_stack[#menu_stack], 'right')
-            table.remove(menu_stack)
-        end
-        if #menu_stack > 0 then
-            menuFlyIn(menu_stack[#menu_stack], 'left')
-        end
-    end
-    function setMod(mod_name)
+    -- local function menuFlyIn(self, dir)
+    --     self.alpha = 1
+    --     if dir == 'left' then
+    --         self.x = screen.width * 0.5 - screen.width
+    --     elseif dir == 'right' then
+    --         self.x = screen.width * 0.5 + screen.width
+    --     end
+    --     task.Clear(self)
+    --     task.New(self, function()
+    --         task.MoveTo(screen.width * 0.5, self.y, 30, 2)
+    --         self.locked = false
+    --     end)
+    --     task.New(self, function()
+    --         for i = 1, 30 do
+    --             self.alpha0 = i / 30
+    --             task.Wait(1)
+    --         end
+    --     end)
+    -- end
+    -- local function menuFlyOut(self, dir)
+    --     local x
+    --     if dir == 'left' then
+    --         x = screen.width * 0.5 - screen.width
+    --     elseif dir == 'right' then
+    --         x = screen.width * 0.5 + screen.width
+    --     end
+    --     task.Clear(self)
+    --     if not self.locked then
+    --         task.New(self, function()
+    --             self.locked = true
+    --             task.MoveTo(x, self.y, 30, 1)
+    --         end)
+    --         task.New(self, function()
+    --             for i = 29, 0, -1 do
+    --                 self.alpha0 = i / 30
+    --                 task.Wait(1)
+    --             end
+    --         end)
+    --     end
+    -- end
+    -- local function pushMenuStack(obj)
+    --     obj = obj or empty_menu_obj
+    --     if #menu_stack > 0 then
+    --         menuFlyOut(menu_stack[#menu_stack], 'left')
+    --     end
+    --     table.insert(menu_stack, obj)
+    --     menuFlyIn(obj, 'right')
+    -- end
+    -- local function popMenuStack()
+    --     if #menu_stack > 0 then
+    --         menuFlyOut(menu_stack[#menu_stack], 'right')
+    --         table.remove(menu_stack)
+    --     end
+    --     if #menu_stack > 0 then
+    --         menuFlyIn(menu_stack[#menu_stack], 'left')
+    --     end
+    -- end
+    --[[function setMod(mod_name)
         setting.mod = mod_name
         saveConfigure()
         pushMenuStack(nil)
         self.color_value_d = -1 / 30
         task.New(self, function()
-            task.Wait(30)
+            --task.Wait(30)
             SceneManager.setNext("LauncherLoadingScene")
         end)
     end
-
-    -- Mod 选择菜单
-    local menu_mod = SelectMod.create(function()
-        subui.sound.playConfirm()
-        popMenuStack()
-    end)
-
+    setMod("东方秽漫洋")]]--
+    setting.mod = "东方秽漫洋"
+    saveConfigure()
+    --pushMenuStack(nil)
+    --self.color_value_d = -1 / 30
+    SceneManager.setNext("LauncherLoadingScene")
     -- 文本输入
     local menu_textinput = TextInput.create()
 
@@ -1511,17 +1096,6 @@ function LauncherScene:onCreate()
 
     -- 设置菜单
     local menu_setting = GameSetting.create(function()
-        popMenuStack()
-    end)
-
-    -- 插件管理菜单
-    local menu_plugin = PluginManager.create(function()
-        popMenuStack()
-    end)
-
-    -- 版本更新菜单
-    local version_view = VersionView.create(function()
-        subui.sound.playConfirm()
         popMenuStack()
     end)
 
@@ -1547,19 +1121,7 @@ function LauncherScene:onCreate()
     local main_widgets = {
         { "launcher.menu.start", function()
             subui.sound.playConfirm()
-            menu_mod:refresh()
-            pushMenuStack(menu_mod)
-        end },
-        { "launcher.menu.username", function()
-            subui.sound.playConfirm()
-            menu_textinput:reset("launcher.menu.username", setting.username, function(text)
-                if text then
-                    setting.username = text
-                    saveConfigure()
-                end
-                popMenuStack()
-            end)
-            pushMenuStack(menu_textinput)
+            setMod("东方秽漫洋")
         end },
         { "launcher.menu.setting.input.keyboard", function()
             subui.sound.playConfirm()
@@ -1571,34 +1133,17 @@ function LauncherScene:onCreate()
             menu_setting:refresh()
             pushMenuStack(menu_setting)
         end },
-        { "launcher.menu.plugin_manager", function()
-            subui.sound.playConfirm()
-            menu_plugin:refresh()
-            pushMenuStack(menu_plugin)
-        end },
         { "$lang", function() end }, -- 被自己的代码丑到了……
     }
-    -- 暂时不在这里做新版本检查，防止被报毒
-    --local check_nv, nv_name = checkNewVersion()
-    --if check_nv then
-    --    table.insert(main_widgets, { "launcher.menu.found_new_version", function()
-    --        subui.sound.playConfirm()
-    --        version_view:refresh()
-    --        pushMenuStack(version_view)
-    --    end })
-    --else
-        table.insert(main_widgets, { "launcher.menu.check_new_version", function()
-            subui.sound.playConfirm()
-            version_view:refresh()
-            pushMenuStack(version_view)
-        end })
-    --end
+
+    --在这里insert菜单选项
+    
     table.insert(main_widgets, { "launcher.menu.exit", exitGame })
     menu_main = Main.create(exitMain, main_widgets)
 
     -- 开始场景
-    subui.sound.playConfirm()
-    pushMenuStack(menu_main)
+    --subui.sound.playConfirm()
+    --pushMenuStack(menu_main)
 end
 
 function LauncherScene:onDestroy()
@@ -1664,7 +1209,6 @@ function LauncherLoadingScene:onCreate()
 
     lstg.SetResourceStatus("global")
     Include("root.lua")
-    lstg.plugin.DispatchEvent("afterMod")
     lstg.RegisterAllGameObjectClass()
     lstg.SetResourceStatus("stage")
 

@@ -513,7 +513,7 @@ function widget.CheckBox()
         self.y = 0
         self.width = 64.0
         self.height = 16.0
-        self.halign = "left"
+        self.halign = "center"
         self.valign = "vcenter"
 
         self._value = false
@@ -965,7 +965,7 @@ function widget.SimpleSelector()
         self.y = 0
         self.width = 64.0
         self.height = 16.0
-        self.halign = "left"
+        self.halign = "center"
         self.valign = "vcenter"
 
         self._split_factor = 0.5 -- 标签、滑条各占一半
@@ -1121,6 +1121,190 @@ function widget.SimpleSelector()
             drawTTF("ttf:menu-font", self._item[self._getValue()],
                 self.x + self.width * self._split_factor, self.x + self.width,
                 self.y - self.height, self.y,
+                color,
+                "center", self.valign)
+        end
+
+        -- 按钮
+
+        self._left_button:draw()
+        self._right_button:draw()
+
+        color.a = 255
+    end
+
+    cls:init()
+    return cls
+end
+function widget.SimpleSelector_Vertical()
+    ---@class ui.widget.SimpleSelector
+    local cls = {}
+
+    function cls:init()
+        -- ui.widget.Text
+        self.disable = false
+        self.alpha = 1.0
+        self.text = ""
+        self.x = 0
+        self.y = 0
+        self.width = 64.0
+        self.height = 16.0
+        self.halign = "left"
+        self.valign = "vcenter"
+
+        self._split_factor = 0.5 -- 标签、滑条各占一半
+
+        self._value = 1
+        self._value_v = 1
+        ---@type string[]
+        self._item = { "" }
+
+        ---@type fun(value:number)
+        self.callback = function(value) end
+
+        self._enbale_getter_setter = false
+        ---@type fun():number
+        self._getter = function() return false end
+        ---@type fun(value:number)
+        self._setter = function(value) end
+
+        function self._getValue()
+            if self._enbale_getter_setter then
+                return self._getter()
+            else
+                return self._value
+            end
+        end
+        ---@param v number
+        function self._setValue(v)
+            if self._enbale_getter_setter then
+                self._setter(v)
+            else
+                self._value = v
+            end
+            self.callback(v)
+        end
+        ---@param factor number
+        function self._addValue(factor)
+            local v = self._getValue()
+            if #self._item > 0 then
+                v = clamp(v + factor, 1, #self._item)
+            else
+                v = 1
+            end
+            self._setValue(v)
+        end
+
+        self._focus = false
+        self._focus_v = 0.0
+
+        self._left_button = widget.Button("<", function()
+            self._addValue(-1)
+        end)
+        self._left_button.width = 24
+
+        self._right_button = widget.Button(">", function()
+            self._addValue(1)
+        end)
+        self._right_button.width = 24
+        self._right_button.halign = "right"
+    end
+
+    ---@param text string
+    function cls:setText(text)
+        self.text = text
+        return self
+    end
+
+    ---comment
+    ---@param x number
+    ---@param y number
+    ---@param width number
+    ---@param height number
+    function cls:setRect(x, y, width, height)
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        return self
+    end
+
+    ---@param callback fun(value:number)
+    ---@param getter fun():number
+    ---@param setter fun(value:number)
+    ---@return ui.widget.SimpleSelector
+    ---@overload fun(self:ui.widget.SimpleSelector, callback:fun(value:number)):ui.widget.SimpleSelector
+    function cls:setCallback(callback, getter, setter)
+        self.callback = callback
+        if getter and setter then
+            self._enbale_getter_setter = true
+            self._getter = getter
+            self._setter = setter
+        else
+            self._enbale_getter_setter = false
+        end
+        return self
+    end
+
+    ---@param focus boolean
+    function cls:update(focus)
+        self._focus = focus
+        if self._focus and not self.disable then
+            if ui_keyboard.left.down then
+                self._addValue(-1)
+            elseif ui_keyboard.right.down then
+                self._addValue(1)
+            end
+        end
+
+        self._left_button.x = self.x
+        self._left_button.y = self.y
+        self._left_button.height = self.height
+        self._left_button:update(self._focus and ui.isMouseInRect(self._left_button))
+
+        self._right_button.x = self.x + self.width - self._right_button.width
+        self._right_button.y = self.y
+        self._right_button.height = self.height
+        self._right_button:update(self._focus and ui.isMouseInRect(self._right_button))
+
+        if self._focus then
+            self._focus_v = math.min(self._focus_v + 0.1, 1)
+        else
+            self._focus_v = math.max(0, self._focus_v - 0.1)
+        end
+    end
+
+    function cls:draw()
+        if self.alpha < minimum_alpha then
+            return
+        end
+        local color = color_not_focus
+        if self._focus then
+            color = color_focus
+        end
+        color.a = self.alpha * 255
+
+        -- 焦点底色
+
+        lstg.SetImageState("img:menu-white", "", lstg.Color(self.alpha * self._focus_v * 32, 255, 255, 255))
+        lstg.RenderRect("img:menu-white",
+            self.x, self.x + self.width,
+            self.y - self.height, self.y)
+
+        -- 文本标签
+
+        drawTTF("ttf:menu-font", self.text,
+            self.x, self.x + self.width,
+            self.y - self.height * self._split_factor, self.y,
+            color,
+            "center", self.valign)
+
+        -- 内容
+
+        if #self._item > 0 then
+            drawTTF("ttf:menu-font", self._item[self._getValue()],
+                self.x, self.x + self.width,
+                self.y - self.height, self.y - self.height * self._split_factor,
                 color,
                 "center", self.valign)
         end

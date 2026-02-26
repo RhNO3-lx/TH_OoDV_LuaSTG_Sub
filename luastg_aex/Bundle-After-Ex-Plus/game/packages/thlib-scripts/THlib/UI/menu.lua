@@ -158,6 +158,7 @@ function sc_pr_menu:render()
     RenderTTF('sc_pr', 'Spell Practice', self.x, self.x, self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
     RenderTTF('sc_pr', string.format('<-  page %d/%d  ->', self.page + 1, self.npage), self.x, self.x, self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
 end
+------------------------------------------------------------
 
 simple_menu = Class(object)
 
@@ -222,8 +223,77 @@ end
 
 function simple_menu:render()
     SetViewMode('ui')
-    ui.DrawMenu(self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
+    ui.DrawMenuTTF("menuttf", self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
 end
+------------------------------------------------------------
+title_menu = Class(object)
+
+---@class text_offx : table
+function title_menu:init(title, content, keyslot, offx, offy, text_offx)
+    self.layer = LAYER_TOP
+    self.group = GROUP_GHOST
+    self.alpha = 1
+    self.text_offx = text_offx
+    self.offx = offx or 0
+    self.x = screen.width * 0.5 - screen.width
+    self.y = screen.height * 0.28 + offy
+    self.bound = false
+    self.locked = true
+    self.title = title
+    self.content = content
+    self.text = {}
+    self.func = {}
+    for i = 1, #content do
+        self.text[i] = content[i][1]
+        self.func[i] = content[i][2]
+    end
+    self.pos = 1
+    self.pos_pre = 1
+    self.pos_changed = 0
+    self.no_pos_change = false
+    self.keyslot = keyslot
+    if content[#content][1] == 'exit' then
+        self.exit_func = content[#content][2]
+        self.text[#content] = nil
+        self.func[#content] = nil
+    end
+end
+
+function title_menu:frame()
+    task.Do(self)
+    if self.locked then
+        return
+    end
+    if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
+        self.pos = self.pos - 1
+        PlaySound('select00', 0.3)
+    end
+    if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
+        self.pos = self.pos + 1
+        PlaySound('select00', 0.3)
+    end
+    self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
+    if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
+        self.func[self.pos]()
+        PlaySound('ok00', 0.3)
+    elseif KeyIsPressed('spell', self.keyslot) and self.exit_func then
+        self.exit_func()
+        PlaySound('cancel00', 0.3)
+    end
+    if self.pos_changed > 0 then
+        self.pos_changed = self.pos_changed - 1
+    end
+    if self.pos_pre ~= self.pos then
+        self.pos_changed = ui.menu.shake_time
+    end
+    self.pos_pre = self.pos
+end
+
+function title_menu:render()
+    SetViewMode('ui')
+    ui.DrawMenuTTF('menuttf', self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed, self.text_offx, "left")
+end
+------------------------------------------------------------
 
 simple_image = Class(object)
 function simple_image:init(img, size)
@@ -658,6 +728,191 @@ function replay_loader:render()
     end
 end
 --------------------------------------------------------------------------------------------
+-------------------------------musicroom----------------------------------------------------
+musicroom = Class(object)
 
+----------------------------------------------------------------------------
+-------------------------options--------------------------------------------
+options = Class(object)
 
+local last_setting_copy = {
+    resx = setting.resx,
+    resy = setting.resy,
+    windowed = setting.windowed,
+    vsync = setting.vsync,
+    sevolume = setting.sevolume,
+    bgmvolume = setting.bgmvolume,
+}
+local last_setting = {
+    resx = setting.resx,
+    resy = setting.resy,
+    windowed = setting.windowed,
+    vsync = setting.vsync,
+    sevolume = setting.sevolume,
+    bgmvolume = setting.bgmvolume,
+}
 
+local mode_window = {
+        -- legacy
+        {  640,  480, 60, 1 },
+        {  800,  600, 60, 1 },
+        {  960,  720, 60, 1 },
+        { 1024,  768, 60, 1 },
+        { 1280,  960, 60, 1 },
+        { 1600, 1200, 60, 1 },
+        { 1920, 1440, 60, 1 },
+    }
+
+local function OptionsRefresh()
+    setting.resx = self.setting_resx
+    setting.resy = self.setting_resy
+end
+
+local function copyDataToSetting()
+    setting.resx = last_setting.resx
+    setting.resy = last_setting.resy
+    setting.windowed = last_setting.windowed
+    setting.vsync = last_setting.vsync
+    setting.sevolume = last_setting.sevolume
+    setting.bgmvolume = last_setting.bgmvolume
+end
+
+local function copyDataFromSetting()
+    last_setting_copy.resx = setting.resx
+    last_setting_copy.resy = setting.resy
+    last_setting_copy.windowed = setting.windowed
+    last_setting_copy.vsync = setting.vsync
+    last_setting_copy.sevolume = setting.sevolume
+    last_setting_copy.bgmvolume = setting.bgmvolume
+
+    last_setting.resx = setting.resx
+    last_setting.resy = setting.resy
+    last_setting.windowed = setting.windowed
+    last_setting.vsync = setting.vsync
+    last_setting.sevolume = setting.sevolume
+        last_setting.bgmvolume = setting.bgmvolume
+end
+
+--先在这占个位，等我研究出来setting怎么使我就把它扔setting里
+local auto_shoot = false
+local auto_bomb = false
+
+local mode_window_index = 1
+local mode_window_name = {}
+local function updateDisplayMode()
+        local cfg = last_setting
+
+        mode_window_index = 0
+        for i, v in ipairs(mode_window) do
+            if v[1] == cfg.resx and v[2] == cfg.resy then
+                mode_window_index = i
+                break
+            end
+        end
+        if mode_window_index == 0 then
+            for i, v in ipairs(mode_window) do
+                if v[1] == cfg.resx or v[2] == cfg.resy then
+                    mode_window_index = i
+                    break
+                end
+            end
+        end
+        if mode_window_index == 0 then
+            mode_window_index = 1 -- fallback
+        end
+
+        mode_window_name = {}
+        for i, v in ipairs(mode_window) do
+            mode_window_name[i] = string.format("%dx%d", v[1], v[2])
+        end
+end
+
+local function updateData()
+    local data = {}
+    local cfg = last_setting
+    updateDisplayMode()
+    data[1] = mode_window_name[mode_window_index]
+    data[2] = not cfg.windowed
+    data[3] = cfg.bgmvolume
+    data[4] = cfg.sevolume
+    data[5] = auto_shoot
+    data[6] = auto_bomb
+    return data
+end
+
+function options:init(title, content, keyslot, offx)
+    self.layer = LAYER_TOP
+    self.group = GROUP_GHOST
+    self.alpha = 1
+    self.offx = offx or 0
+    self.x = screen.width * 0.5 - screen.width
+    self.y = screen.height * 0.5
+    self.bound = false
+    self.locked = true
+    self.title = title
+    self.content = content
+    self.text = {}
+    self.func = {}
+    self.type = {}
+    self.data = {}
+    for i = 1, #content do
+        self.text[i] = content[i][1]
+        self.func[i] = content[i][2]
+        self.type[i] = content[i][3]
+        self.data = updateData()
+    end
+    self.pos = 1
+    self.pos_pre = 1
+    self.pos_changed = 0
+    self.no_pos_change = false
+    self.keyslot = keyslot
+    if content[#content][1] == 'exit' then
+        self.exit_func = content[#content][2]
+        self.text[#content] = nil
+        self.func[#content] = nil
+    end
+
+    self.setting_resx = setting.resx
+    self.setting_resy = setting.resy
+end
+
+function options:Refresh()
+    --self.state1Text = OptionsRefresh()
+end
+
+function options:frame()
+    task.Do(self)
+    if self.locked then
+        return
+    end
+    if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
+        self.pos = self.pos - 1
+        PlaySound('select00', 0.3)
+    end
+    if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
+        self.pos = self.pos + 1
+        PlaySound('select00', 0.3)
+    end
+    
+    self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
+    if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
+        self.func[self.pos]()
+        PlaySound('ok00', 0.3)
+    elseif KeyIsPressed('spell', self.keyslot) and self.exit_func then
+        self.exit_func()
+        PlaySound('cancel00', 0.3)
+    end
+    if self.pos_changed > 0 then
+        self.pos_changed = self.pos_changed - 1
+    end
+    if self.pos_pre ~= self.pos then
+        self.pos_changed = ui.menu.shake_time
+    end
+    self.pos_pre = self.pos
+end
+
+function options:render()
+    SetViewMode('ui')
+    updateData()
+    ui.DrawOptionTTF('menuttf', self.title, self.text, self.type, self.data, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
+end
