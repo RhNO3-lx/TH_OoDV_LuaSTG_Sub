@@ -1,17 +1,17 @@
 ---todo: based on the homing bullet template, design our player
 ---! 穹海 涟析 | Kyuukai Renseki
 renseki_player=Class(player_class)
-
+local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
 ---!todo: add class member var to enable shooting direction locked/released
 function renseki_player:init(slot)
-	LoadTexture('reimu_player',dir..'renseki.png')
+	LoadTexture('reimu_player',dir..'renseki_full.png')
 	LoadTexture('reimu_player2p',dir..'reimu_2p.png')
 	LoadTexture('reimu_kekkai',dir..'reimu_kekkai.png')
 	LoadTexture('reimu_orange_ef2',dir..'reimu_orange_eff.png')
 	-----------------------------------------
-	LoadImageGroup('reimu_player','reimu_player',0,0,32,48,8,3,0.5,0.5)
+	LoadImageGroup('reimu_player','reimu_player',0,0,256,256,12,3,0.5,0.5)
 	LoadImageGroup('reimu_player2p','reimu_player2p',0,0,32,48,8,3,0.5,0.5)
 	-----------------------------------------
 	LoadImage('reimu_bullet_red','reimu_player',192,160,64,16,16,16)
@@ -54,9 +54,10 @@ function renseki_player:init(slot)
 
 	---todo: modify frame settings here
 	--LoadTexture("renseki_idle","")
-	self._wisys=PlayerWalkImageSystem(self)
-	local wi=self._wisys
+	--self._wisys = PlayerWalkImageSystem(self)  
+	--self._wisys:setParam(0, 0, 32, 48, 12)
 	--wi.
+	--self._wisys = DNHWalkImageSystem(self, 'reimu_player', 0, 0, 32, 48, 12)
 
 	self.name='Reimu'
 	self.hspeed=4.5
@@ -65,8 +66,12 @@ function renseki_player:init(slot)
 	if slot and slot==2 and jstg.players[1].name==self.name then
 		for i=1,24 do self.imgs[i]='reimu_player2p'..i end
 	else
-		for i=1,24 do self.imgs[i]='reimu_player'..i end
+		for i=1,36 do self.imgs[i]='reimu_player'..i end
 	end
+
+	---!use self.nf and self.nc to determine the frame counts and cycling frame counts
+	self.nf=12 self.nc=8
+	self.hscale=0.25 self.vscale=0.20
 
 	--子机位置
 	self.slist=
