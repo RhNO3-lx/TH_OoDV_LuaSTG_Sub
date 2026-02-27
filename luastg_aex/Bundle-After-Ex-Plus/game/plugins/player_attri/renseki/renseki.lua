@@ -6,7 +6,7 @@ local dir= "renseki/"
 
 ---!todo: add class member var to enable shooting direction locked/released
 function renseki_player:init(slot)
-	LoadTexture('reimu_player',dir..'reimu.png')
+	LoadTexture('reimu_player',dir..'renseki.png')
 	LoadTexture('reimu_player2p',dir..'reimu_2p.png')
 	LoadTexture('reimu_kekkai',dir..'reimu_kekkai.png')
 	LoadTexture('reimu_orange_ef2',dir..'reimu_orange_eff.png')
