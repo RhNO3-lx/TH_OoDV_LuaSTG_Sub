@@ -288,18 +288,17 @@ function ui.DrawOptionTTF(ttfname, title, text, type, data, pos, x, y, alpha, ti
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
             --选项渲染
             RenderTTF(ttfname, text[i], x_left + xos, x_left + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), "left", "vcenter", "noclip")
-            ui.DrawComponent(ttfname, type[i], i, data[i], x_right + xos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), alpha)
+            ui.DrawOptionData(ttfname, type[text[i]], data[text[i]], x_right + xos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), alpha)
         else
             local color = ui.menu.focused_color1
             --选项渲染
             RenderTTF(ttfname, text[i], x_left, x_left, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(ui.menu.unfocused_color)), "left", "vcenter", "noclip")
-            ui.DrawComponent(ttfname, type[i], i, data[i], x_right, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), alpha)
+            ui.DrawOptionData(ttfname, type[text[i]], data[text[i]], x_right, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), alpha)
         end
     end
 end
 
---position传入的时候要加上os!
-function ui.DrawComponent(ttfname, type, index, data, pos_x, pos_y, color, alpha)
+function ui.DrawOptionData(ttfname, type, data, pos_x, pos_y, color, alpha)
     if type == "selector" then
         RenderTTF(ttfname, data, pos_x, pos_x, pos_y, pos_y, color, "right", "vcenter", "noclip")
     elseif type == "checkbox" then
@@ -312,6 +311,7 @@ function ui.DrawComponent(ttfname, type, index, data, pos_x, pos_y, color, alpha
         end
     elseif type == "button" then
     else
+        --print("nil")
     end
 
 end

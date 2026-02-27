@@ -752,7 +752,7 @@ local last_setting = {
     bgmvolume = setting.bgmvolume,
 }
 
-local mode_window = {
+options.mode_window = {
         -- legacy
         {  640,  480, 60, 1 },
         {  800,  600, 60, 1 },
@@ -761,23 +761,51 @@ local mode_window = {
         { 1280,  960, 60, 1 },
         { 1600, 1200, 60, 1 },
         { 1920, 1440, 60, 1 },
-    }
+}
 
-local function OptionsRefresh()
-    setting.resx = self.setting_resx
-    setting.resy = self.setting_resy
+function options.mode_BGM_and_SE_()
+    local mode = {}
+    for i = 1, 21 do
+        mode[i] = (i - 1) * 5
+    end
+    return mode
 end
 
-local function copyDataToSetting()
+
+local function applySetting(screenChange)
+    if screenChange then
+        if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
+            setting.windowed = true
+            saveConfigure()
+            if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
+                stage.QuitGame()
+                return
+            end
+        end
+        ResetScreen()
+    end
+    lstg.SetSEVolume(setting.sevolume / 100)
+    lstg.SetBGMVolume(setting.bgmvolume / 100)
+    saveConfigure()
+end
+
+function options.copyDataToSetting()
+    local screenChange = false
+    if last_setting.resx ~= setting.resx or
+    last_setting.resy ~= setting.resy or
+    last_setting.windowed ~= setting.windowed then
+        screenChange = true
+    end
     setting.resx = last_setting.resx
     setting.resy = last_setting.resy
     setting.windowed = last_setting.windowed
     setting.vsync = last_setting.vsync
     setting.sevolume = last_setting.sevolume
     setting.bgmvolume = last_setting.bgmvolume
+    applySetting(screenChange)
 end
 
-local function copyDataFromSetting()
+function options.copyDataFromSetting()
     last_setting_copy.resx = setting.resx
     last_setting_copy.resy = setting.resy
     last_setting_copy.windowed = setting.windowed
@@ -790,7 +818,29 @@ local function copyDataFromSetting()
     last_setting.windowed = setting.windowed
     last_setting.vsync = setting.vsync
     last_setting.sevolume = setting.sevolume
-        last_setting.bgmvolume = setting.bgmvolume
+    last_setting.bgmvolume = setting.bgmvolume
+end
+
+function options:copyDataToLastSetting()
+    last_setting.resx = self.control.content["Resolution"][self.control.index["Resolution"]][1]
+    last_setting.resy = self.control.content["Resolution"][self.control.index["Resolution"]][2]
+    last_setting.windowed = not self.control.data["Fullscreen"]
+    last_setting.bgmvolume = self.control.content["SetBGMVolume"][self.control.index["SetBGMVolume"]]
+    last_setting.sevolume = self.control.content["SetSEVolume"][self.control.index["SetSEVolume"]]
+end
+
+function options:setDefault()
+    self.control.data["Resolution"] = "1280x960"
+    self.control.index["Resolution"] = 5
+    self.control.data["Fullscreen"] = false
+    self.control.data["SetBGMVolume"] = 100
+    self.control.index["SetBGMVolume"] = 21
+    self.control.data["SetSEVolume"] = 80
+    self.control.index["SetSEVolume"] = 17
+    self.control.data["AutoShoot"] = false
+    self.control.data["AutoBomb"] = false
+    options.copyDataToLastSetting(self)
+    options.copyDataToSetting()
 end
 
 --先在这占个位，等我研究出来setting怎么使我就把它扔setting里
@@ -803,7 +853,7 @@ local function updateDisplayMode()
         local cfg = last_setting
 
         mode_window_index = 0
-        for i, v in ipairs(mode_window) do
+        for i, v in ipairs(options.mode_window) do
             if v[1] == cfg.resx and v[2] == cfg.resy then
                 mode_window_index = i
                 break
@@ -822,24 +872,28 @@ local function updateDisplayMode()
         end
 
         mode_window_name = {}
-        for i, v in ipairs(mode_window) do
+        for i, v in ipairs(options.mode_window) do
             mode_window_name[i] = string.format("%dx%d", v[1], v[2])
         end
 end
 
-local function updateData()
-    local data = {}
+function options:updateData()
     local cfg = last_setting
-    updateDisplayMode()
-    data[1] = mode_window_name[mode_window_index]
-    data[2] = not cfg.windowed
-    data[3] = cfg.bgmvolume
-    data[4] = cfg.sevolume
-    data[5] = auto_shoot
-    data[6] = auto_bomb
-    return data
+    self.control.data["Resolution"] = mode_window_name[self.control.index["Resolution"]]
+    self.control.data["Fullscreen"] = self.control.data["Fullscreen"]
+    self.control.data["SetBGMVolume"] = self.control.content["SetBGMVolume"][self.control.index["SetBGMVolume"]] .. "%"
+    self.control.data["SetSEVolume"] = self.control.content["SetSEVolume"][self.control.index["SetSEVolume"]] .. "%"
+    self.control.data["AutoShoot"] = self.control.data["AutoShoot"]
+    self.control.data["AutoBomb"] = self.control.data["AutoBomb"]
 end
 
+function options:updateLastSetting()
+    last_setting.resx = self.control.content["Resolution"][self.control.index["Resolution"]][1]
+    last_setting.resy = self.control.content["Resolution"][self.control.index["Resolution"]][2]
+    last_setting.bgmvolume = self.control.content["SetBGMVolume"][self.control.index["SetBGMVolume"]]
+end
+
+option_enter = true
 function options:init(title, content, keyslot, offx)
     self.layer = LAYER_TOP
     self.group = GROUP_GHOST
@@ -851,16 +905,9 @@ function options:init(title, content, keyslot, offx)
     self.locked = true
     self.title = title
     self.content = content
-    self.text = {}
-    self.func = {}
-    self.type = {}
-    self.data = {}
-    for i = 1, #content do
-        self.text[i] = content[i][1]
-        self.func[i] = content[i][2]
-        self.type[i] = content[i][3]
-        self.data = updateData()
-    end
+    self.control = {}
+    options.createControl(self)
+    options.initControl(self)
     self.pos = 1
     self.pos_pre = 1
     self.pos_changed = 0
@@ -868,15 +915,11 @@ function options:init(title, content, keyslot, offx)
     self.keyslot = keyslot
     if content[#content][1] == 'exit' then
         self.exit_func = content[#content][2]
-        self.text[#content] = nil
-        self.func[#content] = nil
     end
-
-    self.setting_resx = setting.resx
-    self.setting_resy = setting.resy
 end
 
 function options:Refresh()
+    copyDataFromSetting()
     --self.state1Text = OptionsRefresh()
 end
 
@@ -893,10 +936,30 @@ function options:frame()
         self.pos = self.pos + 1
         PlaySound('select00', 0.3)
     end
+    if GetLastKey(self.keyslot) == setting.keys.left and (not self.no_pos_change) then
+        if self.control.changeFuc[self.control.text[self.pos]] ~= nil then
+            self.control.changeFuc[self.control.text[self.pos]]("left")
+            options.copyDataToLastSetting(self)
+            options.copyDataToSetting()
+        end
+        PlaySound('select00', 0.3)
+    end
+    if GetLastKey(self.keyslot) == setting.keys.right and (not self.no_pos_change) then
+        if self.control.changeFuc[self.control.text[self.pos]] ~= nil then
+            self.control.changeFuc[self.control.text[self.pos]]("right")
+            options.copyDataToLastSetting(self)
+            options.copyDataToSetting()
+        end
+        PlaySound('select00', 0.3)
+    end
     
-    self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
-    if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
-        self.func[self.pos]()
+    self.pos = (self.pos - 1 + #(self.control.text)) % (#(self.control.text)) + 1
+    if KeyIsPressed('shoot', self.keyslot) and self.control.func[self.control.text[self.pos]] then
+        if self.control.text[self.pos] == "Default" then
+            options.setDefault(self)
+        else
+            self.control.func[self.control.text[self.pos]]()
+        end
         PlaySound('ok00', 0.3)
     elseif KeyIsPressed('spell', self.keyslot) and self.exit_func then
         self.exit_func()
@@ -913,6 +976,84 @@ end
 
 function options:render()
     SetViewMode('ui')
-    updateData()
-    ui.DrawOptionTTF('menuttf', self.title, self.text, self.type, self.data, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
+    options.updateData(self)
+    ui.DrawOptionTTF('menuttf', self.title, self.control.text, self.control.type, self.control.data, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
+    --ui.DrawOptionTTF('menuttf', self.title, self.text, self.type, self.data, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed)
+end
+
+function options:createControl()
+    local control = {}
+    self.control.text = {}
+    self.control.func = {}
+    self.control.type = {}
+    self.control.index = {}
+    self.control.data = {}
+    self.control.content = {}
+    self.control.changeFuc = {}
+    for i = 1, #self.content do
+        if self.content[i][3] == "selector" then
+            self.control.text[i] = self.content[i][1]
+            self.control.func[self.control.text[i]] = self.content[i][2]
+            self.control.type[self.control.text[i]] = self.content[i][3]
+            self.control.index[self.control.text[i]] = 1
+            self.control.data[self.control.text[i]] = "nil"
+            self.control.content[self.control.text[i]] = self.content[i][4]
+            self.control.changeFuc[self.control.text[i]] = function (dir)
+                if dir == "left" and self.control.index[self.control.text[i]] ~= 1 then
+                    self.control.index[self.control.text[i]] = self.control.index[self.control.text[i]] - 1
+                    print("left")
+                elseif dir == "right" and self.control.index[self.control.text[i]] ~= #self.control.content[self.control.text[i]] then
+                    self.control.index[self.control.text[i]] = self.control.index[self.control.text[i]] + 1
+                    print("right")
+                end
+            end
+        elseif self.content[i][3] == "checkbox" then
+            self.control.text[i] = self.content[i][1]
+            self.control.func[self.control.text[i]] = self.content[i][2]
+            self.control.type[self.control.text[i]] = self.content[i][3]
+            self.control.data[self.control.text[i]] = false
+            self.control.changeFuc[self.control.text[i]] = function (dir)
+                if dir == "left" and self.control.data[self.control.text[i]] == false then
+                    self.control.data[self.control.text[i]] = true
+                elseif dir == "right" and self.control.data[self.control.text[i]] == true then
+                    self.control.data[self.control.text[i]] = false
+                end
+            end
+        elseif self.content[i][3] == "button" then
+            self.control.text[i] = self.content[i][1]
+            self.control.func[self.control.text[i]] = self.content[i][2]
+            self.control.type[self.control.text[i]] = self.content[i][3]
+        else
+            --抛出异常应该怎么写来着
+        end
+        -- print("search this")
+        -- if self.control.content[self.control.text[i]] == nil then
+        --     print("nil")
+        -- else
+        --     print(self.control.content)
+        -- end
+    end
+end
+
+function options:initControl()
+    local cfg = last_setting
+    updateDisplayMode()
+    self.control.data["Resolution"] = mode_window_name[mode_window_index]
+    self.control.index["Resolution"] = mode_window_index
+    self.control.data["Fullscreen"] = not cfg.windowed
+    self.control.data["SetBGMVolume"] = cfg.bgmvolume
+    for i in ipairs(self.control.content["SetBGMVolume"]) do
+        if self.control.content["SetBGMVolume"][i] == cfg.bgmvolume then
+            self.control.index["SetBGMVolume"] = i
+        end
+    end
+    self.control.data["SetSEVolume"] = cfg.bgmvolume
+    for i in ipairs(self.control.content["SetSEVolume"]) do
+        if self.control.content["SetSEVolume"][i] == cfg.bgmvolume then
+            self.control.index["SetSEVolume"] = i
+        end
+    end
+    self.control.data["AutoShoot"] = auto_shoot
+    self.control.data["AutoBomb"] = auto_bomb
+    
 end

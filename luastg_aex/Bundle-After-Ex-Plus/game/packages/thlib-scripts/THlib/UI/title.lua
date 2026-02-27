@@ -1,11 +1,20 @@
 local stage_init = stage.New('init', true, true)
 function stage_init:init()
+    if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
+        setting.windowed = true
+        saveConfigure()
+        if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
+            stage.QuitGame()
+            return
+        end
+    end
+    ResetScreen()
+    lstg.SetSEVolume(setting.sevolume / 100)
+    lstg.SetBGMVolume(setting.bgmvolume / 100)
     New(mask_fader, 'open')
 end
 function stage_init:frame()
-    if self.timer >= 30 then
-        stage.Set('menu', 'none')
-    end
+    stage.Set('menu', 'none')
 end
 function stage_init:render()
     ui.DrawMenuBG()
@@ -91,6 +100,8 @@ function stage_menu:init()
     end})
     table.insert(menu_items, { 'Option', function ()
         menu_options.pos = 1
+        menu.option_enter = true
+        options.copyDataFromSetting()
         menu.FadeIn(menu_options)
         menu.FadeOut(menu_title)
     end})
@@ -246,32 +257,34 @@ function stage_menu:init()
     end)
     --
     menu_items = {}
+    --selector参数:{"title, clickFun, content, function from}
     table.insert(menu_items, { 'Resolution', function ()
-    end, "selector" })
+    end, "selector", options.mode_window })
     table.insert(menu_items, { 'Fullscreen', function ()
     end, "checkbox" })
     table.insert(menu_items, { 'SetBGMVolume', function ()
 
-    end, "selector" })
+    end, "selector", options.mode_BGM_and_SE_() })
     table.insert(menu_items, { 'SetSEVolume', function ()
         
-    end, "selector" })
+    end, "selector", options.mode_BGM_and_SE_() })
     table.insert(menu_items, { 'AutoShoot', function ()
     end, "checkbox" })
     table.insert(menu_items, { 'AutoBomb', function ()
     end, "checkbox" })
     table.insert(menu_items, { 'DeleteSaveData', function ()
-    end, "" })
+    end, "button" })
     table.insert(menu_items, { 'Default', function ()
     end, "button" })
     table.insert(menu_items, { 'Quit', function ()
         menu.FlyIn(menu_title, 'left')
         menu.FadeOut(menu_options)
+        options.copyDataToSetting()
     end, "button" })
     table.insert(menu_items, { 'exit', function()
         menu.FlyIn(menu_title, 'left')
         menu.FadeOut(menu_options)
-    end })
+    end, "exit" })
     --table.insert()
     menu_offset = {}
     menu_options = New(options, 'Option', menu_items)
@@ -332,3 +345,4 @@ function stage_menu:render()
         ui.DrawMenuBG()
     end
 end
+
