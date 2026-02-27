@@ -44,7 +44,8 @@ function stage_menu:init()
     menu_replay_saver,
     menu_items,
     menu_sc_pr,
-    menu_options
+    menu_options,
+    menu_manual
     local menu_offset = {}
     local menu_list = {}
     local menu_practice = {}
@@ -96,6 +97,7 @@ function stage_menu:init()
         menu.FadeIn(menu_replay_loader, 'right')
         menu.FadeOut(menu_title, 'left')
     end })
+    ---🎺🎺🎺🍳🍳🍳
     table.insert(menu_items, { 'Music Room', function()
     end})
     table.insert(menu_items, { 'Option', function ()
@@ -106,6 +108,8 @@ function stage_menu:init()
         menu.FadeOut(menu_title)
     end})
     table.insert(menu_items, { 'Manual', function()
+        menu.FadeIn(menu_manual)
+        menu.FadeOut(menu_title)
     end})
     table.insert(menu_items, { 'Exit Game', ExitGame })
     table.insert(menu_items, { 'exit', function()
@@ -117,7 +121,6 @@ function stage_menu:init()
     end })
     menu_offset = { 0, 40, 10, 50, 20, 60, 30, 70 }
     menu_title = New(title_menu, '', menu_items, '', -(screen.width * 0.45), 0,menu_offset)
-    --todo 优化位置渲染选项
     menu_items = {}
     local difficulty_pos = 1
     for _, name in ipairs(stage.groups) do
@@ -257,7 +260,6 @@ function stage_menu:init()
     end)
     --
     menu_items = {}
-    --selector参数:{"title, clickFun, content, function from}
     table.insert(menu_items, { 'Resolution', function ()
     end, "selector", options.mode_window })
     table.insert(menu_items, { 'Fullscreen', function ()
@@ -285,9 +287,16 @@ function stage_menu:init()
         menu.FlyIn(menu_title, 'left')
         menu.FadeOut(menu_options)
     end, "exit" })
-    --table.insert()
     menu_offset = {}
     menu_options = New(options, 'Option', menu_items)
+    --
+    menu_items = {}
+    table.insert(menu_items, { '1.','img', function ()
+        
+    end })
+
+    menu_manual = New(manual, 'Manual', menu_items)
+    --
     local task_menu_init = function()
         menu.FadeIn(menu_title)
     end

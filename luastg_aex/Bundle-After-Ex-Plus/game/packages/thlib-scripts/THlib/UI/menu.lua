@@ -735,14 +735,7 @@ musicroom = Class(object)
 -------------------------options--------------------------------------------
 options = Class(object)
 
-local last_setting_copy = {
-    resx = setting.resx,
-    resy = setting.resy,
-    windowed = setting.windowed,
-    vsync = setting.vsync,
-    sevolume = setting.sevolume,
-    bgmvolume = setting.bgmvolume,
-}
+
 local last_setting = {
     resx = setting.resx,
     resy = setting.resy,
@@ -806,13 +799,6 @@ function options.copyDataToSetting()
 end
 
 function options.copyDataFromSetting()
-    last_setting_copy.resx = setting.resx
-    last_setting_copy.resy = setting.resy
-    last_setting_copy.windowed = setting.windowed
-    last_setting_copy.vsync = setting.vsync
-    last_setting_copy.sevolume = setting.sevolume
-    last_setting_copy.bgmvolume = setting.bgmvolume
-
     last_setting.resx = setting.resx
     last_setting.resy = setting.resy
     last_setting.windowed = setting.windowed
@@ -844,6 +830,7 @@ function options:setDefault()
 end
 
 --先在这占个位，等我研究出来setting怎么使我就把它扔setting里
+--貌似有点难度，先搁着等主要功能实现了再研究
 local auto_shoot = false
 local auto_bomb = false
 
@@ -1001,10 +988,8 @@ function options:createControl()
             self.control.changeFuc[self.control.text[i]] = function (dir)
                 if dir == "left" and self.control.index[self.control.text[i]] ~= 1 then
                     self.control.index[self.control.text[i]] = self.control.index[self.control.text[i]] - 1
-                    print("left")
                 elseif dir == "right" and self.control.index[self.control.text[i]] ~= #self.control.content[self.control.text[i]] then
                     self.control.index[self.control.text[i]] = self.control.index[self.control.text[i]] + 1
-                    print("right")
                 end
             end
         elseif self.content[i][3] == "checkbox" then
@@ -1024,19 +1009,13 @@ function options:createControl()
             self.control.func[self.control.text[i]] = self.content[i][2]
             self.control.type[self.control.text[i]] = self.content[i][3]
         else
-            --抛出异常应该怎么写来着
+            --啥都不干
         end
-        -- print("search this")
-        -- if self.control.content[self.control.text[i]] == nil then
-        --     print("nil")
-        -- else
-        --     print(self.control.content)
-        -- end
     end
 end
 
 function options:initControl()
-    local cfg = last_setting
+    local cfg = setting
     updateDisplayMode()
     self.control.data["Resolution"] = mode_window_name[mode_window_index]
     self.control.index["Resolution"] = mode_window_index
@@ -1056,4 +1035,74 @@ function options:initControl()
     self.control.data["AutoShoot"] = auto_shoot
     self.control.data["AutoBomb"] = auto_bomb
     
+end
+
+
+----------------------------------------------------------------------------
+------------------------------------manual----------------------------------
+manual = Class(object)
+
+function manual:init(title, content, keyslot, offx, offy, text_offx)
+    self.layer = LAYER_TOP
+    self.group = GROUP_GHOST
+    self.alpha = 1
+    self.text_offx = text_offx
+    self.offx = offx or 0
+    self.x = screen.width * 0.5 - screen.width
+    self.y = screen.height * 0.28 + offy
+    self.bound = false
+    self.locked = true
+    self.title = title
+    self.content = content
+    self.text = {}
+    self.func = {}
+    for i = 1, #content do
+        self.text[i] = content[i][1]
+        self.func[i] = content[i][2]
+    end
+    self.pos = 1
+    self.pos_pre = 1
+    self.pos_changed = 0
+    self.no_pos_change = false
+    self.keyslot = keyslot
+    if content[#content][1] == 'exit' then
+        self.exit_func = content[#content][2]
+        self.text[#content] = nil
+        self.func[#content] = nil
+    end
+end
+
+function manual:frame()
+    task.Do(self)
+    if self.locked then
+        return
+    end
+    if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
+        self.pos = self.pos - 1
+        PlaySound('select00', 0.3)
+    end
+    if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
+        self.pos = self.pos + 1
+        PlaySound('select00', 0.3)
+    end
+    self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
+    if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
+        self.func[self.pos]()
+        PlaySound('ok00', 0.3)
+    elseif KeyIsPressed('spell', self.keyslot) and self.exit_func then
+        self.exit_func()
+        PlaySound('cancel00', 0.3)
+    end
+    if self.pos_changed > 0 then
+        self.pos_changed = self.pos_changed - 1
+    end
+    if self.pos_pre ~= self.pos then
+        self.pos_changed = ui.menu.shake_time
+    end
+    self.pos_pre = self.pos
+end
+
+function manual:render()
+    SetViewMode('ui')
+    ui.DrawManualTTF('menuttf', self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed, self.text_offx, "left")
 end
