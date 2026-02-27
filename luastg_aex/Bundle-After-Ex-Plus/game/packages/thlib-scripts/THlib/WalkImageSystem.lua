@@ -534,6 +534,7 @@ function PlayerWalkImageSystem:UpdateImage()
     self.a = self.A
     self.b = self.B
 end
+--todo: find where to define self.imgs
 local c1, c2
 function PlayerWalkImageSystem:UpdateImageByType(t)
     if t == "normal" then
