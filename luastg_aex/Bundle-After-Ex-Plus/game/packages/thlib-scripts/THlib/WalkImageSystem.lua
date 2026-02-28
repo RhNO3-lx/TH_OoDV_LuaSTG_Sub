@@ -448,7 +448,12 @@ function PlayerWalkImageSystem:init(obj, intv, leftlr, rightlr)
     self.leftlr = leftlr or 6
     self.rightlr = rightlr or 6
     self.obj.protect = self.obj.protect or 0
+
+    ---!add new attributes to define how many frames per ani and how many cycling frames of left move
+
+    ---set frames attri: how many frames per ani and how many cycling frames of move
 end
+
 function PlayerWalkImageSystem:update(dx)
     local obj = self.obj
     if dx == nil then
@@ -500,45 +505,53 @@ function PlayerWalkImageSystem:render()
     Render(obj.img, obj.x, obj.y, obj.rot, obj.hscale, obj.vscale)
 end
 function PlayerWalkImageSystem:UpdateImage()
+    if self.nf==nil or self.nc==nil then
+        self.nf=8
+        self.nc=4
+    end
     if abs(self.lr) == 1 then
         if self.imgs["normal"] then
             self._wisys.UpdateImageByType(self, "normal")
         else
-            self.img = self.imgs[int(self.ani / 8) % 8 + 1]
+            self.img = self.imgs[int(self.ani / self.nf) % self.nf + 1]
         end
     elseif self.lr == -self._wisys.leftlr then
         if self.imgs["left"] then
             self._wisys.UpdateImageByType(self, "left2")
         else
-            self.img = self.imgs[int(self.ani / 8) % 4 + 13]
+            self.img = self.imgs[int(self.ani / self.nf) % self.nc + 1+self.nf*2-self.nc]
         end
     elseif self.lr == self._wisys.rightlr then
         if self.imgs["right"] then
             self._wisys.UpdateImageByType(self, "right2")
         else
-            self.img = self.imgs[int(self.ani / 8) % 4 + 21]
+            self.img = self.imgs[int(self.ani / self.nf) % self.nc + 1+self.nf*3-self.nc]
+            --self.img = self.imgs[int(self.ani / 8) % 4 + 21]
         end
     elseif self.lr < 0 then
         if self.imgs["left"] then
             self._wisys.UpdateImageByType(self, "left1")
         else
-            self.img = self.imgs[7 - self.lr]
+            --self.img = self.imgs[7 - self.lr]
+            self.img = self.imgs[self.nf-1 - self.lr]
         end
     elseif self.lr > 0 then
         if self.imgs["right"] then
             self._wisys.UpdateImageByType(self, "right1")
         else
-            self.img = self.imgs[15 + self.lr]
+            --self.img = self.imgs[15 + self.lr]
+            self.img = self.imgs[self.lr-1+self.nf*2]
         end
     end
     self.a = self.A
     self.b = self.B
 end
+--todo: find where to define self.imgs
 local c1, c2
 function PlayerWalkImageSystem:UpdateImageByType(t)
     if t == "normal" then
         c1 = #self.imgs["normal"]
-        self.img = self.imgs["normal"][int(self.ani / 8) % c1 + 1]
+        self.img = self.imgs["normal"][int(self.ani / self.nf) % c1 + 1]
     elseif t == "left1" then
         self.img = self.imgs["left"][-1 - self.lr]
     elseif t == "right1" then
@@ -546,10 +559,10 @@ function PlayerWalkImageSystem:UpdateImageByType(t)
     elseif t == "left2" then
         c1 = #self.imgs["left"]
         c2 = self.imgs["left"].ani or int(c1 / 2)
-        self.img = self.imgs["left"][int(self.ani / 8) % c2 + (c1 - c2) + 1]
+        self.img = self.imgs["left"][int(self.ani / self.nf) % c2 + (c1 - c2) + 1]
     elseif t == "right2" then
         c1 = #self.imgs["right"]
-        c2 = self.imgs["right"].ani or int(c1 / 2)
-        self.img = self.imgs["right"][int(self.ani / 8) % c2 + (c1 - c2) + 1]
+        self.img = self.imgs["right"][int(self.ani / self.nf) % c2 + (c1 - c2) + 1]
+        --self.img = self.imgs["right"][int(self.ani / 12) % c2 + (c1 - c2) + 1]
     end
 end

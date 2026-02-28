@@ -194,10 +194,10 @@ function OriginalSetWorld(l, r, b, t, bl, br, bb, bt, sl, sr, sb, st, pl, pr, pb
     w.pt = pt
     w.world = m
 
-    w.l3d=l3d or l
-    w.r3d=r3d or r
-    w.b3d=b3d or b
-    w.t3d=t3d or t
+    w.l3d=l3d or sl
+    w.r3d=r3d or sr
+    w.b3d=b3d or sb
+    w.t3d=t3d or st
 end
 
 function SetWorld(l, b, w, h, bound, m)
@@ -288,10 +288,10 @@ function SetViewMode(mode)
         --]]
 
         --#region
-        local deltax=screen.dx-lstg.worldoffset.cx3d+(lstg.world.scrl+lstg.world.scrr)/2*screen.scale
-        local deltay=screen.dy-lstg.worldoffset.cy3d+(lstg.world.scrb+lstg.world.scrt)/2*screen.scale
-        SetViewport(lstg.world.l3d * screen.scale + deltax, lstg.world.r3d * screen.scale + deltax,
-                lstg.world.b3d * screen.scale + deltay, lstg.world.t3d * screen.scale + deltay)
+       --local deltax=screen.dx+(lstg.world.scrl+lstg.world.scrr)/2*screen.scale
+        --local deltay=screen.dy+(lstg.world.scrb+lstg.world.scrt)/2*screen.scale
+        SetViewport(lstg.world.scrl * screen.scale+lstg.worldoffset.dx*screen.scale , lstg.world.scrr * screen.scale+lstg.worldoffset.dx*screen.scale ,
+                lstg.world.scrb * screen.scale+lstg.worldoffset.dy*screen.scale, lstg.world.scrt * screen.scale+lstg.worldoffset.dy*screen.scale )
         --#endregion
 
         SetPerspective(

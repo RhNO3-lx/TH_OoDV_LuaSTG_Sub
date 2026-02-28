@@ -223,6 +223,7 @@ function misc.Renderhpbar(x, y, rot, la, r1, r2, n, c)
     end
 end
 
+
 function renderstar(x, y, r, point)
     --?
     local ang = 360 / (2 * point)
