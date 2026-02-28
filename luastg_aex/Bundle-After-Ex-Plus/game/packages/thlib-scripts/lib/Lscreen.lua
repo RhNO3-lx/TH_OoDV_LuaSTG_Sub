@@ -194,10 +194,10 @@ function OriginalSetWorld(l, r, b, t, bl, br, bb, bt, sl, sr, sb, st, pl, pr, pb
     w.pt = pt
     w.world = m
 
-    w.l3d=l3d or l
-    w.r3d=r3d or r
-    w.b3d=b3d or b
-    w.t3d=t3d or t
+    w.l3d=l3d or sl
+    w.r3d=r3d or sr
+    w.b3d=b3d or sb
+    w.t3d=t3d or st
 end
 
 function SetWorld(l, b, w, h, bound, m)

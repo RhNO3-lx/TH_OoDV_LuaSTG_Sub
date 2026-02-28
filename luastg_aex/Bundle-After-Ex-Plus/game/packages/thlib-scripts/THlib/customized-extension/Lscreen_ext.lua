@@ -17,24 +17,20 @@ end
 ---! sl,sb,sw,sh ->screen param
 ---! w,h ->world size param
 ---! l3d,r3d,b3d,t3d ->3d render world rect, =scr by default
-function SetWorldV2(sl, sb,sw,sh, w, h,l3d,r3d,b3d,t3d,bound, m)
+function SetWorldV2(sl, sb,sw,sh, w, h,bound, m)
     bound = bound or 32
     m = m or 15
     local l=-w / 2
     local r=w/2
     local b=-h/2
     local t=h/2
-    l3d=l3d or sl
-    r3d=r3d or sl+sw
-    b3d=b3d or sb
-    t3d=t3d or sb+sh
+
     OriginalSetWorld(
             l,r,b,t,
             l - bound, r + bound, b - bound, t + bound,
             sl,sl+sw,sb,sb+sh,
             l,r,b,t,
-            m,
-            l3d,r3d,b3d,t3d
+            m
     )
     SetBound(lstg.world.boundl, lstg.world.boundr, lstg.world.boundb, lstg.world.boundt)
 
