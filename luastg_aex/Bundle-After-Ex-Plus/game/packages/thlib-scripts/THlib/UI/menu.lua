@@ -1049,7 +1049,7 @@ function manual:init(title, content, keyslot, offx, offy, text_offx)
     self.text_offx = text_offx
     self.offx = offx or 0
     self.x = screen.width * 0.5 - screen.width
-    self.y = screen.height * 0.28 + offy
+    self.y = screen.height * 0.5
     self.bound = false
     self.locked = true
     self.title = title

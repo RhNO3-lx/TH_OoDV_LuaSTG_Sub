@@ -3,9 +3,11 @@ Include "THlib/UI/font.lua"
 Include "THlib/UI/title.lua"
 Include "THlib/UI/sc_pr.lua"
 
+local post_effect = require("lib.posteffect")
 
 ---! todo: we may learn very simple graphics methods here
 ui = {}
+
 
 LoadTexture("boss_ui", "THlib/UI/boss_ui.png")
 LoadImage("boss_spell_name_bg", "boss_ui", 0, 0, 256, 36)
@@ -78,6 +80,8 @@ ui.menu = {
     op_right_off = 200,
     chbox_off = 50
 }
+
+ui.menu_bulr = 0
 
 function ui.DrawMenu(title, text, pos, x, y, alpha, timer, shake, text_offx, align)
     local _text_offx = text_offx
@@ -461,7 +465,11 @@ function lstg_ui:drawMenuBG()
 end
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
+    lstg.CreateRenderTarget("rt:background")
+    lstg.PushRenderTarget("rt:background")
     Render("menu_bg", 320, 240, 0, 0.25, 0.25)
+    lstg.PopRenderTarget()
+    post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
             string.format("%.1ffps", GetFPS()),
