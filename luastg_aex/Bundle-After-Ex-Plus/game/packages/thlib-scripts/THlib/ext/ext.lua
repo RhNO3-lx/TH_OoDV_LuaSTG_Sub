@@ -127,7 +127,6 @@ do
     -- 基础
     reg("thlib-default-basic:player~enemy-bullet", GROUP_PLAYER, GROUP_ENEMY_BULLET)
     reg("thlib-default-basic:player~enemy-bullet1", GROUP_PLAYER, GROUP_INDES)
-    reg("thlib-default-basic:player~food", GROUP_PLAYER, GROUP_FOOD) -- by baiABC
     reg("thlib-default-basic:player~enemy", GROUP_PLAYER, GROUP_ENEMY)
     reg("thlib-default-basic:enemy~player-bullet", GROUP_ENEMY, GROUP_PLAYER_BULLET)
     reg("thlib-default-basic:enemy1~player-bullet", GROUP_NONTJT, GROUP_PLAYER_BULLET)
@@ -139,6 +138,7 @@ do
     reg("thlib-default-player:spell~enemy-bullet1", GROUP_SPELL, GROUP_INDES)
     -- 用于检查与自机碰撞 (by OLC)
     reg("thlib-default-area:area~player", GROUP_CPLAYER, GROUP_PLAYER)
+    reg("thlib-default-basic:food~player", GROUP_FOOD, GROUP_PLAYER) -- by baiABC
 end
 
 ----------------------------------------
