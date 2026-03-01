@@ -127,6 +127,7 @@ do
     -- 基础
     reg("thlib-default-basic:player~enemy-bullet", GROUP_PLAYER, GROUP_ENEMY_BULLET)
     reg("thlib-default-basic:player~enemy-bullet1", GROUP_PLAYER, GROUP_INDES)
+    reg("thlib-default-basic:player~food", GROUP_PLAYER, GROUP_FOOD) -- by baiABC
     reg("thlib-default-basic:player~enemy", GROUP_PLAYER, GROUP_ENEMY)
     reg("thlib-default-basic:enemy~player-bullet", GROUP_ENEMY, GROUP_PLAYER_BULLET)
     reg("thlib-default-basic:enemy1~player-bullet", GROUP_NONTJT, GROUP_PLAYER_BULLET)
