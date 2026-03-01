@@ -80,6 +80,7 @@ class.list_default = {
     { GROUP_ENEMY, { 255, 255, 255, 128 } },
     { GROUP_ENEMY_BULLET, { 255, 255, 50, 50 } },
     { GROUP_INDES, { 255, 255, 165, 10 } },
+    { GROUP_FOOD, { 255, 128, 64, 192 } },
 }
 
 local known_group_values = {

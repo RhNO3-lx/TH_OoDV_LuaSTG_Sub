@@ -1,7 +1,7 @@
 ---=====================================
 ---stage group
 ---=====================================
-
+---! 在这里定义关卡行为，死亡行为等
 Extramode = false -- TODO: 需要重新设计
 gamecontinueflag = false -- TODO: 需要重新设计
 moveoverflag = false -- TODO: 这是什么几把
@@ -261,6 +261,8 @@ function M.frame(self)
         error('Player data has not been initialized. (Call function item.PlayerInit.)')
     end
     --
+    assert(type(lstg.var.BombExtendPoint)~="nil", "BombExtendPoint is nil")
+    ---! define death behavior here
     if lstg.var.lifeleft <= -1 then
         if ext.replay.IsReplay() then
             ext.pop_pause_menu = true

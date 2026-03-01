@@ -8,6 +8,19 @@ LoadTexture('bonus3', 'THlib/item/item.png')
 
 lstg.var.collectingitem = 0
 
+---! 新增生命与bomb上限定义
+lstg.var.LifeExtendPoint=100
+lstg.var.BombExtendPoint=100
+lstg.var.LifechipPoint=30
+lstg.var.BombchipPoint=30
+
+---! 改用血条和bomb系统
+lstg.var.PlayerLifePoint=0
+lstg.var.PlayerBombPoint=0
+lstg.var.MissBombpointCompensate=lstg.var.BombExtendPoint*2
+
+
+
 item = Class(object)
 
 function item:init(x, y, t, v, angle)
