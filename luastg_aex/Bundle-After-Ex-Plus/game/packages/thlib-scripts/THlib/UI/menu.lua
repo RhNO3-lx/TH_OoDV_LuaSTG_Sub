@@ -236,7 +236,7 @@ function title_menu:init(title, content, keyslot, offx, offy, text_offx)
     self.text_offx = text_offx
     self.offx = offx or 0
     self.x = screen.width * 0.5 - screen.width
-    self.y = screen.height * 0.28 + offy
+    self.y = screen.height * 0.5 + (offy or 0)
     self.bound = false
     self.locked = true
     self.title = title
@@ -1042,33 +1042,33 @@ end
 ------------------------------------manual----------------------------------
 manual = Class(object)
 
-function manual:init(title, content, keyslot, offx, offy, text_offx)
+function manual:init(title, item, content, keyslot, offx, offy)
     self.layer = LAYER_TOP
     self.group = GROUP_GHOST
     self.alpha = 1
-    self.text_offx = text_offx
     self.offx = offx or 0
     self.x = screen.width * 0.5 - screen.width
     self.y = screen.height * 0.5
     self.bound = false
     self.locked = true
     self.title = title
-    self.content = content
+    self.item = item
+    self.content = manual.createContent(content)
     self.text = {}
     self.func = {}
-    for i = 1, #content do
-        self.text[i] = content[i][1]
-        self.func[i] = content[i][2]
+    for i = 1, #item do
+        self.text[i] = item[i][1]
+        self.func[i] = item[i][2]
     end
     self.pos = 1
     self.pos_pre = 1
     self.pos_changed = 0
     self.no_pos_change = false
     self.keyslot = keyslot
-    if content[#content][1] == 'exit' then
-        self.exit_func = content[#content][2]
-        self.text[#content] = nil
-        self.func[#content] = nil
+    if item[#item][1] == 'exit' then
+        self.exit_func = item[#item][2]
+        self.text[#item] = nil
+        self.func[#item] = nil
     end
 end
 
@@ -1104,5 +1104,45 @@ end
 
 function manual:render()
     SetViewMode('ui')
-    ui.DrawManualTTF('menuttf', self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed, self.text_offx, "left")
+    ui.DrawManualTTF('menuttf', self.title, self.text, self.content[self.pos], self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed, "left")
+end
+
+function manual.createContent(content)
+    local _content = {}
+    local con = {}
+    con.x = {}
+    con.y = {}
+    con.type = {}
+    con.text = {}
+    con.font = {}
+    con.image_path = {}
+    for i, v in ipairs(content) do
+        con = {}
+        con.x = {}
+        con.y = {}
+        con.type = {}
+        con.text = {}
+        con.font = {}
+        con.image_path = {}
+        con.length = 0
+        for j, _ in ipairs(v) do
+            con.x[j] = _[2]
+            con.y[j] = _[3]
+            if _[1] == "text" then
+                con.type[j] = "text"
+                if _[4] == "" then
+                    con.font[j] = 'menuttf'
+                else
+                    con.font[j] = _[4]
+                end
+                con.text[j] = _[5]
+            elseif _[1] == "image" then
+                con.type[j] = "image"
+                con.image_path[j] = _[4]
+            end
+            con.length = con.length + 1
+        end
+        table.insert(_content, con)
+    end
+    return _content
 end

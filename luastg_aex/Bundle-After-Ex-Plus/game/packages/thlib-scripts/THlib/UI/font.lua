@@ -2,7 +2,7 @@ LoadTTF('boss_name', 'assets/font/SourceHanSansCN-Bold.otf', 20)
 LoadTTF('sc_name', 'assets/font/SourceHanSerifCN-Heavy.otf', 26)
 LoadTTF('sc_pr', 'assets/font/SourceHanSansCN-Bold.otf', 30)
 LoadTTF('dialog', 'assets/font/SourceHanSansCN-Bold.otf', 30)
-LoadTTF('menuttf', 'assets/font/STXINWEI.TTF', 30)
+LoadTTF('menuttf', 'assets/font/STXINWEI.TTF', 50)
 
 LoadFont('score', 'THlib/UI/font/score_new.fnt', false)
 LoadFont('item', 'THlib/UI/font/item.fnt', true)

@@ -57,7 +57,7 @@ LoadImage("rank_Lunatic", "ui_rank", 0, 96, 144, 32)
 LoadImage("rank_Extra", "ui_rank", 0, 128, 144, 32)
 
 ui.menu = {
-    font_size = 1,
+    font_size = 0.675,
     line_height = 28,
     char_width = 20,
     num_width = 12.5,
@@ -78,7 +78,8 @@ ui.menu = {
     rep_line_height = 20,
     op_left_off = -200,
     op_right_off = 200,
-    chbox_off = 50
+    chbox_off = 50,
+    manual_item_off = -250,
 }
 
 ui.menu_bulr = 0
@@ -138,7 +139,7 @@ function ui.DrawMenuTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, te
         yos = (#text + 1) * ui.menu.sc_pr_line_height * 0.5
     else
         yos = (#text - 1) * ui.menu.sc_pr_line_height * 0.5
-        RenderTTF(ttfname, title, x, x, y + yos + ui.menu.sc_pr_line_height, y + yos + ui.menu.sc_pr_line_height, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
+        RenderTTF2(ttfname, title, x, x, y + yos + ui.menu.sc_pr_line_height, y + yos + ui.menu.sc_pr_line_height, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
     end
     for i = 1, #text do
         local _x = x
@@ -152,9 +153,9 @@ function ui.DrawMenuTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, te
                 color[j] = ui.menu.focused_color1[j] * k + ui.menu.focused_color2[j] * (1 - k)
             end
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
-            RenderTTF(ttfname, text[i], _x + xos, _x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], _x + xos, _x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
         else
-            RenderTTF(ttfname, text[i], _x, _x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], _x, _x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
         end
     end
 end
@@ -166,14 +167,14 @@ function ui.DrawMenuTTFBlack(ttfname, title, text, pos, x, y, alpha, timer, shak
         yos = (#text + 1) * ui.menu.sc_pr_line_height * 0.5
     else
         yos = (#text - 1) * ui.menu.sc_pr_line_height * 0.5
-        RenderTTF(ttfname, title, x, x, y + yos + ui.menu.sc_pr_line_height, y + yos + ui.menu.sc_pr_line_height, Color(0xFF000000), align, "vcenter", "noclip")
+        RenderTTF2(ttfname, title, x, x, y + yos + ui.menu.sc_pr_line_height, y + yos + ui.menu.sc_pr_line_height, ui.menu.font_size, Color(0xFF000000), align, "vcenter", "noclip")
     end
     for i = 1, #text do
         if i == pos then
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
-            RenderTTF(ttfname, text[i], x + xos, x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(0xFF000000), align, "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], x + xos, x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(0xFF000000), align, "vcenter", "noclip")
         else
-            RenderTTF(ttfname, text[i], x, x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(0xFF000000), align, "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], x, x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(0xFF000000), align, "vcenter", "noclip")
         end
     end
 end
@@ -278,7 +279,7 @@ function ui.DrawOptionTTF(ttfname, title, text, type, data, pos, x, y, alpha, ti
         yos = (#text + 1) * ui.menu.sc_pr_line_height * 0.5
     else
         yos = (#text - 1) * ui.menu.sc_pr_line_height * 0.5
-        RenderTTF(ttfname, title, x, x, y + yos + 2 * ui.menu.sc_pr_line_height, y + yos + 2 * ui.menu.sc_pr_line_height, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
+        RenderTTF2(ttfname, title, x, x, y + yos + 2 * ui.menu.sc_pr_line_height, y + yos + 2 * ui.menu.sc_pr_line_height, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
     end
     for i = 1, #text do
         local x_left = x + ui.menu.op_left_off
@@ -291,12 +292,12 @@ function ui.DrawOptionTTF(ttfname, title, text, type, data, pos, x, y, alpha, ti
             end
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
             --选项渲染
-            RenderTTF(ttfname, text[i], x_left + xos, x_left + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), "left", "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], x_left + xos, x_left + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(color)), "left", "vcenter", "noclip")
             ui.DrawOptionData(ttfname, type[text[i]], data[text[i]], x_right + xos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), alpha)
         else
             local color = ui.menu.focused_color1
             --选项渲染
-            RenderTTF(ttfname, text[i], x_left, x_left, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(ui.menu.unfocused_color)), "left", "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], x_left, x_left, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.unfocused_color)), "left", "vcenter", "noclip")
             ui.DrawOptionData(ttfname, type[text[i]], data[text[i]], x_right, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), alpha)
         end
     end
@@ -304,14 +305,14 @@ end
 
 function ui.DrawOptionData(ttfname, type, data, pos_x, pos_y, color, alpha)
     if type == "selector" then
-        RenderTTF(ttfname, data, pos_x, pos_x, pos_y, pos_y, color, "right", "vcenter", "noclip")
+        RenderTTF2(ttfname, data, pos_x, pos_x, pos_y, pos_y, ui.menu.font_size, color, "right", "vcenter", "noclip")
     elseif type == "checkbox" then
         if data == true then
-        RenderTTF(ttfname, 'On', pos_x - ui.menu.chbox_off, pos_x - ui.menu.chbox_off, pos_y, pos_y, color, "right", "vcenter", "noclip")
-        RenderTTF(ttfname, 'Off', pos_x, pos_x, pos_y, pos_y, Color(alpha * 255, unpack(ui.menu.unfocused_color)), "right", "vcenter", "noclip")
+        RenderTTF2(ttfname, 'On', pos_x - ui.menu.chbox_off, pos_x - ui.menu.chbox_off, pos_y, pos_y, ui.menu.font_size, color, "right", "vcenter", "noclip")
+        RenderTTF2(ttfname, 'Off', pos_x, pos_x, pos_y, pos_y, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.unfocused_color)), "right", "vcenter", "noclip")
         elseif data == false then
-        RenderTTF(ttfname, 'On', pos_x - ui.menu.chbox_off, pos_x - ui.menu.chbox_off, pos_y, pos_y, Color(alpha * 255, unpack(ui.menu.unfocused_color)), "right", "vcenter", "noclip")
-        RenderTTF(ttfname, 'Off', pos_x, pos_x, pos_y, pos_y, color, "right", "vcenter", "noclip")
+        RenderTTF2(ttfname, 'On', pos_x - ui.menu.chbox_off, pos_x - ui.menu.chbox_off, pos_y, pos_y, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.unfocused_color)), "right", "vcenter", "noclip")
+        RenderTTF2(ttfname, 'Off', pos_x, pos_x, pos_y, pos_y, ui.menu.font_size, color, "right", "vcenter", "noclip")
         end
     elseif type == "button" then
     else
@@ -320,7 +321,7 @@ function ui.DrawOptionData(ttfname, type, data, pos_x, pos_y, color, alpha)
 
 end
 
-function ui.DrawManualTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, text_offx, align)
+function ui.DrawManualTTF(ttfname, title, text, content, pos, x, y, alpha, timer, shake, align)
     local _text_offx = text_offx or {}
     align = align or "center"
     local yos
@@ -328,10 +329,10 @@ function ui.DrawManualTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, 
         yos = (#text + 1) * ui.menu.sc_pr_line_height * 0.5
     else
         yos = (#text - 1) * ui.menu.sc_pr_line_height * 0.5
-        RenderTTF(ttfname, title, x, x, y + yos + ui.menu.sc_pr_line_height, y + yos + ui.menu.sc_pr_line_height, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
+        RenderTTF2(ttfname, title, x, x, 400, 400, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
     end
     for i = 1, #text do
-        local _x = x
+        local _x = x + ui.menu.manual_item_off
         if _text_offx[i] ~= nil then
             _x = x + _text_offx[i]
         end
@@ -342,9 +343,28 @@ function ui.DrawManualTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, 
                 color[j] = ui.menu.focused_color1[j] * k + ui.menu.focused_color2[j] * (1 - k)
             end
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
-            RenderTTF(ttfname, text[i], _x + xos, _x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], _x + xos, _x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
+            ui.DrawManualContent(x, y, content, alpha, ui.menu.focused_color1)
         else
-            RenderTTF(ttfname, text[i], _x, _x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], _x, _x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
+        end
+    end
+end
+
+function ui.DrawManualContent(x, y, content, alpha, color)
+    local con = content
+    for i = 1, con.length do
+        -- print("DrawManualContent:")
+        -- print("text")
+        -- print(con.font[i])
+        -- print(con.text[i])
+        -- print(con.x[i])
+        -- print(con.y[i])
+        -- print("------------")
+        if con.type[i] == "text" then
+            RenderTTF2(con.font[i], con.text[i], con.x[i] + x, con.x[i] + x, con.y[i] + y, con.y[i] + y, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.focused_color1)), "", "vcenter", "noclip")
+        elseif con.type == "image" then
+
         end
     end
 end
@@ -463,13 +483,19 @@ end
 function lstg_ui:drawMenuBG()
     self["drawMenuBG" .. self.type](self)
 end
+local is_bg_render_create = false
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
-    lstg.CreateRenderTarget("rt:background")
-    lstg.PushRenderTarget("rt:background")
-    Render("menu_bg", 320, 240, 0, 0.25, 0.25)
-    lstg.PopRenderTarget()
-    post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
+    if not is_bg_render_create and stage.current_stage.stage_name == "menu" then
+        lstg.CreateRenderTarget("rt:background")
+        lstg.PushRenderTarget("rt:background")
+        Render("menu_bg", 320, 240, 0, 0.25, 0.25)
+        lstg.PopRenderTarget()
+        is_bg_render_create = true
+    end
+    if stage.current_stage.stage_name == "menu" then
+        post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
+    end
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
             string.format("%.1ffps", GetFPS()),

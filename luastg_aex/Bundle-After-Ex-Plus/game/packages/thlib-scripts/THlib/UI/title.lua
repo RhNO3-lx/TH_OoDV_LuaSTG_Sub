@@ -1,6 +1,17 @@
 
 local post_effect = require("lib.posteffect")
 
+local manual_content = {
+    {
+        { "text", 0, 0, "", "this is the first option" },
+        { "text", 100, 100, "", "change position" },
+        { "image", 100, 100, "THlib/UI/test_image.png" }
+    },
+    {
+        { "text", 0, 0, "", "this is the second option" }
+    }
+}
+
 local stage_init = stage.New('init', true, true)
 function stage_init:init()
     if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
@@ -146,8 +157,8 @@ function stage_menu:init()
             menu_title.pos = #menu_title.text
         end
     end })
-    menu_offset = { 0, 40, 10, 50, 20, 60, 30, 70 }
-    menu_title = New(title_menu, '', menu_items, '', -(screen.width * 0.45), 0,menu_offset)
+    menu_offset = { 0, 30, 10, 40, 20, 50, 30, 60 }
+    menu_title = New(title_menu, '', menu_items, '', -(screen.width * 0.45), -120, menu_offset)
     menu_items = {}
     local difficulty_pos = 1
     for _, name in ipairs(stage.groups) do
@@ -354,11 +365,26 @@ function stage_menu:init()
     menu_options = New(options, 'Option', menu_items)
     --
     menu_items = {}
-    table.insert(menu_items, { '1.','img', function ()
+    menu_offset = {}
+    table.insert(menu_items, { '1.游戏进行的方式', function ()
         
     end })
+    table.insert(menu_items, { '2.???', function ()
+        
+    end })
+    table.insert(menu_items, { 'exit', function()
+        task.New(self, function()
+            while ui.menu_bulr > 0 do
+                ui.menu_bulr = ui.menu_bulr - 0.1
+                task.Wait()
+            end
+        end)
+        menu.FlyIn(menu_title, 'left')
+        menu.FadeOut(menu_manual)
+    end, "exit" })
 
-    menu_manual = New(manual, 'Manual', menu_items)
+    menu_offset = { 0, 0, 0, 0, 0, 0, 0, 0 }
+    menu_manual = New(manual, 'Manual', menu_items, manual_content, "", 0, 0)
     --
     local task_menu_init = function()
         menu.FadeIn(menu_title)
