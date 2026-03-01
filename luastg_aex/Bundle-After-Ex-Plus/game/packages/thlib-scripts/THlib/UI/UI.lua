@@ -3,9 +3,11 @@ Include "THlib/UI/font.lua"
 Include "THlib/UI/title.lua"
 Include "THlib/UI/sc_pr.lua"
 
+local post_effect = require("lib.posteffect")
 
 ---! todo: we may learn very simple graphics methods here
 ui = {}
+
 
 LoadTexture("boss_ui", "THlib/UI/boss_ui.png")
 LoadImage("boss_spell_name_bg", "boss_ui", 0, 0, 256, 36)
@@ -78,6 +80,8 @@ ui.menu = {
     op_right_off = 200,
     chbox_off = 50
 }
+
+ui.menu_bulr = 0
 
 function ui.DrawMenu(title, text, pos, x, y, alpha, timer, shake, text_offx, align)
     local _text_offx = text_offx
@@ -316,6 +320,35 @@ function ui.DrawOptionData(ttfname, type, data, pos_x, pos_y, color, alpha)
 
 end
 
+function ui.DrawManualTTF(ttfname, title, text, pos, x, y, alpha, timer, shake, text_offx, align)
+    local _text_offx = text_offx or {}
+    align = align or "center"
+    local yos
+    if title == "" then
+        yos = (#text + 1) * ui.menu.sc_pr_line_height * 0.5
+    else
+        yos = (#text - 1) * ui.menu.sc_pr_line_height * 0.5
+        RenderTTF(ttfname, title, x, x, y + yos + ui.menu.sc_pr_line_height, y + yos + ui.menu.sc_pr_line_height, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
+    end
+    for i = 1, #text do
+        local _x = x
+        if _text_offx[i] ~= nil then
+            _x = x + _text_offx[i]
+        end
+        if i == pos then
+            local color = {}
+            local k = cos(timer * ui.menu.blink_speed) ^ 2
+            for j = 1, 3 do
+                color[j] = ui.menu.focused_color1[j] * k + ui.menu.focused_color2[j] * (1 - k)
+            end
+            local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
+            RenderTTF(ttfname, text[i], _x + xos, _x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
+        else
+            RenderTTF(ttfname, text[i], _x, _x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
+        end
+    end
+end
+
 ---@class lstg.lstg_ui_object
 lstg.lstg_ui_object = Class(object)
 function lstg.lstg_ui_object:init()
@@ -432,7 +465,11 @@ function lstg_ui:drawMenuBG()
 end
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
+    lstg.CreateRenderTarget("rt:background")
+    lstg.PushRenderTarget("rt:background")
     Render("menu_bg", 320, 240, 0, 0.25, 0.25)
+    lstg.PopRenderTarget()
+    post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
             string.format("%.1ffps", GetFPS()),
