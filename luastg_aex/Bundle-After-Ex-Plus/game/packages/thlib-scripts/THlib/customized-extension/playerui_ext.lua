@@ -101,7 +101,7 @@ function PutPlayerUIBar()
     SetImageState("white", attri.blendmode, attri.c)
     for i=1,n do
         local ac=-i*360/lstg.var.LifeMax
-        RenderRingEx("white", cx,cy, offset+90+ac-da,2*da,attri.r1, attri.r2,1)
+        RenderRingEx("white", cx,cy, offset+90+ac-da,2*da,attri.r1, attri.r2,1,4)
     end
 end
 --[[
