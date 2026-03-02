@@ -868,7 +868,9 @@ function lib.ResultSpell(info)
             local score = info.score - info.score % 10
             lstg.var.score = lstg.var.score + score
             PlaySound('cardget', 1.0, 0)
-            New(hinter_bonus, 'hint.getbonus', 0.6, 0, 112 * SCREEN_SCALE, 15, 120, true, score)
+            ---!更改符卡结束提示信息 RhNO3-lx
+            --New(hinter_bonus, 'hint.getbonus', 0.6, 0, 112 * SCREEN_SCALE, 15, 120, true, score)
+            New(hinter,"hint.getbonus",0.6,0,112 * SCREEN_SCALE, 15, 120)
             New(kill_timer, 0, 30 * SCREEN_SCALE, info.timer)
         else
             New(hinter, 'hint.bonusfail', 0.6, 0, 112 * SCREEN_SCALE, 15, 120)
