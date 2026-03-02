@@ -61,6 +61,10 @@ function saveConfigure()
 			sound_effect_volume = setting.sevolume / 100.0,
 			music_volume = setting.bgmvolume / 100.0,
 		},
+		game_system = {
+			auto_shoot = setting.auto_shoot,
+			auto_bomb = setting.auto_bomb
+		}
 	}))
 	write_file(get_file_name_launch(), content_launch)
 end

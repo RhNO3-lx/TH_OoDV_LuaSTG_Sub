@@ -357,13 +357,6 @@ end
 function ui.DrawManualContent(x, y, content, alpha, color)
     local con = content
     for i = 1, con.length do
-        -- print("DrawManualContent:")
-        -- print("text")
-        -- print(con.font[i])
-        -- print(con.text[i])
-        -- print(con.x[i])
-        -- print(con.y[i])
-        -- print("------------")
         if con.type[i] == "text" then
             RenderTTF2(con.font[i], con.text[i], con.x[i] + x, con.x[i] + x, con.y[i] + y, con.y[i] + y, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.focused_color1)), "", "vcenter", "noclip")
         elseif con.type == "image" then
@@ -528,8 +521,6 @@ function lstg_ui:drawMenuBG1()
     Render("menu_bg", 320, 240, 0, 0.25, 0.25)
     lstg.PopRenderTarget()
     SetImageState("menu_bg", "", Color(255, ui.bg_blk * 255, ui.bg_blk * 255, ui.bg_blk * 255 ))
-    print(ui.menu_bulr)
-    print(ui.blk_mask_alpha)
     post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",

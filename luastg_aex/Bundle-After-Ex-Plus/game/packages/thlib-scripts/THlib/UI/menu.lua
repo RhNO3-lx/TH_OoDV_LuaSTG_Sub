@@ -855,6 +855,8 @@ local last_setting = {
     vsync = setting.vsync,
     sevolume = setting.sevolume,
     bgmvolume = setting.bgmvolume,
+    auto_shoot = setting.auto_shoot or false,
+    auto_bomb = setting.auto_bomb or false
 }
 
 options.mode_window = {
@@ -907,6 +909,8 @@ function options.copyDataToSetting()
     setting.vsync = last_setting.vsync
     setting.sevolume = last_setting.sevolume
     setting.bgmvolume = last_setting.bgmvolume
+    setting.auto_shoot = last_setting.auto_shoot
+    setting.auto_bomb = last_setting.auto_bomb
     applySetting(screenChange)
 end
 
@@ -925,6 +929,8 @@ function options:copyDataToLastSetting()
     last_setting.windowed = not self.control.data["Fullscreen"]
     last_setting.bgmvolume = self.control.content["SetBGMVolume"][self.control.index["SetBGMVolume"]]
     last_setting.sevolume = self.control.content["SetSEVolume"][self.control.index["SetSEVolume"]]
+    last_setting.auto_shoot = self.control.data["AutoShoot"]
+    last_setting.auto_bomb = self.control.data["AutoBomb"]
 end
 
 function options:setDefault()
@@ -941,8 +947,6 @@ function options:setDefault()
     options.copyDataToSetting()
 end
 
---先在这占个位，等我研究出来setting怎么使我就把它扔setting里
---貌似有点难度，先搁着等主要功能实现了再研究
 local auto_shoot = false
 local auto_bomb = false
 
@@ -1144,8 +1148,8 @@ function options:initControl()
             self.control.index["SetSEVolume"] = i
         end
     end
-    self.control.data["AutoShoot"] = auto_shoot
-    self.control.data["AutoBomb"] = auto_bomb
+    self.control.data["AutoShoot"] = cfg.auto_shoot or false
+    self.control.data["AutoBomb"] = cfg.auto_bomb or false
     
 end
 
