@@ -487,12 +487,9 @@ end
 ui.is_bg_render_create = false
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
-    if not is_bg_render_create and stage.current_stage.stage_name == "menu" then
+    if not ui.is_bg_render_create then
         lstg.CreateRenderTarget("rt:background")
-        lstg.PushRenderTarget("rt:background")
-        Render("menu_bg", 320, 240, 0, 0.25, 0.25)
-        lstg.PopRenderTarget()
-        is_bg_render_create = true
+        ui.is_bg_render_create = true
     end
     lstg.PushRenderTarget("rt:background")
     Render("menu_bg", 320, 240, 0, 0.25, 0.25)

@@ -171,7 +171,30 @@ function stage_menu:init()
                 menu.FlyOut(menu_difficulty_select, 'left')
                 last_menu = menu_difficulty_select
                 last_menu.group_name = name
-                menu.FlyIn(menu_player_select, 'right')
+                --
+                scoredata.player_select = 1
+                lstg.var.player_name = player_list[1][2]
+                lstg.var.rep_player = player_list[1][3]
+                task.New(stage_menu_self, function()
+                    for i = 1, 60 do
+                        SetBGMVolume('menu', 1 - i / 60)
+                        task.Wait()
+                    end
+                end)
+                task.New(stage_menu_self, function()
+                    task.Wait(30)
+                    New(mask_fader, 'close')
+                    task.Wait(30)
+                    if practice == 'stage' then
+                        stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])
+                    elseif practice == 'spell' then
+                        stage.IsSCpractice = true--判定进入符卡练习的flag add by OLC
+                        stage.group.PracticeStart('Spell Practice@Spell Practice')
+                    else
+                        stage.group.Start(last_menu.group_name)
+                    end
+                end)
+                --
             end })
             difficulty_pos = difficulty_pos + 1
         end
@@ -263,9 +286,8 @@ function stage_menu:init()
                         last_menu = menu_practice[sg]
                         --
                         scoredata.player_select = 1
-                        menu.FlyOut(menu_player_select, 'left')
-                        lstg.var.player_name = player_list[i][2]
-                        lstg.var.rep_player = player_list[i][3]
+                        lstg.var.player_name = player_list[1][2]
+                        lstg.var.rep_player = player_list[1][3]
                         task.New(stage_menu_self, function()
                             for i = 1, 60 do
                                 SetBGMVolume('menu', 1 - i / 60)
@@ -285,7 +307,7 @@ function stage_menu:init()
                                 stage.group.Start(last_menu.group_name)
                             end
                         end)
-                        --menu.FlyIn(menu_player_select, 'right')
+                        --
                     end })
                 end
             end
@@ -307,8 +329,31 @@ function stage_menu:init()
         if index then
             last_menu = menu_sc_pr
             lstg.var.sc_index = index
-            menu.FlyIn(menu_player_select, 'right')
             menu.FlyOut(menu_sc_pr, 'left')
+            --
+            scoredata.player_select = 1
+            lstg.var.player_name = player_list[1][2]
+            lstg.var.rep_player = player_list[1][3]
+            task.New(stage_menu_self, function()
+                for i = 1, 60 do
+                    SetBGMVolume('menu', 1 - i / 60)
+                    task.Wait()
+                end
+            end)
+            task.New(stage_menu_self, function()
+                task.Wait(30)
+                New(mask_fader, 'close')
+                task.Wait(30)
+                if practice == 'stage' then
+                    stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])
+                elseif practice == 'spell' then
+                    stage.IsSCpractice = true--判定进入符卡练习的flag add by OLC
+                    stage.group.PracticeStart('Spell Practice@Spell Practice')
+                else
+                    stage.group.Start(last_menu.group_name)
+                end
+            end)
+            --
         else
             menu.FlyIn(menu_title, 'left')
             menu.FlyOut(menu_sc_pr, 'right')
