@@ -15,9 +15,9 @@ lstg.var.LifechipPoint=30
 lstg.var.BombchipPoint=30
 
 ---! 改用血条和bomb系统
-lstg.var.PlayerLifePoint=0
-lstg.var.PlayerBombPoint=0
-lstg.var.MissBombpointCompensate=lstg.var.BombExtendPoint*2
+---! use lstg.var.chip, lstg.var.bombchip to idicate unfilled life or bomb
+lstg.var.MissBombCompensate=2
+lstg.var.MissPowerPenality=30
 
 
 
@@ -144,8 +144,8 @@ function item_chip:init(x, y)
     --    PlaySound('bonus',0.8)
 end
 function item_chip:collect()
-    lstg.var.chip = lstg.var.chip + 1
-    if lstg.var.chip == 5 then
+    lstg.var.chip = lstg.var.chip + lstg.var.LifechipPoint
+    if lstg.var.chip == lstg.var.LifeExtendPoint then
         lstg.var.lifeleft = lstg.var.lifeleft + 1
         lstg.var.chip = 0
         PlaySound('extend', 0.5)
@@ -160,7 +160,7 @@ function item_bombchip:init(x, y)
 end
 function item_bombchip:collect()
     lstg.var.bombchip = lstg.var.bombchip + 1
-    if lstg.var.bombchip == 5 then
+    if lstg.var.bombchip == lstg.var.BombExtendPoint then
         lstg.var.bomb = lstg.var.bomb + 1
         lstg.var.bombchip = 0
         PlaySound('cardget', 0.8)
@@ -181,11 +181,13 @@ function item_faith:init(x, y)
     item.init(self, x, y, 5)
 end
 function item_faith:collect()
-    local var = lstg.var
-    New(float_text, 'item', '10000', self.x, self.y + 6, 0.75, 90, 60, 0.5, 0.5, Color(0x8000C000), Color(0x0000C000))
-    var.faith = var.faith + 100
+    --local var = lstg.var
+    --New(float_text, 'item', '10000', self.x, self.y + 6, 0.75, 90, 60, 0.5, 0.5, Color(0x8000C000), Color(0x0000C000))
+    --var.faith = var.faith + 100
+    lstg.var.BombchipPoint=lstg.var.BombchipPoint+1
 end
 
+---! todo: 消弹时不生成
 item_faith_minor = Class(object)
 function item_faith_minor:init(x, y)
     self.x = x
@@ -351,6 +353,8 @@ function item.PlayerReinit()
 end
 ------------------------------------------
 --HZC的收点系统
+---! todo:禁用收点奖励系统
+---! todo:在合适的时机调整上线收点界
 function item.playercollect(n)
     New(tasker, function()
         local z = 0
@@ -437,6 +441,8 @@ function item.playercollect(n)
 
 end
 -----------------------------
+---
+---! miss的行为居然是在这里定义的？
 function item:PlayerMiss()
     lstg.var.chip_bonus = false
     if lstg.var.sc_bonus then
@@ -444,16 +450,16 @@ function item:PlayerMiss()
     end
     self.protect = 360
     lstg.var.lifeleft = lstg.var.lifeleft - 1
-    lstg.var.power = math.max(lstg.var.power - 50, 100)
-    lstg.var.bomb = max(lstg.var.bomb, 3)
-    if lstg.var.lifeleft > 0 then
-        for i = 1, 7 do
-            local a = 90 + (i - 4) * 18 + self.x * 0.26
-            New(item_power, self.x, self.y + 10, 3, a)
-        end
-    else
-        New(item_power_full, self.x, self.y + 10)
-    end
+    lstg.var.power = math.max(lstg.var.power - lstg.var.MissPowerPenality, 100)
+    lstg.var.bomb = max(lstg.var.bomb, lstg.var.MissBombCompensate)
+    -- if lstg.var.lifeleft > 0 then
+    --     for i = 1, 7 do
+    --         local a = 90 + (i - 4) * 18 + self.x * 0.26
+    --         New(item_power, self.x, self.y + 10, 3, a)
+    --     end
+    -- else
+    --     New(item_power_full, self.x, self.y + 10)
+    -- end
 end
 
 function item.PlayerSpell()

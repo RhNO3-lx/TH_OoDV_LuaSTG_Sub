@@ -8,6 +8,8 @@ misc = {}
 --杂项功能
 
 --多种消亡特效
+
+---! here to define short infomation hinter
 hinter = Class(object)
 function hinter:init(img, size, x, y, t1, t2, fade)
     self.img = img

@@ -60,7 +60,7 @@ function renseki_player:init(slot)
 	--wi.
 	--self._wisys = DNHWalkImageSystem(self, 'reimu_player', 0, 0, 32, 48, 12)
 
-	self.name='Reimu'
+	self.name='Renseki'
 	self.hspeed=4.5
 	self.imgs={}
 	self.A=0.5 self.B=0.5

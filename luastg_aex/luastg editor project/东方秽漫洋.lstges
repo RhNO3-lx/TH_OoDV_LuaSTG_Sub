@@ -1,6 +1,6 @@
 ﻿0,{"$type":".RootFolder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"File","EditWindow":""}],"AttributeCount":1}
 1,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"test_script","EditWindow":""}],"AttributeCount":1}
-2,{"$type":".Object.ObjectDefine, ","IsExpanded":false,"Attributes":[{"attrCap":"Name","attrInput":"test","EditWindow":""},{"attrCap":"Difficulty","attrInput":"All","EditWindow":"objDifficulty"}],"AttributeCount":2}
+2,{"$type":".Object.ObjectDefine, ","Attributes":[{"attrCap":"Name","attrInput":"test","EditWindow":""},{"attrCap":"Difficulty","attrInput":"All","EditWindow":"objDifficulty"}],"AttributeCount":2,"IsExpanded":false}
 3,{"$type":".Object.ObjectInit, ","Attributes":[{"attrCap":"Parameter List","attrInput":"","EditWindow":""},{"attrCap":"Image","attrInput":"\"leaf\"","EditWindow":"objimage"},{"attrCap":"Layer","attrInput":"LAYER_ENEMY_BULLET","EditWindow":"layer"},{"attrCap":"Group","attrInput":"GROUP_ENEMY_BULLET","EditWindow":"group"},{"attrCap":"Hide","attrInput":"false","EditWindow":"bool"},{"attrCap":"Bound","attrInput":"true","EditWindow":"bool"},{"attrCap":"Auto Rotation","attrInput":"false","EditWindow":"bool"},{"attrCap":"HP","attrInput":"10","EditWindow":""},{"attrCap":"Collision","attrInput":"true","EditWindow":"bool"}],"AttributeCount":9}
 3,{"$type":".Object.CallBackFunc, ","Attributes":[{"attrCap":"Event type","attrInput":"colli","EditWindow":"event"}],"AttributeCount":1}
 4,{"$type":".Object.DefaultAction, ","Attributes":[]}
@@ -45,13 +45,14 @@
 5,{"$type":".General.IfThen, LuaSTGEditorSharp","Attributes":[]}
 6,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"print(\"collide with player\")","EditWindow":"code"}],"AttributeCount":1}
 6,{"$type":".Object.Kill, ","Attributes":[{"attrCap":"Target","attrInput":"self","EditWindow":"target"},{"attrCap":"Trigger event","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
+3,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"todo: 应检测他和GROUP_PLAYER_EAT的碰撞，并且需要创建playereat对象的实例","EditWindow":""},{"attrCap":"Comment on child","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
 3,{"$type":".Object.CallBackFunc, ","Attributes":[{"attrCap":"Event type","attrInput":"kill","EditWindow":"event"}],"AttributeCount":1}
 4,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local C = 20","EditWindow":"code"}],"AttributeCount":1}
 4,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"lstg.var.power=lstg.var.power+C","EditWindow":"code"}],"AttributeCount":1}
-4,{"$type":".Object.DefaultAction, ","IsExpanded":false,"Attributes":[]}
+4,{"$type":".Object.DefaultAction, ","Attributes":[],"IsExpanded":false}
 3,{"$type":".Render.OnRender, ","Attributes":[]}
-4,{"$type":".Object.SetBlend, ","IsSelected":true,"Attributes":[{"attrCap":"Target","attrInput":"self","EditWindow":"target"},{"attrCap":"Blend Mode","attrInput":"\"mul,add\"","EditWindow":"blend"},{"attrCap":"ARGB","attrInput":"255,123,1235,123","EditWindow":"ARGB"}],"AttributeCount":3}
-4,{"$type":".Object.DefaultAction, ","IsExpanded":false,"Attributes":[]}
+4,{"$type":".Object.SetBlend, ","Attributes":[{"attrCap":"Target","attrInput":"self","EditWindow":"target"},{"attrCap":"Blend Mode","attrInput":"\"mul+add\"","EditWindow":"blend"},{"attrCap":"ARGB","attrInput":"255,255,255,255","EditWindow":"ARGB"}],"AttributeCount":3,"IsSelected":true}
+4,{"$type":".Object.DefaultAction, ","Attributes":[],"IsExpanded":false}
 1,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"Classes","EditWindow":""}],"AttributeCount":1}
 2,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"---!here is the beginning of folder \"classes\"","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
 2,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"---!beginning of define boss","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
@@ -59,7 +60,7 @@
 3,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"---!here to define boss init","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
 3,{"$type":".Boss.BossInit, ","Attributes":[{"attrCap":"Position","attrInput":"240,384","EditWindow":"position"},{"attrCap":"Spell Card Background","attrInput":"","EditWindow":"bossBG"}],"AttributeCount":2,"IsExpanded":false}
 3,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"---!here to define spellcard :\"spellcard test\"","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2,"IsExpanded":false}
-3,{"$type":".Boss.BossSpellCard, ","Attributes":[{"attrCap":"Name","attrInput":"","EditWindow":"SCName"},{"attrCap":"Protect time (sec)","attrInput":"2","EditWindow":""},{"attrCap":"DMG redu. time (sec)","attrInput":"5","EditWindow":""},{"attrCap":"Total time (sec)","attrInput":"60","EditWindow":""},{"attrCap":"Hit point","attrInput":"1800","EditWindow":""},{"attrCap":"Drop power","attrInput":"0","EditWindow":""},{"attrCap":"Drop faith","attrInput":"0","EditWindow":""},{"attrCap":"Drop point","attrInput":"0","EditWindow":""},{"attrCap":"Immune to bomb","attrInput":"false","EditWindow":"bool"},{"attrCap":"Performing action","attrInput":"false","EditWindow":"bool"},{"attrCap":"Optional ID","attrInput":"","EditWindow":""}],"AttributeCount":11,"IsExpanded":false}
+3,{"$type":".Boss.BossSpellCard, ","Attributes":[{"attrCap":"Name","attrInput":"","EditWindow":"SCName"},{"attrCap":"Protect time (sec)","attrInput":"2","EditWindow":""},{"attrCap":"DMG redu. time (sec)","attrInput":"5","EditWindow":""},{"attrCap":"Total time (sec)","attrInput":"60","EditWindow":""},{"attrCap":"Hit point","attrInput":"100","EditWindow":""},{"attrCap":"Drop power","attrInput":"0","EditWindow":""},{"attrCap":"Drop faith","attrInput":"0","EditWindow":""},{"attrCap":"Drop point","attrInput":"0","EditWindow":""},{"attrCap":"Immune to bomb","attrInput":"false","EditWindow":"bool"},{"attrCap":"Performing action","attrInput":"false","EditWindow":"bool"},{"attrCap":"Optional ID","attrInput":"","EditWindow":""}],"AttributeCount":11,"IsExpanded":false}
 4,{"$type":".Boss.BossSCBeforeStart, ","Attributes":[]}
 4,{"$type":".Boss.BossSCStart, ","Attributes":[]}
 5,{"$type":".Task.TaskNode, ","Attributes":[]}
@@ -74,7 +75,7 @@
 4,{"$type":".Boss.BossSCStart, ","Attributes":[]}
 5,{"$type":".Task.TaskNode, ","Attributes":[]}
 6,{"$type":".Task.TaskMoveTo, ","Attributes":[{"attrCap":"Destination","attrInput":"50,60","EditWindow":"position"},{"attrCap":"Frame","attrInput":"60","EditWindow":""},{"attrCap":"Mode","attrInput":"MOVE_NORMAL","EditWindow":"interpolation"}],"AttributeCount":3,"IsExpanded":false}
-6,{"$type":".Object.CreateObject, ","IsExpanded":false,"Attributes":[{"attrCap":"Name","attrInput":"\"fish\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"","EditWindow":"objectParam"}],"AttributeCount":3}
+6,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"fish\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"","EditWindow":"objectParam"}],"AttributeCount":3,"IsExpanded":false}
 6,{"$type":".Task.TaskMoveTo, ","Attributes":[{"attrCap":"Destination","attrInput":"0,60","EditWindow":"position"},{"attrCap":"Frame","attrInput":"60","EditWindow":""},{"attrCap":"Mode","attrInput":"MOVE_NORMAL","EditWindow":"interpolation"}],"AttributeCount":3,"IsExpanded":false}
 4,{"$type":".Boss.BossSCBeforeFinish, ","Attributes":[]}
 4,{"$type":".Boss.BossSCFinish, ","Attributes":[]}

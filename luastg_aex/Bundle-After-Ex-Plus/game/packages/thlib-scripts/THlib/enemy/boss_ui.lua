@@ -5,6 +5,15 @@
 ----------------------------------------
 --boss ui
 --！警告：未适配宽屏等非传统版面
+---! 添加适配：宽屏等非传统版面
+---! by: RhNO3-lx
+---! 指定ui模式下渲染的偏移量，计算版面中心坐标
+---! 警告：并未使ui能随版面大小改变而更改偏移，不过我认为咱们并不需要
+local function GetUIOffset()
+    local w=lstg.world
+    local cx, cy = (w.scrr-w.scrl)/2, (w.scrt-w.scrb)/2
+    return cx, cy
+end
 
 ---@class boss.ui
 ---@return boss
@@ -182,7 +191,8 @@ function timeCounter:init(ui, system)
     self.ui = ui
     self.system = system
     local b = self.system.boss
-    self.x, self.y = 2, 192
+
+
     self.scale = 0.5
     self.scalewarning = 1
     self.scalewarning_current = 1.0
@@ -207,7 +217,12 @@ function timeCounter:frame()
         return
     end
     assert(self.t2 <= self.t1, "time counter's t1 > t2 must be satisfied.")
-    self.x, self.y = 2, 192
+
+    ---! 计时器位置
+    ---! by: RhNO3-lx
+    local cx,cy = GetUIOffset()
+    self.x, self.y = 2+cx, 192+cy
+    --self.x, self.y = 2, 192
     if _ui.countdown and self.sound then
         if _ui.countdown > self.t2 and _ui.countdown <= self.t1 and _ui.countdown % 1 == 0 then
             PlaySound("timeout", 0.6)
@@ -283,6 +298,8 @@ function timeCounter:frame()
     end
 end
 function timeCounter:render()
+    ---!
+    SetViewMode("ui")
     local b = self.system.boss
     if not (IsValid(b)) then
         return
@@ -317,6 +334,8 @@ function timeCounter:render()
             RenderText("time", string.format("%d%d", min(9, cd2 / 10), min(9, cd2 % 10)), x, y2, scale2, "vcenter", "left")
         end
     end
+    
+    SetViewMode("world")
 end
 
 ----------------------------------------
@@ -377,6 +396,7 @@ end
 
 ----------------------------------------
 ---boss 信息板
+---指定左半边的符卡数量以及boss名渲染方式
 ---@class boss.infobar
 ---@return boss.infobar
 boss.infobar = plus.Class()
@@ -385,10 +405,14 @@ function infobar:init(ui, system)
     self.ui = ui
     self.system = system
     local b = self.system.boss
+
+    ---! 信息板位置
+    ---! by: RhNO3-lx
+    local cx,cy=GetUIOffset()
     if b.__hpbartype2 and int(b.__hpbartype2 / 10) == 2 then
-        self.x, self.y = -185, 213
+        self.x, self.y = -185+cx, 213+cy
     else
-        self.x, self.y = -185, 222
+        self.x, self.y = -185+cx, 222+cy
     end
     self.t = 0
     self.mt = 15
@@ -398,11 +422,20 @@ function infobar:frame()
     if not (IsValid(b)) then
         return
     end
+
+    ---! 信息板位置
+    ---! by: RhNO3-lx
+    local cx,cy=GetUIOffset()
     if b.__hpbartype2 and int(b.__hpbartype2 / 10) == 2 then
-        self.x, self.y = -185, 213
+        self.x, self.y = -185+cx, 213+cy
     else
-        self.x, self.y = -185, 222
+        self.x, self.y = -185+cx, 222+cy
     end
+    -- if b.__hpbartype2 and int(b.__hpbartype2 / 10) == 2 then
+    --     self.x, self.y = -185, 213
+    -- else
+    --     self.x, self.y = -185, 222
+    -- end
     local bscl = b.sc_left
     if self.sc_left == nil then
         self.sc_left = bscl
@@ -416,6 +449,9 @@ function infobar:frame()
     end
 end
 function infobar:render()
+    ---!
+    SetViewMode("ui")
+
     local _ui = self.ui
     local b = self.system.boss
     if not (IsValid(b)) then
@@ -457,10 +493,14 @@ function infobar:render()
             end
         end
     end
+
+    ---!
+    SetViewMode("world")
 end
 
 ----------------------------------------
 ---boss 符卡名（gzz式）
+---todo: 删除符卡奖励分数
 ---@class boss.sc_name
 ---@return boss.sc_name
 boss.sc_name = Class(object)
@@ -482,8 +522,7 @@ function sc_name:init(b, name, score)
     if self.name == "" then
         RawDel(self)
     end
-    self.x = 192
-    self.y = 236
+    
     self.ybot = 380
     self.xoffset = 200
     self.xoffset2 = 0
@@ -501,6 +540,12 @@ function sc_name:init(b, name, score)
     self.talpha2 = 0
 end
 function sc_name:frame()
+    ---! 根据版面大小来附加额外偏移
+    ---! by:RhNO3-lx
+    local cx,cy=GetUIOffset()
+    self.x = 192+cx
+    self.y = 236+cy
+    ---end
     local b = self.boss
     local _ui = b.ui
     local sc_hist = 0
@@ -594,6 +639,7 @@ function sc_name:frame()
     end
 end
 function sc_name:render()
+    SetViewMode("ui")
     local b = self.boss
     local sc_hist = self.sc_hist or { 0, 0 }
     local bonus = self.bonus
@@ -637,9 +683,11 @@ function sc_name:render()
         --RenderText("bonus2", string.format("%d/%d", sc_hist[1], sc_hist[2]), x, y, fontsize, "right")
         --RenderText("bonus", "BONUS          HISTORY", x - 40, y, 0.5, "right")
         SetImageState("cardui_history", "", Color(a, 255, 255, 255))
-        SetImageState("cardui_bonus", "", Color(a, 255, 255, 255))
+        ---! 删除符卡奖励分数
+        ---! by:RhNO3-lx
+        --SetImageState("cardui_bonus", "", Color(a, 255, 255, 255))
         Render("cardui_history", x - 63 + self.xp, y - 6 + self.yp, 0, 0.5)
-        Render("cardui_bonus", x - 156 + self.xp, y - 6 + self.yp, 0, 0.5)
+        --Render("cardui_bonus", x - 156 + self.xp, y - 6 + self.yp, 0, 0.5)
         SetFontState("bonus2", "", Color(a, 255, 255, 255))
         --x = x - 1
         --y = y + 1
@@ -649,7 +697,9 @@ function sc_name:render()
             x = x + xm + 4 + self.xp
             y = y + ym + self.yp
             if bonus ~= "FAILED" then
-                RenderText("bonus2", bonus, x - 90, y, fontsize, "right")
+                ---! 删除符卡奖励分数
+                ---! by:RhNO3-lx
+                --RenderText("bonus2", bonus, x - 90, y, fontsize, "right")
             else
                 SetImageState("sc_failed", "", Color(a, 255, 255, 255))
                 Render("sc_failed", x - 108, y - ym - 6, 0, fontsize)
@@ -672,6 +722,8 @@ function sc_name:render()
             end
         end
     end
+
+    SetViewMode("world")
 end
 function sc_name:kill()
     self.class.del(self)
