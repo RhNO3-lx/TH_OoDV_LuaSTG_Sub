@@ -1,19 +1,23 @@
 
 local post_effect = require("lib.posteffect")
 
+
+---for text,{type, position_x, position_y, font, content, scale}
+---for image,{type, position_x, position_y, name, rot, hscale, vscale}
 local manual_content = {
     {
-        { "text", 0, 0, "", "this is the first option" },
-        { "text", 100, 100, "", "change position" },
-        { "image", 100, 100, "THlib/UI/test_image.png" }
+        { "text", 0, 0, "", "this is the first option", 1 },
+        { "text", 100, 100, "", "change position", 1 },
+        { "image", 0, -50, "test", 0, 0.5, 0.5 }
     },
     {
-        { "text", 0, 0, "", "this is the second option" }
+        { "text", 0, 0, "", "this is the second option", 1 }
     }
 }
 
 local stage_init = stage.New('init', true, true)
 function stage_init:init()
+    
     if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
         setting.windowed = true
         saveConfigure()

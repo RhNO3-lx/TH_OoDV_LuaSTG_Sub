@@ -1110,12 +1110,6 @@ end
 function manual.createContent(content)
     local _content = {}
     local con = {}
-    con.x = {}
-    con.y = {}
-    con.type = {}
-    con.text = {}
-    con.font = {}
-    con.image_path = {}
     for i, v in ipairs(content) do
         con = {}
         con.x = {}
@@ -1123,7 +1117,11 @@ function manual.createContent(content)
         con.type = {}
         con.text = {}
         con.font = {}
-        con.image_path = {}
+        con.name = {}
+        con.rot = {}
+        con.hscale = {}
+        con.vscale = {}
+        content.scale = {}
         con.length = 0
         for j, _ in ipairs(v) do
             con.x[j] = _[2]
@@ -1136,9 +1134,13 @@ function manual.createContent(content)
                     con.font[j] = _[4]
                 end
                 con.text[j] = _[5]
+                con.scale = _[6]
             elseif _[1] == "image" then
                 con.type[j] = "image"
-                con.image_path[j] = _[4]
+                con.name[j] = _[4]
+                con.rot[j] = _[5]
+                con.hscale[j] = _[6]
+                con.vscale[j] = _[7]
             end
             con.length = con.length + 1
         end
