@@ -257,6 +257,7 @@ function DoFrame()
         gameEventDispatcher:DispatchEvent("GameState.BeforeGameStageChange")
         stage.DestroyCurrentStage()
         ChangeGameStage()
+        ui.is_bg_render_create = false
         stage.CreateNextStage()
         gameEventDispatcher:DispatchEvent("GameState.AfterGameStageChange")
     end

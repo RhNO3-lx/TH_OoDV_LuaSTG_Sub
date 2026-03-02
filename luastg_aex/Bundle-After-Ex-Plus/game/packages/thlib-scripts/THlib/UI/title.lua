@@ -1,19 +1,23 @@
 
 local post_effect = require("lib.posteffect")
 
+
+---for text,{type, position_x, position_y, font, content, scale}
+---for image,{type, position_x, position_y, name, rot, hscale, vscale}
 local manual_content = {
     {
-        { "text", 0, 0, "", "this is the first option" },
-        { "text", 100, 100, "", "change position" },
-        { "image", 100, 100, "THlib/UI/test_image.png" }
+        { "text", 0, 0, "", "this is the first option", 1 },
+        { "text", 100, 100, "", "change position", 1 },
+        { "image", 0, -50, "test", 0, 0.5, 0.5 }
     },
     {
-        { "text", 0, 0, "", "this is the second option" }
+        { "text", 0, 0, "", "this is the second option", 1 }
     }
 }
 
 local stage_init = stage.New('init', true, true)
 function stage_init:init()
+    
     if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
         setting.windowed = true
         saveConfigure()
@@ -258,7 +262,31 @@ function stage_menu:init()
                     table.insert(menu_items, { string.match(s, "^[%w_][%w_ ]*"), function()
                         menu.FlyOut(menu_practice[sg], 'left')
                         last_menu = menu_practice[sg]
-                        menu.FlyIn(menu_player_select, 'right')
+                        --
+                        scoredata.player_select = 1
+                        menu.FlyOut(menu_player_select, 'left')
+                        lstg.var.player_name = player_list[i][2]
+                        lstg.var.rep_player = player_list[i][3]
+                        task.New(stage_menu_self, function()
+                            for i = 1, 60 do
+                                SetBGMVolume('menu', 1 - i / 60)
+                                task.Wait()
+                            end
+                        end)
+                        task.New(stage_menu_self, function()
+                            task.Wait(30)
+                            New(mask_fader, 'close')
+                            task.Wait(30)
+                            if practice == 'stage' then
+                                stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])
+                            elseif practice == 'spell' then
+                                stage.IsSCpractice = true--判定进入符卡练习的flag add by OLC
+                                stage.group.PracticeStart('Spell Practice@Spell Practice')
+                            else
+                                stage.group.Start(last_menu.group_name)
+                            end
+                        end)
+                        --menu.FlyIn(menu_player_select, 'right')
                     end })
                 end
             end

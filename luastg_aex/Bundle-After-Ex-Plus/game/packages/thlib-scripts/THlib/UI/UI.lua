@@ -56,6 +56,9 @@ LoadImage("rank_Hard", "ui_rank", 0, 64, 144, 32)
 LoadImage("rank_Lunatic", "ui_rank", 0, 96, 144, 32)
 LoadImage("rank_Extra", "ui_rank", 0, 128, 144, 32)
 
+LoadTexture("test_image", "THlib/UI/test_image.png", true)
+LoadImage("test", "test_image", 0, 0, 512, 128)
+
 ui.menu = {
     font_size = 0.675,
     line_height = 28,
@@ -363,8 +366,9 @@ function ui.DrawManualContent(x, y, content, alpha, color)
         -- print("------------")
         if con.type[i] == "text" then
             RenderTTF2(con.font[i], con.text[i], con.x[i] + x, con.x[i] + x, con.y[i] + y, con.y[i] + y, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.focused_color1)), "", "vcenter", "noclip")
-        elseif con.type == "image" then
-
+        elseif con.type[i] == "image" then
+            SetImageState(con.name[i], '', Color(alpha * 255, unpack(color)))
+            Render(con.name[i], con.x[i] + x, con.y[i] + y, con.rot[i], con.hscale[i], con.vscale[i])
         end
     end
 end
@@ -483,15 +487,15 @@ end
 function lstg_ui:drawMenuBG()
     self["drawMenuBG" .. self.type](self)
 end
-local is_bg_render_create = false
-function lstg_ui:drawMenuBG1()
+ui.is_bg_render_create = false
+function lstg_ui:drawMenuBG1(shader)
     SetViewMode "ui"
-    if not is_bg_render_create and stage.current_stage.stage_name == "menu" then
+    if not ui.is_bg_render_create then
         lstg.CreateRenderTarget("rt:background")
         lstg.PushRenderTarget("rt:background")
         Render("menu_bg", 320, 240, 0, 0.25, 0.25)
         lstg.PopRenderTarget()
-        is_bg_render_create = true
+        ui.is_bg_render_create = true
     end
     if stage.current_stage.stage_name == "menu" then
         post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
