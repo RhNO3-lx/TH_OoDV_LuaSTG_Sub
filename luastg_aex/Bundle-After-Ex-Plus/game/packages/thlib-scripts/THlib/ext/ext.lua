@@ -138,7 +138,8 @@ do
     reg("thlib-default-player:spell~enemy-bullet1", GROUP_SPELL, GROUP_INDES)
     -- 用于检查与自机碰撞 (by OLC)
     reg("thlib-default-area:area~player", GROUP_CPLAYER, GROUP_PLAYER)
-    reg("thlib-default-basic:food~player", GROUP_FOOD, GROUP_PLAYER) -- by baiABC
+    ---!change player to player collider, by RhNO3-lx
+    reg("thlib-default-basic:food~player-eat", GROUP_FOOD, GROUP_PLAYER_EAT) -- by baiABC
 end
 
 ----------------------------------------

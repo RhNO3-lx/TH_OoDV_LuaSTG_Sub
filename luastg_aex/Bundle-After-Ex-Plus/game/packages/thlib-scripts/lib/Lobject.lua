@@ -19,6 +19,7 @@ GROUP_NONTJT = 7
 GROUP_SPELL = 8 -- 由OLC添加，可用于自机bomb
 GROUP_CPLAYER = 9 -- 由OLC添加，可用于检测自机
 GROUP_FOOD = 10 -- by baiABC，可用于检测（可被吃掉的）鱼
+GROUP_PLAYER_EAT=11 -- by RhNO3-lx, 作为自机啃咬碰撞体
 
 GROUP_ALL = 16
 GROUP_NUM_OF_GROUP = 16
@@ -40,6 +41,7 @@ do
     reg("thlib-default-player:spell", GROUP_SPELL)
     reg("thlib-default-area:area", GROUP_CPLAYER)
     reg("thlib-default-basic:food", GROUP_FOOD)
+    reg("thlib-default-basic:player-eat",GROUP_PLAYER_EAT)
 end
 
 --------------------------------------------------------------------------------

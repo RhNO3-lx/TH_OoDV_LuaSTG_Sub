@@ -64,9 +64,10 @@ function bullet:frame()
     task.Do(self)
 end
 
+---! 取消消弹爆出来的道具
 function bullet:kill()
     local w = lstg.world
-    New(item_faith_minor, self.x, self.y)
+    ---New(item_faith_minor, self.x, self.y)
     if self._index and BoxCheck(self, w.boundl, w.boundr, w.boundb, w.boundt) then
         New(BulletBreak, self.x, self.y, self._index)
     end
