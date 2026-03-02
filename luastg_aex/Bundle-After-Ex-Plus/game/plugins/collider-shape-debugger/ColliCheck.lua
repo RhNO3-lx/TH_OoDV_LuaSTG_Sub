@@ -81,6 +81,7 @@ class.list_default = {
     { GROUP_ENEMY_BULLET, { 255, 255, 50, 50 } },
     { GROUP_INDES, { 255, 255, 165, 10 } },
     { GROUP_FOOD, { 255, 128, 64, 192 } },
+    { GROUP_PLAYER_EAT, { 100, 255, 128, 255 } },
 }
 
 local known_group_values = {
@@ -94,6 +95,8 @@ local known_group_values = {
     GROUP_NONTJT = 7,
     GROUP_SPELL = 8,
     GROUP_CPLAYER = 9,
+    GROUP_FOOD = 10,
+    GROUP_PLAYER_EAT = 11
 }
 for k, v in pairs(known_group_values) do
     known_group_values[v] = k
