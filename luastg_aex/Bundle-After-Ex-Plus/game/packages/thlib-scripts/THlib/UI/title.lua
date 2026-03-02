@@ -262,7 +262,31 @@ function stage_menu:init()
                     table.insert(menu_items, { string.match(s, "^[%w_][%w_ ]*"), function()
                         menu.FlyOut(menu_practice[sg], 'left')
                         last_menu = menu_practice[sg]
-                        menu.FlyIn(menu_player_select, 'right')
+                        --
+                        scoredata.player_select = 1
+                        menu.FlyOut(menu_player_select, 'left')
+                        lstg.var.player_name = player_list[i][2]
+                        lstg.var.rep_player = player_list[i][3]
+                        task.New(stage_menu_self, function()
+                            for i = 1, 60 do
+                                SetBGMVolume('menu', 1 - i / 60)
+                                task.Wait()
+                            end
+                        end)
+                        task.New(stage_menu_self, function()
+                            task.Wait(30)
+                            New(mask_fader, 'close')
+                            task.Wait(30)
+                            if practice == 'stage' then
+                                stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])
+                            elseif practice == 'spell' then
+                                stage.IsSCpractice = true--判定进入符卡练习的flag add by OLC
+                                stage.group.PracticeStart('Spell Practice@Spell Practice')
+                            else
+                                stage.group.Start(last_menu.group_name)
+                            end
+                        end)
+                        --menu.FlyIn(menu_player_select, 'right')
                     end })
                 end
             end
@@ -317,7 +341,6 @@ function stage_menu:init()
                 Print(filename, stageName)
                 stage.IsReplay = true--判定进入rep播放的flag add by OLC
                 stage.Set(stageName, 'load', filename)
-                ui.is_bg_render_create = false
             end)
         end
     end)
