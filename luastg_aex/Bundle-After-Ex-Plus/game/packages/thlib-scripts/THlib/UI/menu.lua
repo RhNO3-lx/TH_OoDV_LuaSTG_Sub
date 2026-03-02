@@ -731,6 +731,118 @@ end
 -------------------------------musicroom----------------------------------------------------
 musicroom = Class(object)
 
+function musicroom:init(title, item, content, keyslot, offx, offy)
+    self.layer = LAYER_TOP
+    self.group = GROUP_GHOST
+    self.alpha = 1
+    self.offx = offx or 0
+    self.x = screen.width * 0.5 - screen.width
+    self.y = screen.height * 0.5
+    self.bound = false
+    self.locked = true
+    self.title = title
+    self.item = item
+    self.content = manual.createContent(content)
+    self.text = {}
+    self.func = {}
+    for i = 1, #item do
+        self.text[i] = item[i][1]
+        self.func[i] = item[i][2]
+    end
+    self.pos = 1
+    self.pos_pre = 1
+    self.last_pos = self.pos
+    self.pos_changed = 0
+    self.no_pos_change = false
+    self.keyslot = keyslot
+    if item[#item][1] == 'exit' then
+        self.exit_func = item[#item][2]
+        self.text[#item] = nil
+        self.func[#item] = nil
+    end
+end
+
+function musicroom:frame()
+    task.Do(self)
+    if self.locked then
+        return
+    end
+    if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
+        self.last_pos = self.pos
+        self.pos = self.pos - 1
+        PlaySound('select00', 0.3)
+    end
+    if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
+        self.last_pos = self.pos
+        self.pos = self.pos + 1
+        PlaySound('select00', 0.3)
+    end
+    self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
+    if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
+        self.func[self.pos]()
+        PlaySound('ok00', 0.3)
+    elseif KeyIsPressed('spell', self.keyslot) and self.exit_func then
+        self.exit_func()
+        PlaySound('cancel00', 0.3)
+    end
+    if self.pos_changed > 0 then
+        self.pos_changed = self.pos_changed - 1
+    end
+    if self.pos_pre ~= self.pos then
+        self.pos_changed = ui.menu.shake_time
+    end
+    self.pos_pre = self.pos
+end
+
+local offy = 50
+local offTimer = 0
+local alpha = 0
+function musicroom:render()
+    SetViewMode('ui')
+    ui.DrawMusicTTF('menuttf', self.title, self.text, self.content[self.pos], self.pos, self.x + self.offx, self.y, self.alpha, self.timer, 0, "left")
+end
+
+function musicroom.createContent(content)
+    local _content = {}
+    local con = {}
+    for i, v in ipairs(content) do
+        con = {}
+        con.x = {}
+        con.y = {}
+        con.type = {}
+        con.text = {}
+        con.font = {}
+        con.name = {}
+        con.rot = {}
+        con.hscale = {}
+        con.vscale = {}
+        content.scale = {}
+        con.length = 0
+        for j, _ in ipairs(v) do
+            con.x[j] = _[2]
+            con.y[j] = _[3]
+            if _[1] == "text" then
+                con.type[j] = "text"
+                if _[4] == "" then
+                    con.font[j] = 'menuttf'
+                else
+                    con.font[j] = _[4]
+                end
+                con.text[j] = _[5]
+                con.scale = _[6]
+            elseif _[1] == "image" then
+                con.type[j] = "image"
+                con.name[j] = _[4]
+                con.rot[j] = _[5]
+                con.hscale[j] = _[6]
+                con.vscale[j] = _[7]
+            end
+            con.length = con.length + 1
+        end
+        table.insert(_content, con)
+    end
+    return _content
+end
 ----------------------------------------------------------------------------
 -------------------------options--------------------------------------------
 options = Class(object)
@@ -1113,8 +1225,8 @@ function manual:render()
     ui.DrawManualTTF('menuttf', self.title, self.text, self.content[self.pos], self.pos, self.x + self.offx, self.y, self.alpha, self.timer, 0, "left")
     if self.last_pos ~= self.pos then
         self.locked = true
-        ui.DrawManualContent(self.x, self.y + (-offTimer) * self.pos - self.last_pos, self.content[self.last_pos], 1 - alpha, ui.menu.focused_color1)
-        ui.DrawManualContent(self.x, self.y + (offy - offTimer) * self.pos - self.last_pos, self.content[self.pos], alpha, ui.menu.focused_color1)
+        ui.DrawManualContent(self.x, self.y + (-offTimer) * (self.pos - self.last_pos) / math.abs(self.pos - self.last_pos), self.content[self.last_pos], 1 - alpha, ui.menu.focused_color1)
+        ui.DrawManualContent(self.x, self.y + (offy - offTimer) * (self.pos - self.last_pos) / math.abs(self.pos - self.last_pos), self.content[self.pos], alpha, ui.menu.focused_color1)
         alpha = alpha + 0.05
         offTimer = offTimer + 2.5
         if alpha >= 1 then
