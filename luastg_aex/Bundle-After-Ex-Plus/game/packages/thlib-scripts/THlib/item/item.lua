@@ -13,13 +13,41 @@ lstg.var.LifeExtendPoint=100
 lstg.var.BombExtendPoint=100
 lstg.var.LifechipPoint=30
 lstg.var.BombchipPoint=30
+lstg.var.LifeMax=7
+lstg.var.BombMax=7
+lstg.var.PowerMax=400
 
 ---! 改用血条和bomb系统
 ---! use lstg.var.chip, lstg.var.bombchip to idicate unfilled life or bomb
 lstg.var.MissBombCompensate=2
 lstg.var.MissPowerPenality=30
 
+local function LifeExtendCheck()
+    ---! 生命上限检测 RhNO3-lx
+    if lstg.var.chip >= lstg.var.LifeExtendPoint then
+        lstg.var.lifeleft = lstg.var.lifeleft + 1
+        lstg.var.chip = lstg.var.chip - lstg.var.LifeExtendPoint
+        PlaySound('extend', 0.5)
+        New(hinter, 'hint.extend', 0.6, 0, 112, 15, 120)
+    end
+    if lstg.var.lifeleft >= lstg.var.LifeMax then
+        lstg.var.lifeleft = lstg.var.LifeMax
+        lstg.var.chip = 0
+    end
+end
 
+local function BombExtendCheck()
+    ---! bomb上限检测 RhNO3-lx 
+    if lstg.var.bombchip >= lstg.var.BombExtendPoint then
+        lstg.var.bomb = lstg.var.bomb + 1
+        lstg.var.bombchip = lstg.var.bombchip - lstg.var.BombExtendPoint
+        PlaySound('cardget', 0.8)
+    end
+    if lstg.var.bomb >= lstg.var.BombMax then
+        lstg.var.bomb = lstg.var.BombMax
+        lstg.var.bombchip = 0
+    end
+end
 
 item = Class(object)
 
@@ -84,12 +112,12 @@ end
 
 function GetPower(v)
     local before = int(lstg.var.power / 100)
-    lstg.var.power = min(400, lstg.var.power + v)
+    lstg.var.power = min(lstg.var.PowerMax, lstg.var.power + v)
     local after = int(lstg.var.power / 100)
     if after > before then
         PlaySound('powerup1', 0.5)
     end
-    if lstg.var.power >= 400 then
+    if lstg.var.power >= lstg.var.PowerMax then
         lstg.var.score = lstg.var.score + v * 100
     end
     --    if lstg.var.power==500 then
@@ -135,7 +163,11 @@ end
 function item_extend:collect()
     lstg.var.lifeleft = lstg.var.lifeleft + 1
     PlaySound('extend', 0.5)
-    New(hinter, 'hint.extend', 0.6, 0, 112, 15, 120)
+    if lstg.var.lifeleft <= lstg.var.LifeMax then
+        New(hinter, 'hint.extend', 0.6, 0, 112, 15, 120)
+    end
+    ---added
+    LifeExtendCheck()
 end
 
 item_chip = Class(item)
@@ -145,12 +177,8 @@ function item_chip:init(x, y)
 end
 function item_chip:collect()
     lstg.var.chip = lstg.var.chip + lstg.var.LifechipPoint
-    if lstg.var.chip == lstg.var.LifeExtendPoint then
-        lstg.var.lifeleft = lstg.var.lifeleft + 1
-        lstg.var.chip = 0
-        PlaySound('extend', 0.5)
-        New(hinter, 'hint.extend', 0.6, 0, 112, 15, 120)
-    end
+    ---!added
+    LifeExtendCheck()
 end
 
 item_bombchip = Class(item)
@@ -160,11 +188,8 @@ function item_bombchip:init(x, y)
 end
 function item_bombchip:collect()
     lstg.var.bombchip = lstg.var.bombchip + 1
-    if lstg.var.bombchip == lstg.var.BombExtendPoint then
-        lstg.var.bomb = lstg.var.bomb + 1
-        lstg.var.bombchip = 0
-        PlaySound('cardget', 0.8)
-    end
+    ---! added
+    BombExtendCheck()
 end
 
 item_bomb = Class(item)
@@ -173,7 +198,10 @@ function item_bomb:init(x, y)
 end
 function item_bomb:collect()
     lstg.var.bomb = lstg.var.bomb + 1
-    PlaySound('cardget', 0.8)
+    if lstg.var.bomb <= lstg.var.BombMax then
+        PlaySound('cardget', 0.8)
+    end
+    BombExtendCheck()
 end
 
 item_faith = Class(item)
@@ -185,6 +213,7 @@ function item_faith:collect()
     --New(float_text, 'item', '10000', self.x, self.y + 6, 0.75, 90, 60, 0.5, 0.5, Color(0x8000C000), Color(0x0000C000))
     --var.faith = var.faith + 100
     lstg.var.BombchipPoint=lstg.var.BombchipPoint+1
+    BombExtendCheck()
 end
 
 ---! todo: 消弹时不生成
@@ -239,19 +268,23 @@ function item_faith_minor:collect()
     var.score = var.score + 500
 end
 
+---! 在这里把point给改成小的残机碎片
 item_point = Class(item)
 function item_point:init(x, y)
     item.init(self, x, y, 2)
 end
 function item_point:collect()
     local var = lstg.var
-    if self.attract == 8 then
-        New(float_text, 'item', var.pointrate, self.x, self.y + 6, 0.75, 90, 60, 0.5, 0.5, Color(0x80FFFF00), Color(0x00FFFF00))
-        var.score = var.score + var.pointrate
-    else
-        New(float_text, 'item', int(var.pointrate / 20) * 10, self.x, self.y + 6, 0.75, 90, 60, 0.5, 0.5, Color(0x80FFFFFF), Color(0x00FFFFFF))
-        var.score = var.score + int(var.pointrate / 20) * 10
-    end
+    -- if self.attract == 8 then
+    --     New(float_text, 'item', var.pointrate, self.x, self.y + 6, 0.75, 90, 60, 0.5, 0.5, Color(0x80FFFF00), Color(0x00FFFF00))
+    --     var.score = var.score + var.pointrate
+    -- else
+    --     New(float_text, 'item', int(var.pointrate / 20) * 10, self.x, self.y + 6, 0.75, 90, 60, 0.5, 0.5, Color(0x80FFFFFF), Color(0x00FFFFFF))
+    --     var.score = var.score + int(var.pointrate / 20) * 10
+    -- end
+
+    var.LifechipPoint = var.LifechipPoint + 1
+    LifeExtendCheck()
 end
 
 function item.DropItem(x, y, drop)
