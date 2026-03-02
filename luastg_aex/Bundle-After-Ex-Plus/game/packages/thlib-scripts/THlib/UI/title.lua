@@ -416,6 +416,7 @@ function stage_menu:init()
     --
     menu_items = {}
     table.insert(menu_items, { '1.text~textextext', function ()
+        
     end })
     table.insert(menu_items, { 'exit', function()
         task.New(self, function()

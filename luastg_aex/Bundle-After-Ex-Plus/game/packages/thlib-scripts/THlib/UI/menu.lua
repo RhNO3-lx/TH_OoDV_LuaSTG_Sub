@@ -947,9 +947,6 @@ function options:setDefault()
     options.copyDataToSetting()
 end
 
-local auto_shoot = false
-local auto_bomb = false
-
 local mode_window_index = 1
 local mode_window_name = {}
 local function updateDisplayMode()
@@ -1144,7 +1141,7 @@ function options:initControl()
     end
     self.control.data["SetSEVolume"] = cfg.bgmvolume
     for i in ipairs(self.control.content["SetSEVolume"]) do
-        if self.control.content["SetSEVolume"][i] == cfg.bgmvolume then
+        if self.control.content["SetSEVolume"][i] == cfg.sevolume then
             self.control.index["SetSEVolume"] = i
         end
     end
