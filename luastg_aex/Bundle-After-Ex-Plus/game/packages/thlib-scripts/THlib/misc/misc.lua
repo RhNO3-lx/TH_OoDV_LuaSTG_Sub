@@ -13,8 +13,14 @@ misc = {}
 hinter = Class(object)
 function hinter:init(img, size, x, y, t1, t2, fade)
     self.img = img
-    self.x = x
-    self.y = y
+    self.cx = x
+    self.cy = y
+
+    ---! 修正提示信息渲染位置 by:RhNO3-lx
+    self.scx,self.scy=GetUIOffset()
+    self.x=self.cx+self.scx
+    self.y=self.cy+self.scy
+
     self.t1 = t1
     self.t2 = t2
     self.fade = fade
@@ -25,6 +31,10 @@ function hinter:init(img, size, x, y, t1, t2, fade)
     self.hscale = self.size
 end
 function hinter:frame()
+    ---! 修正提示信息渲染位置
+    self.x=self.cx+self.scx
+    self.y=self.cy+self.scy
+
     if self.timer < self.t1 then
         self.t = self.timer / self.t1
     elseif self.timer < self.t1 + self.t2 then
@@ -36,6 +46,7 @@ function hinter:frame()
     end
 end
 function hinter:render()
+    SetViewMode("ui")
     if self.fade then
         SetImageState(self.img, '', Color(self.t * 255, 255, 255, 255))
         self.vscale = self.size
@@ -45,6 +56,7 @@ function hinter:render()
         self.vscale = self.t * self.size
         object.render(self)
     end
+    SetViewMode("world")
 end
 
 bubble = Class(object)

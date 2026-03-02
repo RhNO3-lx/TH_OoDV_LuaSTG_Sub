@@ -918,16 +918,17 @@ function system:resultSpell(info)
             local score = info.score - info.score % 10
             lstg.var.score = lstg.var.score + score
             PlaySound('cardget', 1.0, 0)
-            New(hinter_bonus, 'hint.getbonus', 0.6, 0, yoffset[1], 15, 120, true, score)
-            New(kill_timer, 0, yoffset[2], info.current_timer)
-            New(kill_timer2, 0, yoffset[3], info.real_timer)
+            --New(hinter_bonus, 'hint.getbonus', 0.6, 0, yoffset[1], 15, 120, true, score)
+            New(hinter, 'hint.getbonus', 0.6, 0, yoffset[1], 15, 120)
+            --New(kill_timer, 0, yoffset[2], info.current_timer)
+            --New(kill_timer2, 0, yoffset[3], info.real_timer)
         else
             if info.timeout and not (info.time_sc) then
                 PlaySound('fault', 1.0, 0)
             end
             New(hinter, 'hint.bonusfail', 0.6, 0, yoffset[1], 15, 120)
-            New(kill_timer, 0, yoffset[2], info.current_timer)
-            New(kill_timer2, 0, yoffset[3], info.real_timer)
+            --New(kill_timer, 0, yoffset[2], info.current_timer)
+            --New(kill_timer2, 0, yoffset[3], info.real_timer)
         end
     end
 end

@@ -595,8 +595,8 @@ function boss_death_ef_unit:render()
     DefaultRenderFunc(self)
 end
 
---非或符结束时弹出的文字
 
+--非或符结束时弹出的文字
 kill_timer = Class(object)
 function kill_timer:init(x, y, t)
     self.t = t

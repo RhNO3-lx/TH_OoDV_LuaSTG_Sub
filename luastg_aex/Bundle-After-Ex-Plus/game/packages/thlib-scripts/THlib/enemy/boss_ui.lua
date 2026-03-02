@@ -9,9 +9,9 @@
 ---! by: RhNO3-lx
 ---! 指定ui模式下渲染的偏移量，计算版面中心坐标
 ---! 警告：并未使ui能随版面大小改变而更改偏移，不过我认为咱们并不需要
-local function GetUIOffset()
+function GetUIOffset()
     local w=lstg.world
-    local cx, cy = (w.scrr-w.scrl)/2, (w.scrt-w.scrb)/2
+    local cx, cy = (w.scrr+w.scrl)/2, (w.scrt+w.scrb)/2
     return cx, cy
 end
 

@@ -572,15 +572,20 @@ function lstg_ui:drawDifficulty()
                 diff = "SpellCard"
             end
         end
-        local x1 = -192 + w.scrr
-        local x2 = 112 + w.scrr
-        local y1 = 457
-        local y2 = 448
+
+        ---!修改显示难度的位置
+        local cx,cy=GetUIOffset()
+        local x1 = cx
+        local x2 = cx*1.6
+        local y1 = 450
+        local y2 = 50
         local dy = 22
         local s = stage.current_stage
         local timer = s.timer
         local a, t = 255, 1
         local x, y = x2, y2
+
+        ---! 在这里控制难度的渐变与消除
         if lstg.var.is_parctice or s.number == 1 then
             if timer < 60 then
                 x, y = x1, y1
@@ -599,11 +604,25 @@ function lstg_ui:drawDifficulty()
                 a = t * 255
             end
         end
+
+        ---! 如果难度是传统的，则使用内置纹理素材
+        
+        local OpacityChange=1
+        if IsValid(lstg.player)==false then
+            OpacityChange=1
+            print("player invalid")
+        else
+            print("enter")
+            if Dist(lstg.player.x,lstg.player.y,x,y)<=50 then
+                OpacityChange=0.2
+            end
+        end
         if diff == "Easy" or diff == "Normal" or diff == "Hard" or diff == "Lunatic" or diff == "Extra" then
-            SetImageState("rank_" .. diff, "", Color(a, 255, 255, 255))
+            SetImageState("rank_" .. diff, "", Color(a*OpacityChange, 255, 255, 255))
             Render("rank_" .. diff, x, y, 0, 0.5, t * 0.5)
         else
-            SetFontState("menu", "", Color(a, 255, 255, 255))
+        ---! 否则单纯打印文本
+            SetFontState("menu", "", Color(a*OpacityChange, 255, 255, 255))
             RenderText("menu", diff, x, y + dy, 0.5, "center")
         end
     end
