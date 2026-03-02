@@ -483,7 +483,7 @@ end
 function lstg_ui:drawMenuBG()
     self["drawMenuBG" .. self.type](self)
 end
-local is_bg_render_create = false
+ui.is_bg_render_create = false
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
     if not is_bg_render_create and stage.current_stage.stage_name == "menu" then
@@ -493,9 +493,10 @@ function lstg_ui:drawMenuBG1()
         lstg.PopRenderTarget()
         is_bg_render_create = true
     end
-    if stage.current_stage.stage_name == "menu" then
-        post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
-    end
+    lstg.PushRenderTarget("rt:background")
+    Render("menu_bg", 320, 240, 0, 0.25, 0.25)
+    lstg.PopRenderTarget()
+    post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
             string.format("%.1ffps", GetFPS()),

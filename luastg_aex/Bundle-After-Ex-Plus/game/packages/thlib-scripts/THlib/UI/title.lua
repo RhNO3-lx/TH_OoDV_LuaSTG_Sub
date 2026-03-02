@@ -8,7 +8,7 @@ local manual_content = {
     {
         { "text", 0, 0, "", "this is the first option", 1 },
         { "text", 100, 100, "", "change position", 1 },
-        { "image", 0, -50, "test", 0, 0.5, 0.5 }
+        --{ "image", 0, -50, "test", 0, 0.5, 0.5 }
     },
     {
         { "text", 0, 0, "", "this is the second option", 1 }
@@ -93,7 +93,7 @@ function stage_menu:init()
     --
     menu_items = { { 'Start Game', function()
         task.New(self, function()
-            while ui.menu_bulr < 2 do
+            while ui.menu_bulr < 0.8 do
                 ui.menu_bulr = ui.menu_bulr + 0.1
                 task.Wait()
             end
@@ -105,7 +105,7 @@ function stage_menu:init()
     if _allow_practice then
         table.insert(menu_items, { 'Stage Practice', function()
             task.New(self, function()
-            while ui.menu_bulr < 2 do
+            while ui.menu_bulr < 0.8 do
                 ui.menu_bulr = ui.menu_bulr + 0.1
                 task.Wait()
             end
@@ -124,7 +124,7 @@ function stage_menu:init()
     end
     table.insert(menu_items, { 'Replay', function()
         task.New(self, function()
-            while ui.menu_bulr < 2 do
+            while ui.menu_bulr < 0.8 do
                 ui.menu_bulr = ui.menu_bulr + 0.1
                 task.Wait()
             end
@@ -138,7 +138,7 @@ function stage_menu:init()
     end})
     table.insert(menu_items, { 'Option', function ()
         task.New(self, function()
-            while ui.menu_bulr < 2 do
+            while ui.menu_bulr < 0.8 do
                 ui.menu_bulr = ui.menu_bulr + 0.1
                 task.Wait()
             end
