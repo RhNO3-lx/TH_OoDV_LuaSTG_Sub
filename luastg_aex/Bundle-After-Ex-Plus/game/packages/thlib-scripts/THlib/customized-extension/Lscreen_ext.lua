@@ -54,6 +54,22 @@ function Set3DWorld(l3d,r3d,b3d,t3d)
     w.t3d=t3d
 end
 
+---! 指定ui模式下渲染的偏移量，计算版面中心坐标
+---! 警告：并未使ui能随版面大小改变而更改偏移，不过我认为咱们并不需要
+function GetUIOffset()
+    local w=lstg.world
+    local cx, cy = (w.scrr+w.scrl)/2, (w.scrt+w.scrb)/2
+    return cx, cy
+end
+
+---@return number,number@player的屏幕坐标
+function GetPlayerScr()
+    local cx,cy=GetUIOffset()
+    local wo=lstg.worldoffset
+    local player_scrx=player.x-wo.centerx+cx
+    local player_scry=player.y-wo.centery+cy
+    return player_scrx,player_scry
+end
 ---! invoke example:
 --[[
 

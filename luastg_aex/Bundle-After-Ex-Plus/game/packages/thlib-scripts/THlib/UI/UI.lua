@@ -613,11 +613,7 @@ function lstg_ui:drawDifficulty()
             -- print(x)
             -- print(player.y)
             -- print(y)
-            local wo=lstg.worldoffset
-            local w=lstg.world
-            local cx,cy=GetUIOffset()
-            local player_scrx=player.x-wo.centerx+cx
-            local player_scry=player.y-wo.centery+cy
+            local player_scrx,player_scry=GetPlayerScr()
             --print(x,y,player_scrx,player_scry)
             local r=Dist(player_scrx,player_scry,x,y)
             local sr=70
@@ -636,6 +632,7 @@ function lstg_ui:drawDifficulty()
     end
 end
 function lstg_ui:drawInfo1()
+    --[[
     local w = lstg.world
     local RenderImgList = {
         { "line_1", 109 + w.scrr, 419, 0, 1, 1 },
@@ -736,8 +733,28 @@ function lstg_ui:drawInfo1()
     RenderScore("score2", lstg.var.pointrate, 204 + w.scrr, 239, 0.4, "right")
     SetFontState("score3", "", Color(alplat, 255, 255, 255))
     RenderText("score3", string.format("%d", lstg.var.graze), 204 + w.scrr, 216, 0.4, "right")
+    ]]
+    ---! 绘制新的自机ui --RhNO3-lx
+    SetViewMode("ui")
+    if IsValid(lstg.player) then
+        PutPlayerUI(PlayerUI.BackGround)
+        PutPlayerUIBar()
+        if lstg.var.ShowLife then
+            PutPlayerUI(PlayerUI.Life)
+        end
+        if lstg.var.ShowPower then
+            --print("enter power")
+            PutPlayerUI(PlayerUI.Power)
+        end
+        if lstg.var.ShowBomb then
+            PutPlayerUI(PlayerUI.Bomb)
+        end
+    end
+    SetViewMode("world")
+
 end
 function lstg_ui:drawInfo2()
+    --[[
     RenderText("score", "HiScore", 8, 520, 0.5, "left", "top")
     RenderText("score",
             string.format("%d", max(lstg.tmpvar.hiscore or 0, lstg.var.score)),
@@ -768,6 +785,7 @@ function lstg_ui:drawInfo2()
     RenderText("score",
             string.rep("*", max(0, lstg.var.bomb)),
             380, 490, 0.5, "right", "top")
+    ]]
 end
 
 function ResetUI()

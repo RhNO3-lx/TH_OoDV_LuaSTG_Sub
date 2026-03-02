@@ -14,8 +14,9 @@ lstg.var.BombExtendPoint=100
 lstg.var.LifechipPoint=30
 lstg.var.BombchipPoint=30
 lstg.var.LifeMax=7
-lstg.var.BombMax=7
+lstg.var.LifeMax=7
 lstg.var.PowerMax=400
+lstg.var.PowerExtendPoint=100
 
 ---! 改用血条和bomb系统
 ---! use lstg.var.chip, lstg.var.bombchip to idicate unfilled life or bomb
@@ -43,8 +44,8 @@ local function BombExtendCheck()
         lstg.var.bombchip = lstg.var.bombchip - lstg.var.BombExtendPoint
         PlaySound('cardget', 0.8)
     end
-    if lstg.var.bomb >= lstg.var.BombMax then
-        lstg.var.bomb = lstg.var.BombMax
+    if lstg.var.bomb >= lstg.var.LifeMax then
+        lstg.var.bomb = lstg.var.LifeMax
         lstg.var.bombchip = 0
     end
 end
@@ -111,14 +112,14 @@ function item:colli(other)
 end
 
 function GetPower(v)
-    local before = int(lstg.var.power / 100)
+    local before = int(lstg.var.power / lstg.var.PowerExtendPoint)
     lstg.var.power = min(lstg.var.PowerMax, lstg.var.power + v)
-    local after = int(lstg.var.power / 100)
+    local after = int(lstg.var.power / lstg.var.PowerExtendPoint)
     if after > before then
         PlaySound('powerup1', 0.5)
     end
     if lstg.var.power >= lstg.var.PowerMax then
-        lstg.var.score = lstg.var.score + v * 100
+        lstg.var.score = lstg.var.score + v * lstg.var.PowerExtendPoint
     end
     --    if lstg.var.power==500 then
     --        for i,o in ObjList(GROUP_ITEM) do
@@ -198,7 +199,7 @@ function item_bomb:init(x, y)
 end
 function item_bomb:collect()
     lstg.var.bomb = lstg.var.bomb + 1
-    if lstg.var.bomb <= lstg.var.BombMax then
+    if lstg.var.bomb <= lstg.var.LifeMax then
         PlaySound('cardget', 0.8)
     end
     BombExtendCheck()

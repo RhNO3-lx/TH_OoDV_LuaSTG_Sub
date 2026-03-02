@@ -1,14 +1,14 @@
 ---! 在这里添加player ui杂项的渲染支持
 ---! 调用时机由编辑器内的关卡进程中决定，手动渲染player中的物体
 
-PlayerUIType={}
-PlayerUIType.Life=1
-PlayerUIType.Bomb=2
-PlayerUIType.Power=3
-PlayerUIType.BackGround=4
+PlayerUI={}
+PlayerUI.Life=1
+PlayerUI.Bomb=2
+PlayerUI.Power=3
+PlayerUI.BackGround=4
 
 lstg.var.ShowLife=true
-lstg.var.ShowBomb=false
+lstg.var.ShowBomb=true
 lstg.var.ShowPower=true
 lstg.var.ShowBackground=true
 
@@ -17,11 +17,13 @@ lstg.var.ShowBackground=true
 ---@param y number @y坐标
 ---@param rot number @起始角度
 ---@param la number @总角度
-function RenderRingEx(tex,x, y, rot, la, r1, r2, n)
+---@param dir number @1为顺时针，-1为逆时针
+function RenderRingEx(tex,x, y, rot, la, r1, r2, dir,n)
+    dir=dir or -1
     n=n or 360
     local da = la / n
     for i = 1, n do
-        local a = rot + da * i
+        local a = rot + da * i*dir
         Render4V(tex,
                 r1 * cos(a + da) + x, r1 * sin(a + da) + y, 0.5,
                 r2 * cos(a + da) + x, r2 * sin(a + da) + y, 0.5,
@@ -35,33 +37,36 @@ end
 ---! 插到UI.lua里使用
 ---! 最好手动创建一个物体来使用，按照图层与渲染统一管理的逻辑来使用它
 function PutPlayerUI(type)
+    SetViewMode("ui")
     if IsValid(player)~=true then
         print("warning: playerui_obj is not valid")
         return
     end
     local attri={}
     attri.blendmode="mul+add"
-    if type==PlayerUIType.Life then
+    if type==PlayerUI.Life then
         attri.alpha=0.75
         attri.r1=44
         attri.r2=50
-        attri.c=Color(255*attri.alpha,183,18,185)
-        attri.la=lstg.var.lifeleft*360/lstg.var.LifeMax+lstg.var.LifechipPoint*360/lstg.var.LifeExtendPoint/lstg.var.LifeMax
+        attri.c=Color(255*attri.alpha,165,0,145)
+        attri.la=lstg.var.lifeleft*360/lstg.var.LifeMax+lstg.var.chip*360/lstg.var.LifeExtendPoint/lstg.var.LifeMax
+        --print("life.la"..attri.la)
         
-    elseif type==PlayerUIType.Bomb then
-        attri.alpha=0.75
+    elseif type==PlayerUI.Bomb then
+        attri.alpha=0.95
         attri.r1=44
         attri.r2=50
-        attri.c=Color(255*attri.alpha,6,71,144)
-        attri.la=lstg.var.bombleft*360/lstg.var.bombmax+lstg.var.bombchip*360/lstg.var.bombextend/lstg.var.bombmax
-    elseif type==PlayerUIType.Power then
+        attri.c=Color(255*attri.alpha,0,110,160)
+        attri.la=lstg.var.bomb*360/lstg.var.LifeMax+lstg.var.bombchip*360/lstg.var.BombExtendPoint/lstg.var.LifeMax
+        --print("bomb.la"..attri.la)
+    elseif type==PlayerUI.Power then
         attri.alpha=0.5
         attri.r1=50
         attri.r2=54
         attri.c=Color(255*attri.alpha,237,68,64)
-        attri.la=lstg.var.powerleft*360/lstg.var.powermax
-    elseif type==PlayerUIType.BackGround then
-        attri.alpha=0.25
+        attri.la=lstg.var.power%lstg.var.PowerExtendPoint*360/lstg.var.PowerExtendPoint
+    elseif type==PlayerUI.BackGround then
+        attri.alpha=0.15
         attri.r1=43
         attri.r2=51
         attri.c=Color(255*attri.alpha,76,168,255)
@@ -69,9 +74,36 @@ function PutPlayerUI(type)
     end
     ---! 血条边框
     SetImageState("white", attri.blendmode, attri.c)
-    RenderRingEx("white", player.x, player.y, 0,attri.la,attri.r1, attri.r2)
+    local cx,cy=GetPlayerScr()
+    RenderRingEx("white", cx,cy, 90,attri.la,attri.r1, attri.r2,-1)
+    SetViewMode("world")
 end
 
+function PutPlayerUIBar()
+    SetViewMode("ui")
+    if IsValid(player)~=true then
+        print("warning: playerui_obj is not valid")
+        return
+    end
+
+    local attri={}
+    attri.blendmode="mul+add"
+    attri.alpha=0.7
+    attri.r1=44
+    attri.r2=50
+    attri.c=Color(255*attri.alpha,0,155,165)
+    local n=max(lstg.var.bomb,lstg.var.lifeleft)
+    print("n:"..n.."lstg.var.bomb:"..lstg.var.bomb.."lstg.var.lifeleft:"..lstg.var.lifeleft)
+
+    local da=1
+    local offset=1
+    local cx,cy=GetPlayerScr()
+    SetImageState("white", attri.blendmode, attri.c)
+    for i=1,n do
+        local ac=-i*360/lstg.var.LifeMax
+        RenderRingEx("white", cx,cy, offset+90+ac-da,2*da,attri.r1, attri.r2,1)
+    end
+end
 --[[
     ---! 绘制新的自机ui
     if IsValid(lstg.player) then
