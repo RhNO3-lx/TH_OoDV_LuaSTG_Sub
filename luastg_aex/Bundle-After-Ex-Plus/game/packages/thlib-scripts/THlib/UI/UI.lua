@@ -56,9 +56,6 @@ LoadImage("rank_Hard", "ui_rank", 0, 64, 144, 32)
 LoadImage("rank_Lunatic", "ui_rank", 0, 96, 144, 32)
 LoadImage("rank_Extra", "ui_rank", 0, 128, 144, 32)
 
-LoadTexture("test_image", "THlib/UI/test_image.png", true)
-LoadImage("test", "test_image", 0, 0, 512, 128)
-
 ui.menu = {
     font_size = 0.675,
     line_height = 28,
@@ -367,9 +364,8 @@ function ui.DrawManualContent(x, y, content, alpha, color)
         -- print("------------")
         if con.type[i] == "text" then
             RenderTTF2(con.font[i], con.text[i], con.x[i] + x, con.x[i] + x, con.y[i] + y, con.y[i] + y, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.focused_color1)), "", "vcenter", "noclip")
-        elseif con.type[i] == "image" then
-            SetImageState(con.name[i], '', Color(alpha * 255, unpack(color)))
-            Render(con.name[i], con.x[i] + x, con.y[i] + y, con.rot[i], con.hscale[i], con.vscale[i])
+        elseif con.type == "image" then
+
         end
     end
 end
@@ -491,9 +487,12 @@ end
 ui.is_bg_render_create = false
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
-    if not ui.is_bg_render_create then
+    if not is_bg_render_create and stage.current_stage.stage_name == "menu" then
         lstg.CreateRenderTarget("rt:background")
-        ui.is_bg_render_create = true
+        lstg.PushRenderTarget("rt:background")
+        Render("menu_bg", 320, 240, 0, 0.25, 0.25)
+        lstg.PopRenderTarget()
+        is_bg_render_create = true
     end
     lstg.PushRenderTarget("rt:background")
     Render("menu_bg", 320, 240, 0, 0.25, 0.25)
@@ -577,9 +576,9 @@ function lstg_ui:drawDifficulty()
         ---!修改显示难度的位置
         local cx,cy=GetUIOffset()
         local x1 = cx
-        local x2 = cx*1.6
+        local x2 = cx*1.8
         local y1 = 450
-        local y2 = 50
+        local y2 = 30
         local dy = 22
         local s = stage.current_stage
         local timer = s.timer
@@ -609,13 +608,24 @@ function lstg_ui:drawDifficulty()
         ---! 如果难度是传统的，则使用内置纹理素材
         
         local OpacityChange=1
-        if IsValid(lstg.player)==false then
+        if IsValid(lstg.player)~=true then
             OpacityChange=1
-            print("player invalid")
+            print("invalid")
         else
-            print("enter")
-            if Dist(lstg.player.x,lstg.player.y,x,y)<=50 then
-                OpacityChange=0.2
+            -- print(player.x)
+            -- print(x)
+            -- print(player.y)
+            -- print(y)
+            local wo=lstg.worldoffset
+            local w=lstg.world
+            local cx,cy=GetUIOffset()
+            local player_scrx=player.x-wo.centerx+cx
+            local player_scry=player.y-wo.centery+cy
+            --print(x,y,player_scrx,player_scry)
+            local r=Dist(player_scrx,player_scry,x,y)
+            local sr=70
+            if r<=sr then
+                OpacityChange=1-(sr-r)/sr*0.9
             end
         end
         if diff == "Easy" or diff == "Normal" or diff == "Hard" or diff == "Lunatic" or diff == "Extra" then
