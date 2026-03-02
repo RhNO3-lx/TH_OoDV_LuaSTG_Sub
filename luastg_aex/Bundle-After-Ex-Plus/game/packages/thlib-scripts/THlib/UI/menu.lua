@@ -1062,6 +1062,7 @@ function manual:init(title, item, content, keyslot, offx, offy)
     end
     self.pos = 1
     self.pos_pre = 1
+    self.last_pos = self.pos
     self.pos_changed = 0
     self.no_pos_change = false
     self.keyslot = keyslot
@@ -1078,10 +1079,12 @@ function manual:frame()
         return
     end
     if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
+        self.last_pos = self.pos
         self.pos = self.pos - 1
         PlaySound('select00', 0.3)
     end
     if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
+        self.last_pos = self.pos
         self.pos = self.pos + 1
         PlaySound('select00', 0.3)
     end
@@ -1102,9 +1105,27 @@ function manual:frame()
     self.pos_pre = self.pos
 end
 
+local offy = 50
+local offTimer = 0
+local alpha = 0
 function manual:render()
     SetViewMode('ui')
-    ui.DrawManualTTF('menuttf', self.title, self.text, self.content[self.pos], self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed, "left")
+    ui.DrawManualTTF('menuttf', self.title, self.text, self.content[self.pos], self.pos, self.x + self.offx, self.y, self.alpha, self.timer, 0, "left")
+    if self.last_pos ~= self.pos then
+        self.locked = true
+        ui.DrawManualContent(self.x, self.y + (-offTimer) * self.pos - self.last_pos, self.content[self.last_pos], 1 - alpha, ui.menu.focused_color1)
+        ui.DrawManualContent(self.x, self.y + (offy - offTimer) * self.pos - self.last_pos, self.content[self.pos], alpha, ui.menu.focused_color1)
+        alpha = alpha + 0.05
+        offTimer = offTimer + 2.5
+        if alpha >= 1 then
+            self.locked = false
+            self.last_pos = self.pos
+            offTimer = 0
+            alpha = 0
+        end
+    else
+        ui.DrawManualContent(self.x, self.y, self.content[self.pos], self.alpha, ui.menu.focused_color1)
+    end
 end
 
 function manual.createContent(content)
