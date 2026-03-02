@@ -1,4 +1,3 @@
-
 local post_effect = require("lib.posteffect")
 
 
@@ -6,13 +5,21 @@ local post_effect = require("lib.posteffect")
 ---for image,{type, position_x, position_y, name, rot, hscale, vscale}
 local manual_content = {
     {
-        { "text", -150, 110, "", "O1.如何进行游戏" },
+        { "text", -150, 110, "", "O1.如何进行游戏", 1.3 },
         { "text", -150, 50, "", "这是注意躲避比自己打的敌人，\n吃掉比自己小的敌人积攒power的游戏。\n每一关都有通关所需的power量，\n积攒足够的power后就过关了。", 1.3 },
     },
     {
-        { "text", 0, 0, "", "this is the second option", 1 }
+        { "text", 0, 0, "", "this is the second option", 1.3 }
     }
 }
+local musicroom_content = {
+    {
+        { "text", -278, -150, "", "♪text~textextext", 1 },
+        { "text", -260, -200, "", "textextextext,textextextext\ntextextextextextextext\ntext.", 1 }
+    }
+}
+
+local bg_blk_ = 0.03
 
 local stage_init = stage.New('init', true, true)
 function stage_init:init()
@@ -62,7 +69,8 @@ function stage_menu:init()
     menu_items,
     menu_sc_pr,
     menu_options,
-    menu_manual
+    menu_manual,
+    menu_musicroom
     local menu_offset = {}
     local menu_list = {}
     local menu_practice = {}
@@ -92,8 +100,9 @@ function stage_menu:init()
     --
     menu_items = { { 'Start Game', function()
         task.New(self, function()
-            while ui.menu_bulr < 0.8 do
+            while ui.menu_bulr < 1 do
                 ui.menu_bulr = ui.menu_bulr + 0.1
+                ui.bg_blk = ui.bg_blk - bg_blk_
                 task.Wait()
             end
         end)
@@ -104,8 +113,9 @@ function stage_menu:init()
     if _allow_practice then
         table.insert(menu_items, { 'Stage Practice', function()
             task.New(self, function()
-            while ui.menu_bulr < 0.8 do
+            while ui.menu_bulr < 1 do
                 ui.menu_bulr = ui.menu_bulr + 0.1
+                ui.bg_blk = ui.bg_blk - bg_blk_
                 task.Wait()
             end
         end)
@@ -123,8 +133,9 @@ function stage_menu:init()
     end
     table.insert(menu_items, { 'Replay', function()
         task.New(self, function()
-            while ui.menu_bulr < 0.8 do
+            while ui.menu_bulr < 1 do
                 ui.menu_bulr = ui.menu_bulr + 0.1
+                ui.bg_blk = ui.bg_blk - bg_blk_
                 task.Wait()
             end
         end)
@@ -134,11 +145,21 @@ function stage_menu:init()
     end })
     ---🎺🎺🎺🍳🍳🍳
     table.insert(menu_items, { 'Music Room', function()
+        task.New(self, function()
+            while ui.menu_bulr < 1 do
+                ui.menu_bulr = ui.menu_bulr + 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
+                task.Wait()
+            end
+        end)
+        menu.FadeIn(menu_musicroom)
+        menu.FadeOut(menu_title)
     end})
     table.insert(menu_items, { 'Option', function ()
         task.New(self, function()
-            while ui.menu_bulr < 0.8 do
+            while ui.menu_bulr < 1 do
                 ui.menu_bulr = ui.menu_bulr + 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
                 task.Wait()
             end
         end)
@@ -203,6 +224,7 @@ function stage_menu:init()
         task.New(self, function()
             while ui.menu_bulr > 0 do
                 ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
                 task.Wait()
             end
         end)
@@ -244,6 +266,7 @@ function stage_menu:init()
         task.New(self, function()
             while ui.menu_bulr > 0 do
                 ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
                 task.Wait()
             end
         end)
@@ -268,6 +291,7 @@ function stage_menu:init()
         task.New(self, function()
             while ui.menu_bulr > 0 do
                 ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
                 task.Wait()
             end
         end)
@@ -365,6 +389,7 @@ function stage_menu:init()
             task.New(self, function()
                 while ui.menu_bulr > 0 do
                     ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
                     task.Wait()
                 end
             end)
@@ -389,9 +414,22 @@ function stage_menu:init()
         end
     end)
     --
-    menu_musicroom = New(musicroom, function (index)
+    menu_items = {}
+    table.insert(menu_items, { '1.text~textextext', function ()
         
-    end)
+    end })
+    table.insert(menu_items, { 'exit', function()
+        task.New(self, function()
+            while ui.menu_bulr > 0 do
+                ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
+                task.Wait()
+            end
+        end)
+        menu.FlyIn(menu_title, 'left')
+        menu.FlyOut(menu_musicroom, 'right')
+    end })
+    menu_musicroom = New(musicroom, "musicroom", menu_items, musicroom_content, '', 0, 0)
     --
     menu_items = {}
     table.insert(menu_items, { 'Resolution', function ()
@@ -416,6 +454,7 @@ function stage_menu:init()
         task.New(self, function()
             while ui.menu_bulr > 0 do
                 ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
                 task.Wait()
             end
         end)
@@ -427,6 +466,7 @@ function stage_menu:init()
         task.New(self, function()
             while ui.menu_bulr > 0 do
                 ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
                 task.Wait()
             end
         end)
@@ -448,6 +488,7 @@ function stage_menu:init()
         task.New(self, function()
             while ui.menu_bulr > 0 do
                 ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
                 task.Wait()
             end
         end)
@@ -480,6 +521,7 @@ function stage_menu:init()
                 task.New(self, function()
                     while ui.menu_bulr > 0 do
                         ui.menu_bulr = ui.menu_bulr - 0.1
+                        ui.bg_blk = ui.bg_blk + bg_blk_
                         task.Wait()
                     end
                 end)
@@ -498,6 +540,7 @@ function stage_menu:init()
                 task.New(self, function()
                     while ui.menu_bulr > 0 do
                         ui.menu_bulr = ui.menu_bulr - 0.1
+                        ui.bg_blk = ui.bg_blk + bg_blk_
                         task.Wait()
                     end
                 end)
