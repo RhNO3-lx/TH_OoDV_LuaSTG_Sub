@@ -6,9 +6,8 @@ local post_effect = require("lib.posteffect")
 ---for image,{type, position_x, position_y, name, rot, hscale, vscale}
 local manual_content = {
     {
-        { "text", 0, 0, "", "this is the first option", 1 },
-        { "text", 100, 100, "", "change position", 1 },
-        --{ "image", 0, -50, "test", 0, 0.5, 0.5 }
+        { "text", -150, 110, "", "O1.如何进行游戏" },
+        { "text", -150, 50, "", "这是注意躲避比自己打的敌人，\n吃掉比自己小的敌人积攒power的游戏。\n每一关都有通关所需的power量，\n积攒足够的power后就过关了。", 1.3 },
     },
     {
         { "text", 0, 0, "", "this is the second option", 1 }
