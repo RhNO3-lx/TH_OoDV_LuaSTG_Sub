@@ -76,20 +76,29 @@ function ResetScreen2() -- TODO: 删了这个不再使用的方法
     ResetScreen(true)
 end
 
+-- local RAW_DEFAULT_WORLD = {--默认的world参数，只读
+--     l = -192, r = 192, b = -224, t = 224,
+--     boundl = -224, boundr = 224, boundb = -256, boundt = 256,
+--     scrl = 32, scrr = 416, scrb = 16, scrt = 464,
+--     pl = -192, pr = 192, pb = -224, pt = 224,
+--     world = 15,
+--     ---! newly added
+--     l3d=-192,r3d=192,b3d=-224,t3d=224
+-- }
 local RAW_DEFAULT_WORLD = {--默认的world参数，只读
-    l = -192, r = 192, b = -224, t = 224,
-    boundl = -224, boundr = 224, boundb = -256, boundt = 256,
-    scrl = 32, scrr = 416, scrb = 16, scrt = 464,
-    pl = -192, pr = 192, pb = -224, pt = 224,
+    l = -320, r = 320, b = -240, t = 240,
+    boundl = -320-30, boundr = 320+30, boundb = -240-30, boundt = 240+30,
+    scrl = 0, scrr = 640, scrb = 0, scrt = 480,
+    pl = -320, pr = 320, pb = -240, pt = 240,
     world = 15,
     ---! newly added
     l3d=-192,r3d=192,b3d=-224,t3d=224
 }
 local DEFAULT_WORLD = {--默认的world参数，可更改
-    l = -192, r = 192, b = -224, t = 224,
-    boundl = -224, boundr = 224, boundb = -256, boundt = 256,
-    scrl = 32, scrr = 416, scrb = 16, scrt = 464,
-    pl = -192, pr = 192, pb = -224, pt = 224,
+    l = -320, r = 320, b = -240, t = 240,
+    boundl = -320-30, boundr = 320+30, boundb = -240-30, boundt = 240+30,
+    scrl = 0, scrr = 640, scrb = 0, scrt = 480,
+    pl = -320, pr = 320, pb = -240, pt = 240,
     world = 15,
     ---! newly added
     l3d=-192,r3d=192,b3d=-224,t3d=224
