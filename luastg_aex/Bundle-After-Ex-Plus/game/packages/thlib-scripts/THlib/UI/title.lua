@@ -317,6 +317,7 @@ function stage_menu:init()
                 Print(filename, stageName)
                 stage.IsReplay = true--判定进入rep播放的flag add by OLC
                 stage.Set(stageName, 'load', filename)
+                ui.is_bg_render_create = false
             end)
         end
     end)
