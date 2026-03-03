@@ -215,7 +215,11 @@ local defaultFrameEvent = {
             if self.time_stop then
                 self.death = self.death - 1
             end
-            -- item.PlayerMissSpecial(self)
+            lstg.var.chip_bonus = false
+            if lstg.var.sc_bonus then
+                lstg.var.sc_bonus = 0
+            end
+            self.protect = 360
             New(death_weapon, self.x, self.y)
             self.deathee = {}
             self.deathee[1] = New(deatheff, self.x, self.y, "first")
