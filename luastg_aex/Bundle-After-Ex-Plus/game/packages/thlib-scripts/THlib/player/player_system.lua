@@ -70,7 +70,11 @@ local defaultFrameEvent = {
         if (self.death == 0 or self.death > 90) and (not self.lock) and not (self.time_stop) then
             self.__death_state = 0
         elseif self.death == 90 then
-            self.__death_state = 1
+            if lstg.var.SpecialDeathFlag then
+                self.__death_state = 11
+            else
+                self.__death_state = 1
+            end
         elseif self.death == 84 then
             self.__death_state = 2
         elseif self.death == 50 then
@@ -204,6 +208,23 @@ local defaultFrameEvent = {
                     end
                 end
             end
+        end
+    end },
+    ["frame.death11"] = { 94.5, function(self)
+        if self.__death_state == 11 then
+            if self.time_stop then
+                self.death = self.death - 1
+            end
+            lstg.var.chip_bonus = false
+            if lstg.var.sc_bonus then
+                lstg.var.sc_bonus = 0
+            end
+            self.protect = 360
+            New(death_weapon, self.x, self.y)
+            self.deathee = {}
+            self.deathee[1] = New(deatheff, self.x, self.y, "first")
+            self.deathee[2] = New(deatheff, self.x, self.y, "second")
+            New(player_death_ef, self.x, self.y)
         end
     end },
     ["frame.death1"] = { 94, function(self)
