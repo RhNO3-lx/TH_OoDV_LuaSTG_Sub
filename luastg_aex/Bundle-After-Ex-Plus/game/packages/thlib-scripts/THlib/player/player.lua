@@ -68,6 +68,7 @@ function player_class:colli(other)
     self._playersys:doColliAfterEvent(other)
 end
 
+---! 在使用的时候记得传进player实体作为隐藏的self参数，在子类中用.调用
 function player_class:findtarget()
     self.target = nil
     local maxpri = -1

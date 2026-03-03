@@ -6,52 +6,75 @@ local dir= "renseki/"
 
 ---!todo: add class member var to enable shooting direction locked/released
 function renseki_player:init(slot)
-	LoadTexture('reimu_player',dir..'renseki.png')
+	--LoadTexture('reimu_player',dir..'renseki.png')
 	LoadTexture('renseki_player',dir..'renseki_full.png')
-	LoadTexture('reimu_player2p',dir..'reimu_2p.png')
+	--LoadTexture('reimu_player2p',dir..'reimu_2p.png')
 	LoadTexture('reimu_kekkai',dir..'reimu_kekkai.png')
-	LoadTexture('reimu_orange_ef2',dir..'reimu_orange_eff.png')
+	--LoadTexture('reimu_orange_ef2',dir..'reimu_orange_eff.png')
 	-----------------------------------------
 	LoadImageGroup('renseki_player','renseki_player',0,0,256,256,12,3,0.5,0.5)
-	LoadImageGroup('reimu_player2p','reimu_player2p',0,0,32,48,8,3,0.5,0.5)
+	--LoadImageGroup('reimu_player2p','reimu_player2p',0,0,32,48,8,3,0.5,0.5)
 	-----------------------------------------
-	LoadImage('reimu_bullet_red','reimu_player',192,160,64,16,16,16)
-	SetImageState('reimu_bullet_red','',Color(0xA0FFFFFF))
-	SetImageCenter('reimu_bullet_red',56,8)
-	LoadAnimation('reimu_bullet_red_ef','reimu_player',0,144,16,16,4,1,4)
-	SetAnimationState('reimu_bullet_red_ef','mul+add',Color(0xA0FFFFFF))
-	LoadImage('reimu_bullet_ef_img','reimu_player',48,144,16,16)
+	--LoadImage('reimu_bullet_red','reimu_player',192,160,64,16,16,16)
+	--SetImageState('reimu_bullet_red','',Color(0xA0FFFFFF))
+	--SetImageCenter('reimu_bullet_red',56,8)
+	--LoadAnimation('reimu_bullet_red_ef','reimu_player',0,144,16,16,4,1,4)
+	--SetAnimationState('reimu_bullet_red_ef','mul+add',Color(0xA0FFFFFF))
+	--LoadImage('reimu_bullet_ef_img','reimu_player',48,144,16,16)
 	-----------------------------------------
-	LoadImage('reimu_bullet_blue','reimu_player',0,160,16,16,16,16)
-	SetImageState('reimu_bullet_blue','',Color(0x80FFFFFF))
-	LoadAnimation('reimu_bullet_blue_ef','reimu_player',0,160,16,16,4,1,4)
-	SetAnimationState('reimu_bullet_blue_ef','mul+add',Color(0xA0FFFFFF))
+	--LoadImage('reimu_bullet_blue','reimu_player',0,160,16,16,16,16)
+	--SetImageState('reimu_bullet_blue','',Color(0x80FFFFFF))
+	--LoadAnimation('reimu_bullet_blue_ef','reimu_player',0,160,16,16,4,1,4)
+	--SetAnimationState('reimu_bullet_blue_ef','mul+add',Color(0xA0FFFFFF))
 	-----------------------------------------
-	LoadImage('reimu_bullet_orange','reimu_player',64,176,64,16,64,16)
-	SetImageState('reimu_bullet_orange','',Color(0x80FFFFFF))
-	SetImageCenter('reimu_bullet_orange',32,8)
-	LoadImage('reimu_bullet_orange_ef','reimu_player',64,176,64,16,64,16)
-	SetImageState('reimu_bullet_orange_ef','',Color(0x80FFFFFF))
-	SetImageCenter('reimu_bullet_orange_ef',32,8)
-	LoadAnimation('reimu_bullet_orange_ef2','reimu_orange_ef2',0,0,64,16,1,9,1)
-	SetAnimationCenter('reimu_bullet_orange_ef2',0,8)
-	SetAnimationState('reimu_bullet_orange_ef2','mul+add',Color(255,255,155,155))
+	--LoadImage('reimu_bullet_orange','reimu_player',64,176,64,16,64,16)
+	--SetImageState('reimu_bullet_orange','',Color(0x80FFFFFF))
+	--SetImageCenter('reimu_bullet_orange',32,8)
+	--LoadImage('reimu_bullet_orange_ef','reimu_player',64,176,64,16,64,16)
+	--SetImageState('reimu_bullet_orange_ef','',Color(0x80FFFFFF))
+	--SetImageCenter('reimu_bullet_orange_ef',32,8)
+	--LoadAnimation('reimu_bullet_orange_ef2','reimu_orange_ef2',0,0,64,16,1,9,1)
+	--SetAnimationCenter('reimu_bullet_orange_ef2',0,8)
+	--SetAnimationState('reimu_bullet_orange_ef2','mul+add',Color(255,255,155,155))
 	-----------------------------------------
-	LoadImage('reimu_support','reimu_player',64,144,16,16)
+	--LoadImage('reimu_support','reimu_player',64,144,16,16)
 	LoadImageFromFile('reimu_bomb_ef',dir..'reimu_bomb_ef.png')
 	LoadImage('reimu_kekkai','reimu_kekkai',0,0,256,256,0,0)
 	SetImageState('reimu_kekkai','mul+add',Color(0x804040FF))
-	LoadPS('reimu_bullet_ef',dir..'reimu_bullet_ef.psi','reimu_bullet_ef_img')
+	--LoadPS('reimu_bullet_ef',dir..'reimu_bullet_ef.psi','reimu_bullet_ef_img')
 	LoadPS('reimu_sp_ef',dir..'reimu_sp_ef.psi','parimg1',16,16)
 	-----------------------------------------
+	LoadTexture("renseki_bullet1",dir.."b1.png")
+	LoadAnimation("renseki_bullet1_ani","renseki_bullet1",0,0,128,64,4,3,3)
+	SetAnimationState("renseki_bullet1_ani","mul+add",Color(160,255,140,230))
+	SetAnimationScale("renseki_bullet1_ani",0.45)
+
+	LoadAnimation("renseki_bullet2_ani","renseki_bullet1",0,0,128,64,4,3,3)
+	SetAnimationState("renseki_bullet2_ani","mul+add",Color(160,210,210,210))
+	SetAnimationScale("renseki_bullet2_ani",0.45)
+
+	LoadTexture("renseki_bullet3",dir.."b2.png")
+	LoadAnimation("renseki_bullet3_ani","renseki_bullet3",0,0,128,128,4,3,3)
+	SetAnimationState("renseki_bullet3_ani","mul+add",Color(150,210,210,210))
+	SetAnimationScale("renseki_bullet3_ani",0.30)
+
+	LoadTexture("renseki_support",dir.."player_sub.png")
+	LoadImage("renseki_support_img","renseki_support",0,0,128,128)
+	SetImageState("renseki_support_img","mul+add",Color(180,200,220,230))
+	SetImageScale("renseki_support_img",0.15)
+
+	LoadTexture("renseki_bullet_ef",dir.."bullet_eff.png")
+	LoadAnimation("renseki_bullet_ef_ani","renseki_bullet_ef",0,0,128,128,3,3,5)
+	SetAnimationState("renseki_bullet_ef_ani","mul+add",Color(150,140,50,140))
+	SetAnimationScale("renseki_bullet_ef_ani",0.65)
 	---self.testvar=1
 	player_class.init(self)
 
 	---todo: regist extra frame event here
-	self._playersys:addFrameBeforeEvent("test",1,function()
+	--self._playersys:addFrameBeforeEvent("test",1,function()
 		---self.testvar=1+self.testvar;
 		---Print("exetute player addframe logic")
-	end)
+	--end)
 
 	---todo: modify frame settings here
 	--LoadTexture("renseki_idle","")
@@ -64,11 +87,11 @@ function renseki_player:init(slot)
 	self.hspeed=4.5
 	self.imgs={}
 	self.A=0.5 self.B=0.5
-	if slot and slot==2 and jstg.players[1].name==self.name then
-		for i=1,24 do self.imgs[i]='reimu_player2p'..i end
-	else
-		for i=1,36 do self.imgs[i]='renseki_player'..i end
-	end
+	-- if slot and slot==2 and jstg.players[1].name==self.name then
+	-- 	for i=1,24 do self.imgs[i]='reimu_player2p'..i end
+	-- else
+	for i=1,36 do self.imgs[i]='renseki_player'..i end
+	-- end
 
 	---!use self.nf and self.nc to determine the frame counts and cycling frame counts
 	self.nf=12 self.nc=8
@@ -100,27 +123,28 @@ end
 ---!todo: may fine move func to change dir
 function renseki_player:shoot()
 	PlaySound('plst00',0.3,self.x/1024)
-	self.nextshoot=4
-	New(reimu_bullet_red,'reimu_bullet_red',self.x+10,self.y,24,90,2)
-	New(reimu_bullet_red,'reimu_bullet_red',self.x-10,self.y,24,90,2)
+	---! 定义攻击间隔
+	self.nextshoot=5
+	New(renseki_bullet_main,'renseki_bullet1_ani',self.x+5,self.y,15,90,2)
+	New(renseki_bullet_main,'renseki_bullet1_ani',self.x-5,self.y,15,90,2)
 	if self.support>0 then
 		if self.slow==1 then
 			for i=1,4 do
 				if self.sp[i] and self.sp[i][3]>0.5 then
-					New(reimu_bullet_orange,'reimu_bullet_orange',self.supportx+self.sp[i][1]-3,self.supporty+self.sp[i][2],24,90,0.3)
-					New(reimu_bullet_orange,'reimu_bullet_orange',self.supportx+self.sp[i][1]+3,self.supporty+self.sp[i][2],24,90,0.3)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]-3,self.supporty+self.sp[i][2],15,90,0.3)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]+3,self.supporty+self.sp[i][2],15,90,0.3)
 				end
 			end
 		else
 --			local num=60/(self.support+1)
-		if self.timer%8<4 then
+		--if self.timer%8<4 then
 			local num=int(lstg.var.power/100)+1
 			for i=1,4 do
 				if self.sp[i] and self.sp[i][3]>0.5 then
-					New(reimu_bullet_blue,'reimu_bullet_blue',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],8,self.anglelist[num][i],self.target,900,0.7)
+					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],8,self.anglelist[num][i],self.target,900,0.7)
 				end
 			end
-		end end
+		end --end
 	end
 end
 
@@ -157,12 +181,14 @@ end
 function renseki_player:render()
 	for i=1,4 do
 		if self.sp[i] and self.sp[i][3]>0.5 then
-			Render('reimu_support',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],self.timer*3)
+			Render('renseki_support_img',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],self.timer*5)
 		end
 	end
 	player_class.render(self)
 end
 -------------------------------------------------------
+---! tmd,迟早给你换掉
+--#region
 reimu_sp_ef1=Class(object)
 function reimu_sp_ef1:init(img,x,y,v,angle,target,trail,dmg,t,player)
 	self.killflag=true
@@ -283,32 +309,37 @@ function reimu_sp_ef2:render()
 	Render(self.img,self.x,self.y)
 	SetImageState(self.img,'mul+add',Color(255,255,255,255))
 end
--------------------------------------------------------
-reimu_bullet_red=Class(player_bullet_straight)
 
-function reimu_bullet_red:kill()
-	New(reimu_bullet_red_ef,self.x,self.y,self.rot+180)
+--#endregion
+
+
+-------------------------------------------------------
+renseki_bullet_main=Class(player_bullet_straight)
+
+function renseki_bullet_main:kill()
+	New(renseki_bullet_ef,self.x,self.y,self.rot+180)
 end
 -------------------------------------------------------
-reimu_bullet_red_ef=Class(object)
+renseki_bullet_ef=Class(object)
 
-function reimu_bullet_red_ef:init(x,y)
-	self.x=x self.y=y self.rot=90 self.img='reimu_bullet_red_ef' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
-	self.vy=2.25
+function renseki_bullet_ef:init(x,y)
+	self.x=x self.y=y self.rot=90 self.img='renseki_bullet_ef_ani' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
+	self.vy=0
 end
-function reimu_bullet_red_ef:frame()
+function renseki_bullet_ef:frame()
 	if self.timer==15 then self.y=600 Del(self) end
 end
 -------------------------------------------------------
-reimu_bullet_orange=Class(player_bullet_straight)
+renseki_bullet_slow=Class(player_bullet_straight)
 
-function reimu_bullet_orange:kill()
-	New(reimu_bullet_orange_ef,self.x,self.y,self.rot+180+ran:Float(-15,15))
-	New(reimu_bullet_orange_ef2,self.x,self.y)
+function renseki_bullet_slow:kill()
+	---todo:add particle eff
+	--New(reimu_bullet_orange_ef,self.x,self.y,self.rot+180+ran:Float(-15,15))
+	--New(reimu_bullet_orange_ef2,self.x,self.y)
 end
 -------------------------------------------------------
-reimu_bullet_blue=Class(player_bullet_trail)
-function reimu_bullet_blue:init(img,x,y,v,angle,target,trail,dmg)
+renseki_bullet_fast=Class(player_bullet_trail)
+function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg)
 	self.group=GROUP_PLAYER_BULLET
 	self.layer=LAYER_PLAYER_BULLET
 	self.img=img
@@ -321,7 +352,7 @@ function reimu_bullet_blue:init(img,x,y,v,angle,target,trail,dmg)
 	self.dmg=dmg
 end
 
-function reimu_bullet_blue:frame()
+function renseki_bullet_fast:frame()
 	player_class.findtarget(self)
 	if IsValid(self.target) and self.target.colli then
 		local a=math.mod(Angle(self,self.target)-self.rot+720,360)
@@ -334,8 +365,9 @@ function reimu_bullet_blue:frame()
 	self.vy=self.v*sin(self.rot)
 end
 
-function reimu_bullet_blue:kill()
-	New(reimu_bullet_blue_ef,self.x,self.y,self.rot)
+function renseki_bullet_fast:kill()
+	--todo:add particle effect
+	---New(reimu_bullet_blue_ef,self.x,self.y,self.rot)
 end
 -------------------------------------------------------
 reimu_bullet_blue_ef=Class(object)
@@ -363,47 +395,48 @@ end
 function reimu_sp_ef:del()
 	misc.KeepParticle(self)
 end
--------------------------------------------------------
-reimu_bullet_ef=Class(object)
+-- -------------------------------------------------------
+-- reimu_bullet_ef=Class(object)
 
-function reimu_bullet_ef:init(x,y,rot)
-	self.x=x self.y=y self.rot=rot self.img='reimu_bullet_ef' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
-end
+-- function reimu_bullet_ef:init(x,y,rot)
+-- 	self.x=x self.y=y self.rot=rot self.img='reimu_bullet_ef_ani' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
+-- end
 
-function reimu_bullet_ef:frame()
-	if self.timer==4 then ParticleStop(self) end
-	if self.timer==30 then Del(self) end
-end
--------------------------------------------------------
-reimu_bullet_orange_ef=Class(object)
+-- function reimu_bullet_ef:frame()
+-- 	if self.timer==4 then ParticleStop(self) end
+-- 	if self.timer==30 then Del(self) end
+-- end
+-- -------------------------------------------------------
+-- reimu_bullet_orange_ef=Class(object)
 
-function reimu_bullet_orange_ef:init(x,y,rot)
-	self.x=x self.y=y+32 self.rot=rot self.img='reimu_bullet_orange_ef' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST self.vy=2
-	self.hscale=ran:Float(1.4,1.6)
-end
+-- function reimu_bullet_orange_ef:init(x,y,rot)
+-- 	self.x=x self.y=y+32 self.rot=rot self.img='reimu_bullet_orange_ef' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST self.vy=2
+-- 	self.hscale=ran:Float(1.4,1.6)
+-- end
 
-function reimu_bullet_orange_ef:frame()
-	if self.timer>15 then self.x=600 Del(self) end
-end
+-- function reimu_bullet_orange_ef:frame()
+-- 	if self.timer>15 then self.x=600 Del(self) end
+-- end
 
-function reimu_bullet_orange_ef:render()
-	SetImageState(self.img,'mul+add',Color(255-255*self.timer/16,255,255,255))
-	object.render(self)
-end
---修改击中效果
--------------------------------------------------------
-reimu_bullet_orange_ef2=Class(object)
+-- function reimu_bullet_orange_ef:render()
+-- 	SetImageState(self.img,'mul+add',Color(255-255*self.timer/16,255,255,255))
+-- 	object.render(self)
+-- end
+-- --修改击中效果
+-- -------------------------------------------------------
+-- reimu_bullet_orange_ef2=Class(object)
 
-function reimu_bullet_orange_ef2:init(x,y)
-	self.x=x self.y=y+32 self.rot=-90+ran:Float(-10,10) self.img='reimu_bullet_orange_ef2' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
-	self.hscale=ran:Float(1.5,1.8) self.vscale=1.5 
-end
+-- function reimu_bullet_orange_ef2:init(x,y)
+-- 	self.x=x self.y=y+32 self.rot=-90+ran:Float(-10,10) self.img='reimu_bullet_orange_ef2' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
+-- 	self.hscale=ran:Float(1.5,1.8) self.vscale=1.5 
+-- end
 
-function reimu_bullet_orange_ef2:frame()
-	if self.timer>=9 then self.x=600 Del(self) end
-end
--------------------------------------------------------
+-- function reimu_bullet_orange_ef2:frame()
+-- 	if self.timer>=9 then self.x=600 Del(self) end
+-- end
+-- -------------------------------------------------------
 
+---! 这个倒是挺有保留的价值
 reimu_kekkai=Class(object)
 
 function reimu_kekkai:init(x,y,dmg,dr,n,t)
