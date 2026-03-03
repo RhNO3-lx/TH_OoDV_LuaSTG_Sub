@@ -74,7 +74,7 @@ function item:LifeShrinkCheck(v,TriggerDeath,is_PlaySound,RemoveBulletRadius)
             PlaySound("pldead00", 0.5)
         end
         lstg.var.chip = lstg.var.LifechipPoint
-        item.PlayerMiss(self);
+        item.PlayerMiss(self)
         player.death = 100
     end
     ---! todo:掉血时的逻辑
