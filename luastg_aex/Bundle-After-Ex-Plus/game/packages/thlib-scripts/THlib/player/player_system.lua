@@ -74,9 +74,15 @@ local defaultFrameEvent = {
         elseif self.death == 84 then
             self.__death_state = 2
         elseif self.death == 50 then
-            self.__death_state = 3
+            if lstg.var.SpecialDeathFlag then
+                self.__death_state = 33
+            else
+                self.__death_state = 3
+            end
         elseif self.death < 50 and not (self.lock) and not (self.time_stop) then
-            self.__death_state = 4
+            if not lstg.var.SpecialDeathFlag then
+                self.__death_state = 4
+            end
         else
             self.__death_state = -1
         end
@@ -219,6 +225,15 @@ local defaultFrameEvent = {
                 self.death = self.death - 1
             end
             self.hide = true
+        end
+    end },
+    ["frame.death33"] = { 92.5, function(self)
+        if self.__death_state == 33 then
+            if self.time_stop then
+                self.death = self.death - 1
+            end
+            self.hide = false
+            New(bullet_deleter, self.x, self.y)
         end
     end },
     ["frame.death3"] = { 92, function(self)
