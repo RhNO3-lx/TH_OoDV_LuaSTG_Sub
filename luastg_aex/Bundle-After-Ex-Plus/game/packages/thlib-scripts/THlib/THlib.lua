@@ -32,3 +32,4 @@ Include 'sp/sp.lua'--OLC神的sp加强库
 Include("THlib/customized-extension/Lscreen_ext.lua")
 Include("THlib/customized-extension/particle_ext.lua")
 Include("THlib/customized-extension/playerui_ext.lua")
+Include("THlib/customized-extension/misc_ex.lua")

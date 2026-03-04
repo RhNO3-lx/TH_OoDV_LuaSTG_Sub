@@ -57,14 +57,6 @@ local function cycling(tex,cx,cy,cz,back,left)
     
 end
 
-local function approach(cur,tar)
-    if abs(cur-tar)<0.00001 then
-        return tar
-    else
-        local delta=(tar-cur)*0.02
-        return cur+delta
-    end
-end
 function stage1_bg:init()
     --print("stage1_bg:init-1")
     background.init(self,false)
@@ -119,10 +111,10 @@ function stage1_bg:frame()
         attri.eye_dz=player.y/8000
     end
 
-    self.etdx=approach(self.etdx,attri.eye_to_dx)
-    self.etdz=approach(self.etdz,attri.eye_to_dz)
-    self.edx=approach(self.edx,attri.eye_dx)
-    self.edz=approach(self.edz,attri.eye_dz)
+    self.etdx=misc_ex.approach(self.etdx,attri.eye_to_dx)
+    self.etdz=misc_ex.approach(self.etdz,attri.eye_to_dz)
+    self.edx=misc_ex.approach(self.edx,attri.eye_dx)
+    self.edz=misc_ex.approach(self.edz,attri.eye_dz)
 
     local cx=0.03*sin(self.timer*0.093)+attri.eye_x+self.etdx
     local cz=0.03*sin(self.timer*0.13)+attri.eye_z+self.etdz
