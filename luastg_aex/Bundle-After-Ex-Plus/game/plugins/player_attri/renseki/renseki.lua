@@ -4,7 +4,7 @@ renseki_player=Class(player_class)
 local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
-lstg.var.EatColliderSize={10,20,29,38,45}
+lstg.var.EatColliderSize={8,17,25,35,45}
 ---TODO: 允许自机power低于100
 
 EatCollider=Class(object)
@@ -34,7 +34,7 @@ function EatCollider:frame()
 	self.a=lstg.var.EatColliderSize[math.floor(lstg.var.power/lstg.var.PowerExtendPoint)+1]
 	print(self.a)
 	self.b=self.a
-	self.imgr=misc_ex.approach(self.imgr,self.a,0.04)
+	self.imgr=misc_ex.approach(self.imgr,self.a,0.14)
 	if IsValid(self.p) then
 		self.x,self.y=self.p.x,self.p.y
 	end
