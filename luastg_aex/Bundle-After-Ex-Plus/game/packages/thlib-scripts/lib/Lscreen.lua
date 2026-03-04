@@ -299,10 +299,11 @@ function SetViewMode(mode)
         --#region
        --local deltax=screen.dx+(lstg.world.scrl+lstg.world.scrr)/2*screen.scale
         --local deltay=screen.dy+(lstg.world.scrb+lstg.world.scrt)/2*screen.scale
-        SetViewport(lstg.world.scrl * screen.scale+lstg.worldoffset.dx*screen.scale , lstg.world.scrr * screen.scale+lstg.worldoffset.dx*screen.scale ,
-                lstg.world.scrb * screen.scale+lstg.worldoffset.dy*screen.scale, lstg.world.scrt * screen.scale+lstg.worldoffset.dy*screen.scale )
+        -- SetViewport(lstg.world.scrl * screen.scale+lstg.worldoffset.dx*screen.scale , lstg.world.scrr * screen.scale+lstg.worldoffset.dx*screen.scale ,
+        --         lstg.world.scrb * screen.scale+lstg.worldoffset.dy*screen.scale, lstg.world.scrt * screen.scale+lstg.worldoffset.dy*screen.scale )
         --#endregion
-
+        SetViewport(lstg.world.scrl * screen.scale + screen.dx, lstg.world.scrr * screen.scale + screen.dx,
+                    lstg.world.scrb * screen.scale + screen.dy, lstg.world.scrt * screen.scale + screen.dy)
         SetPerspective(
                 lstg.view3d.eye[1], lstg.view3d.eye[2], lstg.view3d.eye[3],
                 lstg.view3d.at[1], lstg.view3d.at[2], lstg.view3d.at[3],
