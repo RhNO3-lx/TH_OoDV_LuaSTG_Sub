@@ -45,22 +45,19 @@ function EatCollider:render()
 end
 
 function EatCollider:colli(other)
-	if other.group==GROUP_FOOD then
-		if other.a>self.a then
-			---todo：触发被咬死的miss效果
-		else
-			---todo：触发咬了别人的效果
+print("playereat colli")
+	if other.group == GROUP_FOOD then
+		if other.a >= self.a and lstg.player.protect == 0 then
+			---触发被咬死的miss效果
+			item.LifeShrinkCheck(player,6,true,true,50);
+		elseif other.a < self.a then
+			---触发咬了别人的效果
 			GetPower(other.EatPowerBonus)
 			---todo: 对于food，同样注册他的colli函数，以便我们额外定义被咬死之后的效果
-			---倘若不行，尝试直接在这里加：
-			-- if other.colli~=false then
-			-- 	other:colli(self)
-			-- end
 			---至于food的判定大小显示，考虑：
 			---1.加入鱼的属性字段，随后通过在外面创建一个task，组遍历，挨个按属性绘制碰撞范围
 			---或者
 			---2.他的一切行为直接在编辑器里慢慢写代码搞定
-			other.kill()
 		end
 	end
 end
