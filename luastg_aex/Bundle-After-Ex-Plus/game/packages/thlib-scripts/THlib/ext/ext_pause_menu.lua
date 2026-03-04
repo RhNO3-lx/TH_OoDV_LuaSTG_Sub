@@ -395,7 +395,7 @@ end
 
 local deathmusic = 'deathmusic'--疮痍曲
 
-LoadMusic(deathmusic, 'THlib/music/player_score.ogg', 34.834, 27.54)
+LoadMusic(deathmusic, "THlib/music/消亡与涌现的循环 ~ Player's Score.ogg", 95, 95)
 LoadTexture('pause', 'THlib/UI/pause.png')
 LoadImage('pause_pausemenu', 'pause', 2, 0, 168, 70)
 SetImageCenter('pause_pausemenu', 0, 35)
