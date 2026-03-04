@@ -64,9 +64,11 @@ function renseki_player:init(slot)
 	SetImageScale("renseki_support_img",0.15)
 
 	LoadTexture("renseki_bullet_ef",dir.."bullet_eff.png")
-	LoadAnimation("renseki_bullet_ef_ani","renseki_bullet_ef",0,0,128,128,3,3,5)
+	LoadAnimation("renseki_bullet_ef_ani","renseki_bullet_ef",0,0,128,128,3,3,1)
 	SetAnimationState("renseki_bullet_ef_ani","mul+add",Color(150,140,50,140))
 	SetAnimationScale("renseki_bullet_ef_ani",0.65)
+
+	LoadPS("renseki_bullet_particle",dir.."renseki_bulletef2.psi","parimg11")
 	---self.testvar=1
 	player_class.init(self)
 
@@ -132,7 +134,7 @@ function renseki_player:shoot()
 			for i=1,4 do
 				if self.sp[i] and self.sp[i][3]>0.5 then
 					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]-3,self.supporty+self.sp[i][2],15,90,0.3)
-					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]+3,self.supporty+self.sp[i][2],15,90,0.3)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]+3,self.supporty+self.sp[i][2],15,90,0.25)
 				end
 			end
 		else
@@ -323,19 +325,48 @@ end
 renseki_bullet_ef=Class(object)
 
 function renseki_bullet_ef:init(x,y)
-	self.x=x self.y=y self.rot=90 self.img='renseki_bullet_ef_ani' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
+	self.x=x self.y=y self.rot=ran:Int(0,360) self.img='renseki_bullet_ef_ani' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
 	self.vy=0
 end
 function renseki_bullet_ef:frame()
-	if self.timer==15 then self.y=600 Del(self) end
+	if self.timer==9 then self.y=600 Del(self) end
+	SetImgState(self,"mul+add",(9-self.timer)/9*255*0.6,140,50,140)
 end
 -------------------------------------------------------
+---x,y,v,angle,dmg
 renseki_bullet_slow=Class(player_bullet_straight)
 
 function renseki_bullet_slow:kill()
 	---todo:add particle eff
 	--New(reimu_bullet_orange_ef,self.x,self.y,self.rot+180+ran:Float(-15,15))
 	--New(reimu_bullet_orange_ef2,self.x,self.y)
+	--local vx,vy=self.vx,self.vy
+	New(renseki_bullet_ef,self.x+self.vx/2,self.y+self.vx/2)
+end
+
+renseki_bullet_explode=Class(object)
+
+function renseki_bullet_explode:init(x,y)
+	--player_bullet_straight("renseki_bullet_particle",x,y,0,0,0.12)
+	self.x=x
+	self.y=y
+	self.vx=0
+	self.vy=0
+	self.img="renseki_bullet_particle"
+	--SetImgState(self,"mul+add",160,200,200,200)
+	self.layer=LAYER_PLAYER_BULLET+50 
+	self.group=GROUP_GHOST
+end
+
+function renseki_bullet_explode:render()
+	SetViewMode("world")
+	object.render(self)
+	SetViewMode("world")
+end
+
+function renseki_bullet_explode:frame()
+	if self.timer==4 then ParticleStop(self) end
+	if self.timer==30 then Del(self) end
 end
 -------------------------------------------------------
 renseki_bullet_fast=Class(player_bullet_trail)
@@ -368,18 +399,19 @@ end
 function renseki_bullet_fast:kill()
 	--todo:add particle effect
 	---New(reimu_bullet_blue_ef,self.x,self.y,self.rot)
+	New(renseki_bullet_explode,self.x+self.vx/2,self.y+self.vy/2)
 end
 -------------------------------------------------------
-reimu_bullet_blue_ef=Class(object)
+-- reimu_bullet_blue_ef=Class(object)
 
-function reimu_bullet_blue_ef:init(x,y,rot)
-	self.x=x self.y=y self.rot=rot self.img='reimu_bullet_blue_ef' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
-	self.vx=1*cos(rot) self.vy=1*sin(rot)
-end
+-- function reimu_bullet_blue_ef:init(x,y,rot)
+-- 	self.x=x self.y=y self.rot=rot self.img='reimu_bullet_blue_ef' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
+-- 	self.vx=1*cos(rot) self.vy=1*sin(rot)
+-- end
 
-function reimu_bullet_blue_ef:frame()
-	if self.timer>14 then Del(self) end
-end
+-- function reimu_bullet_blue_ef:frame()
+-- 	if self.timer>14 then Del(self) end
+-- end
 -------------------------------------------------------
 reimu_sp_ef=Class(player_bullet_trail)
 
