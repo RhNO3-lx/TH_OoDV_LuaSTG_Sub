@@ -85,6 +85,7 @@ ui.menu = {
 
 ui.menu_bulr = 0
 ui.bg_blk = 1
+ui.lihui_alpha = 1
 
 function ui.DrawMenu(title, text, pos, x, y, alpha, timer, shake, text_offx, align)
     local _text_offx = text_offx
@@ -454,6 +455,9 @@ function lstg_ui:reloadUI()
         SetImageCenter("logo", 0, 0)
         LoadImageFromFile("ui_bg", "THlib/UI/ui_bg.png")
         LoadImageFromFile("menu_bg", "THlib/UI/menu_bg__.png")
+        LoadImageFromFile("lihui_light", "THlib/UI/lihui-light.png")
+        LoadImageFromFile("lihui_dark", "THlib/UI/lihui-dark.png")
+        LoadImageFromFile("menu_title", "THlib/UI/menu_title.png")
     elseif self.type == 2 then
         LoadImageFromFile("logo", "THlib/UI/logo.png")
         SetImageCenter("logo", 0, 0)
@@ -514,13 +518,22 @@ ui.is_bg_render_create = false
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
     if not ui.is_bg_render_create then
+        ui.menu_bulr = 0
+        ui.bg_blk = 1
+        ui.lihui_alpha = 1
         lstg.CreateRenderTarget("rt:background")
         ui.is_bg_render_create = true
     end
     lstg.PushRenderTarget("rt:background")
     Render("menu_bg", 320, 240, 0, 0.25, 0.25)
+    Render("lihui_light", 320, 240, 0, 0.25, 0.25)
+    Render("menu_title", 320, 240, 0, 0.25, 0.25)
+    --Render("lihui_dark", 320, 240, 0, 0.25, 0.25)
     lstg.PopRenderTarget()
     SetImageState("menu_bg", "", Color(255, ui.bg_blk * 255, ui.bg_blk * 255, ui.bg_blk * 255 ))
+    SetImageState("lihui_light", "mul+alpha", Color(ui.lihui_alpha * 255, 255, 255, 255 ))
+    SetImageState("menu_title", "mul+alpha", Color(ui.lihui_alpha * 255, 255, 255, 255 ))
+    SetImageState("lihui_dark", "add+mul", Color(ui.lihui_alpha * 255, 0, 0, 0 ))
     post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",

@@ -20,6 +20,30 @@ local musicroom_content = {
 }
 
 local bg_blk_ = 0.03
+local lihui_alpha_ = 0.1
+
+local function bg_change(self, dir)
+    if dir == "in" then
+        task.New(self, function()
+            while ui.menu_bulr < 1 do
+                ui.menu_bulr = ui.menu_bulr + 0.1
+                ui.bg_blk = ui.bg_blk - bg_blk_
+                ui.lihui_alpha = ui.lihui_alpha - lihui_alpha_
+                task.Wait()
+            end
+        end)
+    end
+    if dir == "out" then
+        task.New(self, function()
+            while ui.menu_bulr > 0 do
+                ui.menu_bulr = ui.menu_bulr - 0.1
+                ui.bg_blk = ui.bg_blk + bg_blk_
+                ui.lihui_alpha = ui.lihui_alpha + lihui_alpha_
+                task.Wait()
+            end
+        end)
+    end
+end
 
 local stage_init = stage.New('init', true, true)
 function stage_init:init()
@@ -99,26 +123,14 @@ function stage_menu:init()
     end
     --
     menu_items = { { 'Start Game', function()
-        task.New(self, function()
-            while ui.menu_bulr < 1 do
-                ui.menu_bulr = ui.menu_bulr + 0.1
-                ui.bg_blk = ui.bg_blk - bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "in")
         practice = nil
         menu.FlyIn(menu_difficulty_select, 'right')
         menu.FlyOut(menu_title, 'left')
     end } }
     if _allow_practice then
         table.insert(menu_items, { 'Stage Practice', function()
-            task.New(self, function()
-            while ui.menu_bulr < 1 do
-                ui.menu_bulr = ui.menu_bulr + 0.1
-                ui.bg_blk = ui.bg_blk - bg_blk_
-                task.Wait()
-            end
-        end)
+            bg_change(self, "in")
             practice = 'stage'
             menu.FlyIn(menu_difficulty_select_pr, 'right')
             menu.FlyOut(menu_title, 'left')
@@ -132,37 +144,19 @@ function stage_menu:init()
         end })
     end
     table.insert(menu_items, { 'Replay', function()
-        task.New(self, function()
-            while ui.menu_bulr < 1 do
-                ui.menu_bulr = ui.menu_bulr + 0.1
-                ui.bg_blk = ui.bg_blk - bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "in")
         replay_loader.Refresh(menu_replay_loader)
         menu.FadeIn(menu_replay_loader, 'right')
         menu.FadeOut(menu_title, 'left')
     end })
     ---🎺🎺🎺🍳🍳🍳
     table.insert(menu_items, { 'Music Room', function()
-        task.New(self, function()
-            while ui.menu_bulr < 1 do
-                ui.menu_bulr = ui.menu_bulr + 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "in")
         menu.FadeIn(menu_musicroom)
         menu.FadeOut(menu_title)
     end})
     table.insert(menu_items, { 'Option', function ()
-        task.New(self, function()
-            while ui.menu_bulr < 1 do
-                ui.menu_bulr = ui.menu_bulr + 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "in")
         menu_options.pos = 1
         menu.option_enter = true
         options.copyDataFromSetting()
@@ -170,6 +164,7 @@ function stage_menu:init()
         menu.FadeOut(menu_title)
     end})
     table.insert(menu_items, { 'Manual', function()
+        bg_change(self, "in")
         menu.FadeIn(menu_manual)
         menu.FadeOut(menu_title)
     end})
@@ -221,13 +216,7 @@ function stage_menu:init()
         end
     end
     table.insert(menu_items, { 'exit', function()
-        task.New(self, function()
-            while ui.menu_bulr > 0 do
-                ui.menu_bulr = ui.menu_bulr - 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_difficulty_select, 'right')
     end })
@@ -263,13 +252,7 @@ function stage_menu:init()
         end })
     end
     table.insert(menu_items, { 'exit', function()
-        task.New(self, function()
-            while ui.menu_bulr > 0 do
-                ui.menu_bulr = ui.menu_bulr - 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "out")
         menu.FlyIn(last_menu, 'left')
         menu.FlyOut(menu_player_select, 'right')
     end })
@@ -288,13 +271,7 @@ function stage_menu:init()
         end
     end
     table.insert(menu_items, { 'exit', function()
-        task.New(self, function()
-            while ui.menu_bulr > 0 do
-                ui.menu_bulr = ui.menu_bulr - 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_difficulty_select_pr, 'right')
     end })
@@ -386,13 +363,7 @@ function stage_menu:init()
     --
     menu_replay_loader = New(replay_loader, function(filename, stageName)
         if not filename then
-            task.New(self, function()
-                while ui.menu_bulr > 0 do
-                    ui.menu_bulr = ui.menu_bulr - 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                    task.Wait()
-                end
-            end)
+            bg_change(self, "out")
             menu.FlyIn(menu_title, 'left')
             menu.FlyOut(menu_replay_loader, 'right')
         else
@@ -419,13 +390,7 @@ function stage_menu:init()
         
     end })
     table.insert(menu_items, { 'exit', function()
-        task.New(self, function()
-            while ui.menu_bulr > 0 do
-                ui.menu_bulr = ui.menu_bulr - 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_musicroom, 'right')
     end })
@@ -451,25 +416,13 @@ function stage_menu:init()
     table.insert(menu_items, { 'Default', function ()
     end, "button" })
     table.insert(menu_items, { 'Quit', function ()
-        task.New(self, function()
-            while ui.menu_bulr > 0 do
-                ui.menu_bulr = ui.menu_bulr - 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
         menu.FadeOut(menu_options)
         options.copyDataToSetting()
     end, "button" })
     table.insert(menu_items, { 'exit', function()
-        task.New(self, function()
-            while ui.menu_bulr > 0 do
-                ui.menu_bulr = ui.menu_bulr - 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
         menu.FadeOut(menu_options)
     end, "exit" })
@@ -485,13 +438,7 @@ function stage_menu:init()
         
     end })
     table.insert(menu_items, { 'exit', function()
-        task.New(self, function()
-            while ui.menu_bulr > 0 do
-                ui.menu_bulr = ui.menu_bulr - 0.1
-                ui.bg_blk = ui.bg_blk + bg_blk_
-                task.Wait()
-            end
-        end)
+        bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
         menu.FadeOut(menu_manual)
     end, "exit" })
@@ -518,13 +465,7 @@ function stage_menu:init()
         stage.IsSCpractice = nil
         if self.save_replay then
             menu_replay_saver = New(replay_saver, self.save_replay, self.finish, function()
-                task.New(self, function()
-                    while ui.menu_bulr > 0 do
-                        ui.menu_bulr = ui.menu_bulr - 0.1
-                        ui.bg_blk = ui.bg_blk + bg_blk_
-                        task.Wait()
-                    end
-                end)
+                bg_change(self, "out")
                 menu.FlyOut(menu_replay_saver, 'right')
                 menu.FlyIn(menu_sc_pr, 'left')
                 task.New(menu_sc_pr, sc_init)
@@ -537,13 +478,7 @@ function stage_menu:init()
     else
         if self.save_replay then
             menu_replay_saver = New(replay_saver, self.save_replay, self.finish, function()
-                task.New(self, function()
-                    while ui.menu_bulr > 0 do
-                        ui.menu_bulr = ui.menu_bulr - 0.1
-                        ui.bg_blk = ui.bg_blk + bg_blk_
-                        task.Wait()
-                    end
-                end)
+                bg_change(self, "out")
                 menu.FlyOut(menu_replay_saver, 'right')
                 task.New(stage_menu_self, function()
                     task.Wait(30)
