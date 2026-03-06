@@ -122,7 +122,7 @@ function renseki_player:init(slot)
 	self.EatCollider=New(EatCollider,self)
 	for i=1,36 do self.imgs[i]='renseki_player'..i end
 
-	self.LightRange=100
+	self.LightRange=200
 	self.nf=12 self.nc=8
 	self.hscale=0.25 self.vscale=0.20
 
