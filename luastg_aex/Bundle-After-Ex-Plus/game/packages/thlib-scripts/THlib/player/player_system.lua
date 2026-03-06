@@ -1,7 +1,8 @@
 ---! i think the system is sealed well
 ---! therefore, if we want to change player behaviour, like forbid to shoot, change key c behavior
 ---! we only need to edit player scripts in plugins folder
-
+PlayerSys={}
+PlayerSys.FrozenWhenDead = false
 local player_lib = player_lib
 ---@class player.system
 ---@return player.system
@@ -101,7 +102,7 @@ local defaultFrameEvent = {
         end
     end },
     ["frame.control"] = { 98, function(self, system)
-        if self.__death_state == 0 then
+        if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
             if not self.dialog then
                 if (self.__shoot_flag or player_lib.debug_data.keep_shooting) and self.nextshoot <= 0 then
                     system:shoot()
@@ -120,8 +121,10 @@ local defaultFrameEvent = {
     end },
     ["frame.move"] = { 97, function(self)
         local dx, dy, v = 0, 0, self.hspeed
-        if self.__death_state == 0 then
-            if self.death == 0 and not self.lock then
+        --if self.__death_state == 0 then
+        if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
+            if --self.death == 0 and
+                not self.lock then
                 if self.slowlock then
                     self.slow = 1
                 end
@@ -155,7 +158,7 @@ local defaultFrameEvent = {
         self.__move_dy = dy
     end },
     ["frame.fire"] = { 96, function(self)
-        if self.__death_state == 0 then
+        if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
             if self.__shoot_flag and not self.dialog then
                 self.fire = self.fire + 0.16
             else
@@ -170,7 +173,7 @@ local defaultFrameEvent = {
         end
     end },
     ["frame.itemCollect"] = { 95, function(self)
-        if self.__death_state == 0 then
+        if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
             if self.y > self.collect_line then
                 for _, o in ObjList(GROUP_ITEM) do
                     local flag = false
@@ -190,7 +193,7 @@ local defaultFrameEvent = {
             else
                 if self.__slow_flag then
                     for _, o in ObjList(GROUP_ITEM) do
-                        if Dist(self, o) < 48 then
+                        if Dist(self, o) < 70 then
                             if o.attract < 3 then
                                 o.attract = max(o.attract, 3)
                                 o.target = self
@@ -199,7 +202,7 @@ local defaultFrameEvent = {
                     end
                 else
                     for _, o in ObjList(GROUP_ITEM) do
-                        if Dist(self, o) < 24 then
+                        if Dist(self, o) < 40 then
                             if o.attract < 3 then
                                 o.attract = max(o.attract, 3)
                                 o.target = self
@@ -245,7 +248,7 @@ local defaultFrameEvent = {
             if self.time_stop then
                 self.death = self.death - 1
             end
-            self.hide = true
+            -- self.hide = true
         end
     end },
     ["frame.death33"] = { 92.5, function(self)
@@ -262,17 +265,17 @@ local defaultFrameEvent = {
             if self.time_stop then
                 self.death = self.death - 1
             end
-            self.x = 0
-            self.supportx = 0
-            self.y = -236
-            self.supporty = -236
+            -- self.x = 0
+            -- self.supportx = 0
+            -- self.y = -236
+            -- self.supporty = -236
             self.hide = false
             New(bullet_deleter, self.x, self.y)
         end
     end },
     ["frame.death4"] = { 91, function(self)
         if self.__death_state == 4 then
-            self.y = -192 - (1.2 * (self.death - 1))
+            -- self.y = -192 - (1.2 * (self.death - 1))
         end
     end },
     ["frame.updateVar"] = { 90, function(self)

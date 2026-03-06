@@ -136,7 +136,7 @@ end
 function grazer:frame()
     local p = self.player
     local alive = (p.death == 0 or p.death > 90)
-    if alive then
+    if alive or not PlayerSys.FrozenWhenDead then
         self.x = p.x
         self.y = p.y
         self.hide = p.hide

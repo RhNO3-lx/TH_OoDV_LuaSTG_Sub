@@ -15,3 +15,16 @@ function misc_ex.approach(cur,tar,speed)
         return cur+delta
     end
 end
+
+function misc_ex.PlayerMiss()
+    local p=player
+    if p.death == 0 and not p.dialog then
+        if p.protect == 0 then
+            PlaySound("pldead00", 0.5)
+            p.death = 100
+        end
+        if other.group == GROUP_ENEMY_BULLET then
+            Del(other)
+        end
+    end
+end

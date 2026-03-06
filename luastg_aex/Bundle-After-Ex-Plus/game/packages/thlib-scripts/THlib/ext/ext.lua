@@ -141,6 +141,9 @@ do
     ---!change player to player collider, by RhNO3-lx
     reg("thlib-default-basic:food~player-eat", GROUP_FOOD, GROUP_PLAYER_EAT)
     reg("thlib-default-basic:player-eat~food", GROUP_PLAYER_EAT, GROUP_FOOD)
+
+    ---!检测playerbullet和food的碰撞
+    reg("thlib-default-basic:player-bullet~food",GROUP_FOOD,GROUP_PLAYER_BULLET)
 end
 
 ----------------------------------------

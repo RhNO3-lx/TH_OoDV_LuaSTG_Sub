@@ -57,24 +57,28 @@ item = Class(object)
 ---@param RemoveBulletRadius number 掉血时生成的消弹圈大小
 ---@param is_PlaySound boolean|nil 是否播放掉血音效，不一定是传统的biu
 ---@param TriggerDeath boolean|nil 是否【有可能】触发死亡判定
-function item:LifeShrinkCheck(v,TriggerDeath,is_PlaySound,RemoveBulletRadius)
+function item.LifeShrinkCheck(v,TriggerDeath,is_PlaySound,RemoveBulletRadius)
     lstg.var.chip_bonus = false
     if lstg.var.sc_bonus then
         lstg.var.sc_bonus = 0
     end
-    self.protect = 360
+    player.protect = 210
     if v <= lstg.var.chip or not TriggerDeath then
         lstg.var.chip = lstg.var.chip - v
         New(bullet_cleaner, player.x, player.y, RemoveBulletRadius, 0, 60, false, false, 0)
         if lstg.var.chip < 0 then -- TriggerDeath = false
             lstg.var.chip = 0
         end
+        if is_PlaySound then
+            PlaySound("se_immune", 0.5)
+        end
     else
         if is_PlaySound then
             PlaySound("pldead00", 0.5)
         end
         lstg.var.chip = lstg.var.LifechipPoint
-        item.PlayerMiss(self)
+        lstg.var.sc_bonus=0
+        lstg.var.bomb = max(lstg.var.bomb, lstg.var.MissBombCompensate)
         player.death = 100
     end
     ---! todo:掉血时的逻辑
@@ -510,14 +514,15 @@ end
 -----------------------------
 ---
 ---! miss的行为居然是在这里定义的？
+---! 仅仅是兼容原有逻辑的东西，咱们尽量避免主动调用
 function item:PlayerMiss()
     lstg.var.chip_bonus = false
     if lstg.var.sc_bonus then
         lstg.var.sc_bonus = 0
     end
-    self.protect = 360
+    player.protect = 300
     lstg.var.lifeleft = lstg.var.lifeleft - 1
-    lstg.var.power = math.max(lstg.var.power - lstg.var.MissPowerPenality, 100)
+    lstg.var.power = math.max(lstg.var.power - lstg.var.MissPowerPenality, 0)
     lstg.var.bomb = max(lstg.var.bomb, lstg.var.MissBombCompensate)
     -- if lstg.var.lifeleft > 0 then
     --     for i = 1, 7 do

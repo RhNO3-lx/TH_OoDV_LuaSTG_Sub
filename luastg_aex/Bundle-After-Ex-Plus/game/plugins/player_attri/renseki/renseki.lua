@@ -4,7 +4,7 @@ renseki_player=Class(player_class)
 local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
-lstg.var.EatColliderSize={8,17,25,35,45}
+lstg.var.EatColliderSize={12,19,27,36,45}
 ---TODO: 允许自机power低于100
 
 EatCollider=Class(object)
@@ -12,8 +12,8 @@ function EatCollider:init(player)
 	LoadImageFromFile('EatCollider',dir..'eat_collider.png')
 
 	---! 可以访问这个字段来调整碰撞体不透明度
-	self.alpha=0.3
-	SetImageState('EatCollider','mul+add',Color(255*self.alpha,80,150,160))
+	self.alpha=0.4
+	SetImageState('EatCollider','mul+add',Color(255*self.alpha,150,120,150))
 	self.img="EatCollider"
 	self.rect=false
 	self.p=player
@@ -32,7 +32,7 @@ end
 
 function EatCollider:frame()
 	self.a=lstg.var.EatColliderSize[math.floor(lstg.var.power/lstg.var.PowerExtendPoint)+1]
-	print(self.a)
+	---print(self.a)
 	self.b=self.a
 	self.imgr=misc_ex.approach(self.imgr,self.a,0.14)
 	if IsValid(self.p) then
@@ -41,6 +41,11 @@ function EatCollider:frame()
 end
 
 function EatCollider:render()
+	if(self.p.protect==0) then 
+		SetImageState('EatCollider','mul+add',Color(255*self.alpha,200,120,230))
+	else
+		SetImageState('EatCollider','mul+add',Color(255*self.alpha,90,140,70))
+	end
 	Render(self.img,self.x,self.y,0,self.imgr/50,self.imgr/50)
 end
 
@@ -49,10 +54,14 @@ print("playereat colli")
 	if other.group == GROUP_FOOD then
 		if other.a >= self.a and lstg.player.protect == 0 then
 			---触发被咬死的miss效果
-			item.LifeShrinkCheck(player,6,true,true,50);
+			--print("enter")
+			item.LifeShrinkCheck(other.EatLifePenality,true,true,50);
 		elseif other.a < self.a then
 			---触发咬了别人的效果
 			GetPower(other.EatPowerBonus)
+			PlaySound("lgodsget",0.4)
+			other.eaten=true
+			Kill(other)
 			---todo: 对于food，同样注册他的colli函数，以便我们额外定义被咬死之后的效果
 			---至于food的判定大小显示，考虑：
 			---1.加入鱼的属性字段，随后通过在外面创建一个task，组遍历，挨个按属性绘制碰撞范围
