@@ -3,6 +3,13 @@
 ---! we only need to edit player scripts in plugins folder
 PlayerSys={}
 PlayerSys.FrozenWhenDead = false
+
+lstg.var.block_shoot = false
+--lstg.var.block_spell = false
+--lstg.var.block_move = false
+--use this instead
+--player.lock=true
+
 local player_lib = player_lib
 ---@class player.system
 ---@return player.system
@@ -104,7 +111,7 @@ local defaultFrameEvent = {
     ["frame.control"] = { 98, function(self, system)
         if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
             if not self.dialog then
-                if (self.__shoot_flag or player_lib.debug_data.keep_shooting) and self.nextshoot <= 0 then
+                if (self.__shoot_flag or player_lib.debug_data.keep_shooting) and self.nextshoot <= 0 and not lstg.var.block_shoot then
                     system:shoot()
                 end
                 if self.__spell_flag and self.nextspell <= 0 and lstg.var.bomb > 0 and not lstg.var.block_spell then

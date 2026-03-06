@@ -143,7 +143,8 @@ do
     reg("thlib-default-basic:player-eat~food", GROUP_PLAYER_EAT, GROUP_FOOD)
 
     ---!检测playerbullet和food的碰撞
-    reg("thlib-default-basic:player-bullet~food",GROUP_FOOD,GROUP_PLAYER_BULLET)
+    reg("thlib-default-basic:food~player-bullet",GROUP_FOOD,GROUP_PLAYER_BULLET)
+    reg("thlib-default-basic:spell~food",GROUP_SPELL,GROUP_FOOD)
 end
 
 ----------------------------------------

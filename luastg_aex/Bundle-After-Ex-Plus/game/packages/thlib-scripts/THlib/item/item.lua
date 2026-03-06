@@ -76,7 +76,7 @@ function item.LifeShrinkCheck(v,TriggerDeath,is_PlaySound,RemoveBulletRadius)
         if is_PlaySound then
             PlaySound("pldead00", 0.5)
         end
-        lstg.var.chip = lstg.var.LifechipPoint
+        lstg.var.chip = lstg.var.LifeExtendPoint+lstg.var.chip-v
         lstg.var.sc_bonus=0
         lstg.var.bomb = max(lstg.var.bomb, lstg.var.MissBombCompensate)
         player.death = 100
