@@ -66,6 +66,29 @@ local stage_class = {
     allow_practice = false,
 }
 
+death_mask = Class(object)
+function death_mask:init(mode)
+    self.layer = LAYER_TOP + 100
+    self.group = GROUP_GHOST
+    self.open = (mode == 'open')
+end
+function death_mask:frame()
+    if self.timer > 70 then
+        Del(self)
+    end
+end
+function death_mask:render()
+    SetViewMode 'ui'
+    if self.open then
+        SetImageState('white_', '', Color(max(0, min(255, 255 - self.timer * 8.5)), 0, 0, 0))
+    else
+        SetImageState('white_', '', Color(max(0, min(255, self.timer * 8.5)), max(0, min(255, (-math.abs(self.timer - 25) + 25) * 8.5)), 0, 0))
+    end
+    RenderRect('white_', 0, screen.width, 0, screen.height)
+    SetViewMode 'world'
+end
+
+
 ---@param name string
 ---@return stage.group.Group|nil
 function M.Find(name)
@@ -269,10 +292,33 @@ function M.frame(self)
             ext.rep_over = true
             lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
         else
-            PlayMusic(deathmusic, 0.8)
-            ext.pop_pause_menu = true
-            lstg.tmpvar.death = true
-            lstg.tmpvar.pause_menu_text = { 'Continue', 'Quit and Save Replay', 'Restart' }
+            New(death_mask,"close")
+            lstg.var.timeslow = 2
+            task.New(self, function ()
+                -- for i = 1, 50 do
+                --     local mask_color = Color(i * 4.1, i * 2, 0, 0)
+                --     local mask_alph = {
+                --         min(i * 8, 239),
+                --         max(min((i - 10) * 8, 239), 0),
+                --         max(min((i - 20) * 8, 239), 0),
+                --     }
+                --     local mask_x = {
+                --         min(-210 + i, -180),
+                --         min(-220 + i, -180),
+                --         min(-230 + i, -180),
+                --     }
+                --     SetViewMode("ui")
+                --     SetImageState('white_', '', Color(max(0, min(255, 255 - self.timer * 8.5)), 0, 0, 0))
+                --     RenderRect('white', 0, screen.width, 0, screen.height)
+                --     SetViewMode("world")
+                --     task.Wait(1)
+                -- end
+                task.Wait(70)
+                PlayMusic(deathmusic, 0.8)
+                ext.pop_pause_menu = true
+                lstg.tmpvar.death = true
+                lstg.tmpvar.pause_menu_text = { 'Continue', 'Quit and Save Replay', 'Restart' }
+            end)
         end
         lstg.var.lifeleft = 0
     end
@@ -645,6 +691,8 @@ function M.FinishGroupTask(self, wait)
     end
 end
 
+LoadTexture('misc_', 'THlib/misc/misc_.png')
+LoadImage('white_', 'misc_', 56, 8, 16, 16)
 ----------------------------------------
 ---示例代码
 

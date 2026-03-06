@@ -521,6 +521,7 @@ function lstg_ui:drawMenuBG1()
         ui.menu_bulr = 0
         ui.bg_blk = 1
         ui.lihui_alpha = 1
+        
         lstg.CreateRenderTarget("rt:background")
         ui.is_bg_render_create = true
     end
@@ -533,7 +534,7 @@ function lstg_ui:drawMenuBG1()
     SetImageState("menu_bg", "", Color(255, ui.bg_blk * 255, ui.bg_blk * 255, ui.bg_blk * 255 ))
     SetImageState("lihui_light", "mul+alpha", Color(ui.lihui_alpha * 255, 255, 255, 255 ))
     SetImageState("menu_title", "mul+alpha", Color(ui.lihui_alpha * 255, 255, 255, 255 ))
-    SetImageState("lihui_dark", "add+mul", Color(ui.lihui_alpha * 255, 0, 0, 0 ))
+    --SetImageState("lihui_dark", "add+mul", Color(ui.lihui_alpha * 255, 0, 0, 0 ))
     post_effect.drawBoxBlur3x3("rt:background", "", ui.menu_bulr)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
