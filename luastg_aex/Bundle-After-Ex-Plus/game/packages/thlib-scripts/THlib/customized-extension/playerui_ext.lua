@@ -12,6 +12,7 @@ lstg.var.ShowBomb=true
 lstg.var.ShowPower=true
 lstg.var.ShowBackground=true
 
+LoadImage('white2', 'misc', 56, 8, 16, 16)
 ---@param tex string @图片名
 ---@param x number @x坐标
 ---@param y number @y坐标
@@ -73,9 +74,9 @@ function PutPlayerUI(type)
         attri.la=360
     end
     ---! 血条边框
-    SetImageState("white", attri.blendmode, attri.c)
+    SetImageState("white2", attri.blendmode, attri.c)
     local cx,cy=GetPlayerScr()
-    RenderRingEx("white", cx,cy, 90,attri.la,attri.r1, attri.r2,-1)
+    RenderRingEx("white2", cx,cy, 90,attri.la,attri.r1, attri.r2,-1)
     SetViewMode("world")
 end
 
@@ -98,10 +99,10 @@ function PutPlayerUIBar()
     local da=1
     local offset=1
     local cx,cy=GetPlayerScr()
-    SetImageState("white", attri.blendmode, attri.c)
+    SetImageState("white2", attri.blendmode, attri.c)
     for i=1,n do
         local ac=-i*360/lstg.var.LifeMax
-        RenderRingEx("white", cx,cy, offset+90+ac-da,2*da,attri.r1, attri.r2,1,4)
+        RenderRingEx("white2", cx,cy, offset+90+ac-da,2*da,attri.r1, attri.r2,1,4)
     end
 end
 --[[
