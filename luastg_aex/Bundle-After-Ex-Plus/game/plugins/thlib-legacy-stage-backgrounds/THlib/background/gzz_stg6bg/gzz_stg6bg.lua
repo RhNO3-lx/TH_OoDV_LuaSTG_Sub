@@ -84,6 +84,7 @@ function gzz_stg6bg_background:render()
 	background.WarpEffectApply()
 	SetViewMode'world'
 	if self.changed==true then
+		---!制作发光效果
 		misc.RenderRing('gzz6bg5',0,195,max(self.r1-250,0),min(self.r1,500),0,16,8)
 		misc.RenderRing('gzz6bg5',0,195,max(self.r2-250,0),min(self.r2,500),0,16,8)
 		misc.RenderRing('gzz6bg5',0,195,max(self.r3-250,0),min(self.r3,500),0,16,8)

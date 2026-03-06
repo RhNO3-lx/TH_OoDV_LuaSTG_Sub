@@ -4,44 +4,81 @@ renseki_player=Class(player_class)
 local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
+lstg.var.EatColliderSize={12,19,27,36,45}
+---TODO: 允许自机power低于100
+
+EatCollider=Class(object)
+function EatCollider:init(player)
+	LoadImageFromFile('EatCollider',dir..'eat_collider.png')
+
+	---! 可以访问这个字段来调整碰撞体不透明度
+	self.alpha=0.4
+	SetImageState('EatCollider','mul+add',Color(255*self.alpha,150,120,150))
+	self.img="EatCollider"
+	self.rect=false
+	self.p=player
+	self.group=GROUP_PLAYER_EAT
+
+	
+	if IsValid(self.p) then
+		self.x,self.y=self.p.x,self.p.y
+	else
+		self.x,self.y=0,0
+	end
+	self.a=lstg.var.EatColliderSize[math.floor(lstg.var.power/lstg.var.PowerExtendPoint)+1]
+	self.b=self.a
+	self.imgr=self.a
+end
+
+function EatCollider:frame()
+	self.a=lstg.var.EatColliderSize[math.floor(lstg.var.power/lstg.var.PowerExtendPoint)+1]
+	---print(self.a)
+	self.b=self.a
+	self.imgr=misc_ex.approach(self.imgr,self.a,0.14)
+	if IsValid(self.p) then
+		self.x,self.y=self.p.x,self.p.y
+	end
+end
+
+function EatCollider:render()
+	if(self.p.protect==0) then 
+		SetImageState('EatCollider','mul+add',Color(255*self.alpha,200,120,230))
+	else
+		SetImageState('EatCollider','mul+add',Color(255*self.alpha,90,140,70))
+	end
+	Render(self.img,self.x,self.y,0,self.imgr/50,self.imgr/50)
+end
+
+function EatCollider:colli(other)
+print("playereat colli")
+	if other.group == GROUP_FOOD then
+		if other.a >= self.a and lstg.player.protect == 0 then
+			---触发被咬死的miss效果
+			--print("enter")
+			item.LifeShrinkCheck(other.EatLifePenality,true,true,50);
+		elseif other.a < self.a then
+			---触发咬了别人的效果
+			GetPower(other.EatPowerBonus)
+			PlaySound("lgodsget",0.4)
+			other.eaten=true
+			Kill(other)
+			---todo: 对于food，同样注册他的colli函数，以便我们额外定义被咬死之后的效果
+			---至于food的判定大小显示，考虑：
+			---1.加入鱼的属性字段，随后通过在外面创建一个task，组遍历，挨个按属性绘制碰撞范围
+			---或者
+			---2.他的一切行为直接在编辑器里慢慢写代码搞定
+		end
+	end
+end
 ---!todo: add class member var to enable shooting direction locked/released
 function renseki_player:init(slot)
-	--LoadTexture('reimu_player',dir..'renseki.png')
 	LoadTexture('renseki_player',dir..'renseki_full.png')
-	--LoadTexture('reimu_player2p',dir..'reimu_2p.png')
 	LoadTexture('reimu_kekkai',dir..'reimu_kekkai.png')
-	--LoadTexture('reimu_orange_ef2',dir..'reimu_orange_eff.png')
 	-----------------------------------------
 	LoadImageGroup('renseki_player','renseki_player',0,0,256,256,12,3,0.5,0.5)
-	--LoadImageGroup('reimu_player2p','reimu_player2p',0,0,32,48,8,3,0.5,0.5)
-	-----------------------------------------
-	--LoadImage('reimu_bullet_red','reimu_player',192,160,64,16,16,16)
-	--SetImageState('reimu_bullet_red','',Color(0xA0FFFFFF))
-	--SetImageCenter('reimu_bullet_red',56,8)
-	--LoadAnimation('reimu_bullet_red_ef','reimu_player',0,144,16,16,4,1,4)
-	--SetAnimationState('reimu_bullet_red_ef','mul+add',Color(0xA0FFFFFF))
-	--LoadImage('reimu_bullet_ef_img','reimu_player',48,144,16,16)
-	-----------------------------------------
-	--LoadImage('reimu_bullet_blue','reimu_player',0,160,16,16,16,16)
-	--SetImageState('reimu_bullet_blue','',Color(0x80FFFFFF))
-	--LoadAnimation('reimu_bullet_blue_ef','reimu_player',0,160,16,16,4,1,4)
-	--SetAnimationState('reimu_bullet_blue_ef','mul+add',Color(0xA0FFFFFF))
-	-----------------------------------------
-	--LoadImage('reimu_bullet_orange','reimu_player',64,176,64,16,64,16)
-	--SetImageState('reimu_bullet_orange','',Color(0x80FFFFFF))
-	--SetImageCenter('reimu_bullet_orange',32,8)
-	--LoadImage('reimu_bullet_orange_ef','reimu_player',64,176,64,16,64,16)
-	--SetImageState('reimu_bullet_orange_ef','',Color(0x80FFFFFF))
-	--SetImageCenter('reimu_bullet_orange_ef',32,8)
-	--LoadAnimation('reimu_bullet_orange_ef2','reimu_orange_ef2',0,0,64,16,1,9,1)
-	--SetAnimationCenter('reimu_bullet_orange_ef2',0,8)
-	--SetAnimationState('reimu_bullet_orange_ef2','mul+add',Color(255,255,155,155))
-	-----------------------------------------
-	--LoadImage('reimu_support','reimu_player',64,144,16,16)
 	LoadImageFromFile('reimu_bomb_ef',dir..'reimu_bomb_ef.png')
 	LoadImage('reimu_kekkai','reimu_kekkai',0,0,256,256,0,0)
 	SetImageState('reimu_kekkai','mul+add',Color(0x804040FF))
-	--LoadPS('reimu_bullet_ef',dir..'reimu_bullet_ef.psi','reimu_bullet_ef_img')
 	LoadPS('reimu_sp_ef',dir..'reimu_sp_ef.psi','parimg1',16,16)
 	-----------------------------------------
 	LoadTexture("renseki_bullet1",dir.."b1.png")
@@ -78,24 +115,13 @@ function renseki_player:init(slot)
 		---Print("exetute player addframe logic")
 	--end)
 
-	---todo: modify frame settings here
-	--LoadTexture("renseki_idle","")
-	--self._wisys = PlayerWalkImageSystem(self)  
-	--self._wisys:setParam(0, 0, 32, 48, 12)
-	--wi.
-	--self._wisys = DNHWalkImageSystem(self, 'reimu_player', 0, 0, 32, 48, 12)
-
 	self.name='Renseki'
 	self.hspeed=4.5
 	self.imgs={}
 	self.A=0.5 self.B=0.5
-	-- if slot and slot==2 and jstg.players[1].name==self.name then
-	-- 	for i=1,24 do self.imgs[i]='reimu_player2p'..i end
-	-- else
+	self.EatCollider=New(EatCollider,self)
 	for i=1,36 do self.imgs[i]='renseki_player'..i end
-	-- end
 
-	---!use self.nf and self.nc to determine the frame counts and cycling frame counts
 	self.nf=12 self.nc=8
 	self.hscale=0.25 self.vscale=0.20
 
