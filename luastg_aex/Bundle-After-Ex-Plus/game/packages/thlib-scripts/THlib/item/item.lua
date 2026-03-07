@@ -453,61 +453,61 @@ function item.playercollect(n)
             task.Wait(1)
         end
         z = lstg.var.collectitem[n]
-        local x = player.x
-        local y = player.y
-        if z >= 0 and z < 40 then
-            Z = 1.0
-        elseif z < 60 then
-            Z = 1.5
-        elseif z < 80 then
-            Z = 2.4
-        elseif z < 100 then
-            Z = 3.6
-        elseif z < 120 then
-            Z = 5.0
-        elseif z >= 120 then
-            Z = 8.0
-        end
-        if z >= 5 and z < 20 then
-            task.Wait(15)
-            New(float_text2, 'bonus', 'NO BONUS', x, y + 60, 0, 90, 120, 0.5, 0.5, Color(0xF0B0B0B0), Color(0x00B0B0B0))
-        elseif z >= 20 and z < 40 then
-            PlaySound('pin00', 0.8)
-            task.Wait(15)
-            New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFF29E8E8), Color(0x0029E8E8))
-            New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFF29E8E8), Color(0x0029E8E8))
-            var.faith = var.faith + Z * z * 20
-        elseif z >= 40 and z < 60 then
-            PlaySound('pin00', 0.8)
-            task.Wait(15)
-            New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFF29E8E8), Color(0x0029E8E8))
-            New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFF29E8E8), Color(0x0029E8E8))
-            var.faith = var.faith + Z * z * 20
-        elseif z >= 60 and z < 80 then
-            PlaySound('pin00', 0.8)
-            task.Wait(15)
-            New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFF44FFA1), Color(0x0044FFA1))
-            New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFF44EEA1), Color(0x0044EEA1))
-            var.faith = var.faith + Z * z * 20
-        elseif z >= 80 and z < 100 then
-            PlaySound('pin00', 0.8)
-            task.Wait(15)
-            New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFF44FFA1), Color(0x0044FFA1))
-            New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFF44FFA1), Color(0x0044FFA1))
-            var.faith = var.faith + Z * z * 20
-        elseif z >= 100 and z < 120 then
-            PlaySound('pin00', 0.8)
-            task.Wait(15)
-            New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFFFFFF00), Color(0x00FFFF00))
-            New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFFFFFF00), Color(0x00FFFF00))
-            var.faith = var.faith + Z * z * 20
-        elseif z >= 120 then
-            PlaySound('pin00', 0.8)
-            task.Wait(15)
-            New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFFFF4422), Color(0x00FF4422))
-            New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFFFF4422), Color(0x00FF4422))
-            var.faith = var.faith + Z * z * 20
-        end
+        -- local x = player.x
+        -- local y = player.y
+        -- if z >= 0 and z < 40 then
+        --     Z = 1.0
+        -- elseif z < 60 then
+        --     Z = 1.5
+        -- elseif z < 80 then
+        --     Z = 2.4
+        -- elseif z < 100 then
+        --     Z = 3.6
+        -- elseif z < 120 then
+        --     Z = 5.0
+        -- elseif z >= 120 then
+        --     Z = 8.0
+        -- end
+        -- if z >= 5 and z < 20 then
+        --     task.Wait(15)
+        --     New(float_text2, 'bonus', 'NO BONUS', x, y + 60, 0, 90, 120, 0.5, 0.5, Color(0xF0B0B0B0), Color(0x00B0B0B0))
+        -- elseif z >= 20 and z < 40 then
+        --     PlaySound('pin00', 0.8)
+        --     task.Wait(15)
+        --     New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFF29E8E8), Color(0x0029E8E8))
+        --     New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFF29E8E8), Color(0x0029E8E8))
+        --     var.faith = var.faith + Z * z * 20
+        -- elseif z >= 40 and z < 60 then
+        --     PlaySound('pin00', 0.8)
+        --     task.Wait(15)
+        --     New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFF29E8E8), Color(0x0029E8E8))
+        --     New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFF29E8E8), Color(0x0029E8E8))
+        --     var.faith = var.faith + Z * z * 20
+        -- elseif z >= 60 and z < 80 then
+        --     PlaySound('pin00', 0.8)
+        --     task.Wait(15)
+        --     New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFF44FFA1), Color(0x0044FFA1))
+        --     New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFF44EEA1), Color(0x0044EEA1))
+        --     var.faith = var.faith + Z * z * 20
+        -- elseif z >= 80 and z < 100 then
+        --     PlaySound('pin00', 0.8)
+        --     task.Wait(15)
+        --     New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFF44FFA1), Color(0x0044FFA1))
+        --     New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFF44FFA1), Color(0x0044FFA1))
+        --     var.faith = var.faith + Z * z * 20
+        -- elseif z >= 100 and z < 120 then
+        --     PlaySound('pin00', 0.8)
+        --     task.Wait(15)
+        --     New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFFFFFF00), Color(0x00FFFF00))
+        --     New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFFFFFF00), Color(0x00FFFF00))
+        --     var.faith = var.faith + Z * z * 20
+        -- elseif z >= 120 then
+        --     PlaySound('pin00', 0.8)
+        --     task.Wait(15)
+        --     New(float_text2, 'bonus', string.format('BONUS', Z), x, y + 70, 0, 120, 120, 0.5, 0.5, Color(0xFFFF4422), Color(0x00FF4422))
+        --     New(float_text2, 'bonus', string.format('%d X %.1f', z * 20, Z), x, y + 60, 0, 120, 120, 0.5, 0.5, Color(0xFFFF4422), Color(0x00FF4422))
+        --     var.faith = var.faith + Z * z * 20
+        -- end
         lstg.var.collectitem[n] = 0
     end)
 

@@ -123,6 +123,7 @@ function renseki_player:init(slot)
 	self.A=0.5 self.B=0.5
 	self.EatCollider=New(EatCollider,self)
 	for i=1,36 do self.imgs[i]='renseki_player'..i end
+	self.collect_line=600
 
 	self.LightRange=120
 	self.TargetLightRange=120
