@@ -1,5 +1,5 @@
 
---LoadMusic("stage1","THlib/music/stage1.ogg",)
+LoadMusic("stage1","THlib/music/stage1.ogg",81.23,73.95)
 
 LoadTexture("emo_bubble","THlib/emo_bubble/Balloon.png")
 
