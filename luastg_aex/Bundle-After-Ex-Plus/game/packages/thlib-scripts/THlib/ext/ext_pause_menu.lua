@@ -139,7 +139,7 @@ function ext.pausemenu:frame()
                 if self.pos == 1 then
                     ---对第一个选项特化处理
                     ---TODO 这里的if语句需要读取当前关卡信息，判断是否可以续关
-                    if false then
+                    if false or not lstg.tmpvar.death then
                         ext.PushPauseMenuOrder(pause_menu_text[self.pos])
                         self:FlyOut()
                     else
