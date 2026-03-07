@@ -5,17 +5,28 @@ local post_effect = require("lib.posteffect")
 ---for image,{type, position_x, position_y, name, rot, hscale, vscale}
 local manual_content = {
     {
-        { "text", -150, 110, "", "O1.如何进行游戏", 1.3 },
-        { "text", -150, 50, "", "这是注意躲避比自己打的敌人，\n吃掉比自己小的敌人积攒power的游戏。\n每一关都有通关所需的power量，\n积攒足够的power后就过关了。", 1.3 },
+        { "text", -150, 110, "", "O1.如何进行游戏", 0.675 },
+        { "text", -150, 50, "", "这是注意躲避比自己打的敌人，\n吃掉比自己小的敌人积攒power的游戏。\n每一关都有通关所需的power量，\n积攒足够的power后就过关了。", 0.675 },
     },
     {
-        { "text", 0, 0, "", "this is the second option", 1.3 }
+        { "text", 0, 0, "", "this is the second option", 1 }
     }
 }
 local musicroom_content = {
     {
-        { "text", -278, -150, "", "♪text~textextext", 1 },
-        { "text", -260, -200, "", "textextextext,textextextext\ntextextextextextextext\ntext.", 1 }
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 }
+    },
+    {
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 }
+    },
+    {
+        { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
+        { "text", -280, -180, "", 
+        "前两个stage的战败曲。与战败CG一样，希望表现出来的是：\n"..
+        "涟析被杂乱无章的数据之海淹没，最终渐渐失去意识\n"..
+        "难得涌现出的生命奇迹，就这样归于沉寂了，大概就是这样的绝望与希望交加之感。\n"..
+        "这样来看，不允许continue也是很合理的设定\n"..
+        "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
     }
 }
 
@@ -387,6 +398,12 @@ function stage_menu:init()
     --
     menu_items = {}
     table.insert(menu_items, { '1.text~textextext', function ()
+        
+    end })
+    table.insert(menu_items, { '2.text~textextext', function ()
+        
+    end })
+    table.insert(menu_items, { "3.消亡与涌现的循环 ~ Player's Score ", function ()
         
     end })
     table.insert(menu_items, { 'exit', function()

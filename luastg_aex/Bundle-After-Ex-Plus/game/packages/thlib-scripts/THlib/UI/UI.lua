@@ -359,8 +359,9 @@ end
 function ui.DrawManualContent(x, y, content, alpha, color)
     local con = content
     for i = 1, con.length do
+        local sca = con.scale[i] or ui.menu.font_size
         if con.type[i] == "text" then
-            RenderTTF2(con.font[i], con.text[i], con.x[i] + x, con.x[i] + x, con.y[i] + y, con.y[i] + y, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.focused_color1)), "", "vcenter", "noclip")
+            RenderTTF2(con.font[i], con.text[i], con.x[i] + x, con.x[i] + x, con.y[i] + y, con.y[i] + y, sca, Color(alpha * 255, unpack(ui.menu.focused_color1)), "", "vcenter", "noclip")
         elseif con.type == "image" then
 
         end

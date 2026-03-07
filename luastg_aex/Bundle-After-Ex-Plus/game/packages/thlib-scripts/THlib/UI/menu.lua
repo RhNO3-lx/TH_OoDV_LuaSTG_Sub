@@ -734,7 +734,7 @@ musicroom = Class(object)
 function musicroom:init(title, item, content, keyslot, offx, offy)
     self.layer = LAYER_TOP
     self.group = GROUP_GHOST
-    self.alpha = 1
+    self.alpha = 0
     self.offx = offx or 0
     self.x = screen.width * 0.5 - screen.width
     self.y = screen.height * 0.5
@@ -829,7 +829,7 @@ function musicroom.createContent(content)
                     con.font[j] = _[4]
                 end
                 con.text[j] = _[5]
-                con.scale = _[6]
+                con.scale[j] = _[6]
             elseif _[1] == "image" then
                 con.type[j] = "image"
                 con.name[j] = _[4]
@@ -1255,7 +1255,7 @@ function manual.createContent(content)
         con.rot = {}
         con.hscale = {}
         con.vscale = {}
-        content.scale = {}
+        con.scale = {}
         con.length = 0
         for j, _ in ipairs(v) do
             con.x[j] = _[2]
@@ -1268,7 +1268,7 @@ function manual.createContent(content)
                     con.font[j] = _[4]
                 end
                 con.text[j] = _[5]
-                con.scale = _[6]
+                con.scale[j] = _[6]
             elseif _[1] == "image" then
                 con.type[j] = "image"
                 con.name[j] = _[4]
