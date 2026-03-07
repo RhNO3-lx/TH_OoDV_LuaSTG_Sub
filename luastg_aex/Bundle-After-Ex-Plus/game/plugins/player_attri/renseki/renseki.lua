@@ -151,7 +151,17 @@ function renseki_player:init(slot)
 	}
 end
 
+function renseki_player:ChangeColor(r,g,b,a,blend)
+	blend=blend or 'mul+alpha'
+	--todo:让它变得更加丝滑
+	self._a=a
+	self._r=r
+	self._g=g
+	self._b=b
+end
+
 function renseki_player:frame()
+	task.Do(self)
 	player_class.frame(self)
 	self.LightRange=misc_ex.approach(self.LightRange,self.TargetLightRange,0.1)
 	self.TargetLightRange=max(self.TargetLightRange-0.3,self.MinLightRange)
