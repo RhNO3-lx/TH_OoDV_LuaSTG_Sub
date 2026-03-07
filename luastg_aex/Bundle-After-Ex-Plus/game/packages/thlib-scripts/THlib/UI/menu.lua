@@ -1,6 +1,7 @@
 ﻿menu = {}
 
 function menu:FlyIn(dir)
+    
     self.alpha = 1
     if dir == 'left' then
         self.x = screen.width * 0.5 - screen.width
@@ -137,10 +138,10 @@ function sc_pr_menu:render()
         --]]
     SetViewMode('ui')
     SetImageState('white', '', Color(0xC0000000))
-    RenderRect('white', self.x - ui.menu.sc_pr_width * 0.5 - ui.menu.sc_pr_margin,
-            self.x + ui.menu.sc_pr_width * 0.5 + ui.menu.sc_pr_margin,
-            self.y - ui.menu.sc_pr_line_height * (ui.menu.sc_pr_line_per_page + 2) * 0.5 - ui.menu.sc_pr_margin,
-            self.y + ui.menu.sc_pr_line_height * (ui.menu.sc_pr_line_per_page + 2) * 0.5 + ui.menu.sc_pr_margin)
+    -- RenderRect('white', self.x - ui.menu.sc_pr_width * 0.5 - ui.menu.sc_pr_margin,
+    --         self.x + ui.menu.sc_pr_width * 0.5 + ui.menu.sc_pr_margin,
+    --         self.y - ui.menu.sc_pr_line_height * (ui.menu.sc_pr_line_per_page + 2) * 0.5 - ui.menu.sc_pr_margin,
+    --         self.y + ui.menu.sc_pr_line_height * (ui.menu.sc_pr_line_per_page + 2) * 0.5 + ui.menu.sc_pr_margin)
     local text1 = {}
     local text2 = {}
     local offset = self.page * ui.menu.sc_pr_line_per_page

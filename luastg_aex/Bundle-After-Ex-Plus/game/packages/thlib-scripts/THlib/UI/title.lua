@@ -1,8 +1,10 @@
 local post_effect = require("lib.posteffect")
 
 
+---manual与musicroom介绍文本定义
 ---for text,{type, position_x, position_y, font, content, scale}
 ---for image,{type, position_x, position_y, name, rot, hscale, vscale}
+
 local manual_content = {
     {
         { "text", -150, 110, "", "O1.如何进行游戏", 0.675 },
@@ -12,6 +14,8 @@ local manual_content = {
         { "text", 0, 0, "", "this is the second option", 1 }
     }
 }
+---musicroom介绍文本定义
+---
 local musicroom_content = {
     {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 }
@@ -93,6 +97,8 @@ MusicRecord("spellcard", 'THlib/music/spellcard.ogg', 75, 0xc36e80 / 44100 / 4)
 
 stage_menu = stage.New('menu', false, true)
 
+lstg.var.now_music = "menu"
+
 function stage_menu:init()
     local stage_menu_self = self
     local menu_title,
@@ -149,6 +155,7 @@ function stage_menu:init()
     end
     if _allow_sc_practice then
         table.insert(menu_items, { 'Spell Practice', function()
+            bg_change(self, "in")
             practice = 'spell'
             menu.FlyIn(menu_sc_pr, 'right')
             menu.FlyOut(menu_title, 'left')
@@ -367,6 +374,7 @@ function stage_menu:init()
             end)
             --
         else
+            bg_change(self, "out")
             menu.FlyIn(menu_title, 'left')
             menu.FlyOut(menu_sc_pr, 'right')
         end
@@ -397,6 +405,7 @@ function stage_menu:init()
     end)
     --
     menu_items = {}
+    ---musicroom标题文本定义
     table.insert(menu_items, { '1.text~textextext', function ()
         
     end })
@@ -404,9 +413,15 @@ function stage_menu:init()
         
     end })
     table.insert(menu_items, { "3.消亡与涌现的循环 ~ Player's Score ", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('deathmusic')
+        lstg.var.now_music = 'deathmusic'
         
     end })
     table.insert(menu_items, { 'exit', function()
+        PlayMusic('menu')
+        StopMusic(lstg.var.now_music)
+        lstg.var.now_music = 'menu'
         bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_musicroom, 'right')
@@ -482,7 +497,6 @@ function stage_menu:init()
         stage.IsSCpractice = nil
         if self.save_replay then
             menu_replay_saver = New(replay_saver, self.save_replay, self.finish, function()
-                bg_change(self, "out")
                 menu.FlyOut(menu_replay_saver, 'right')
                 menu.FlyIn(menu_sc_pr, 'left')
                 task.New(menu_sc_pr, sc_init)
