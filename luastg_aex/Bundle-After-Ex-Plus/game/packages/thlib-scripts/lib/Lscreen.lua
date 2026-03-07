@@ -480,6 +480,8 @@ end
 
 ---设置world偏移
 function SetWorldOffset(centerx, centery, hscale, vscale)
+    hscale=hscale or 1
+    vscale=vscale or 1
     lstg.worldoffset.centerx = centerx
     lstg.worldoffset.centery = centery
     lstg.worldoffset.hscale = hscale

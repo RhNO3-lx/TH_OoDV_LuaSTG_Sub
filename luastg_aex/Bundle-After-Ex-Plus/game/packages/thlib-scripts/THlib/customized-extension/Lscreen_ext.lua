@@ -10,8 +10,8 @@ require("lib.Lscreen")
 ---@param cy number
 ---@deprecated
 function Set3DOffset(cx,cy)
-    lstg.worldoffset.cy3d=cy
-    lstg.worldoffset.cx3d=cx
+    --lstg.worldoffset.cy3d=cy
+    --lstg.worldoffset.cx3d=cx
 end
 
 ---! sl,sb,sw,sh ->screen param
