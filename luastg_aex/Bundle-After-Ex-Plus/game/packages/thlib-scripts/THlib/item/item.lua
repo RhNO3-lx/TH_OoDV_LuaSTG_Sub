@@ -324,7 +324,7 @@ function item_point:collect()
     --     var.score = var.score + int(var.pointrate / 20) * 10
     -- end
 
-    var.LifechipPoint = var.LifechipPoint + 1
+    var.chip = var.chip + 1
     LifeExtendCheck()
 end
 

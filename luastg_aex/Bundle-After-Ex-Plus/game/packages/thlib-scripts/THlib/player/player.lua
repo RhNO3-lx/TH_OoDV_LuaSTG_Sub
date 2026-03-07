@@ -94,6 +94,17 @@ function player_class:findtarget()
             end
         end
     end
+    for i, o in ObjList(GROUP_FOOD) do
+        if o.colli then
+            local dx = self.x - o.x
+            local dy = self.y - o.y
+            local pri = abs(dy) / (abs(dx) + 0.01)
+            if pri > maxpri then
+                maxpri = pri
+                self.target = o
+            end
+        end
+    end
 end
 
 function MixTable(x, t1, t2)

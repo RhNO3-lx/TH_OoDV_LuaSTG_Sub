@@ -187,7 +187,7 @@ function renseki_player:frame()
 	-- 	item.LifeShrinkCheck(1,true,true,50);
 	-- end
 
-	if self.HealEffectTime>0 and self.HealEffectTime%6==0 then
+	if self.HealEffectTime>0 and self.HealEffectTime%7==0 then
 		lstg.var.chip=lstg.var.chip+1
 		LifeExtendCheck()
 	end
