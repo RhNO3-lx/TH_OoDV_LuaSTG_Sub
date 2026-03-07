@@ -19,6 +19,7 @@ function ext.pausemenu:init()
 
     self.timer = 0
     self.t = 30
+    self.shake = 0
 
     self.eff = 0
     self.mask_color = Color(0, 255, 255, 255)
@@ -34,6 +35,9 @@ function ext.pausemenu:init()
 end
 
 function ext.pausemenu:frame()
+    if self.shake > 0 then
+        self.shake = self.shake - 1
+    end
     if self.kill then
         return "killed"
     end
@@ -133,9 +137,15 @@ function ext.pausemenu:frame()
                 self.t = 15
                 PlaySound('ok00', 0.3)
                 if self.pos == 1 then
-                    --对第一个选项特化处理
-                    ext.PushPauseMenuOrder(pause_menu_text[self.pos])
-                    self:FlyOut()
+                    ---对第一个选项特化处理
+                    ---TODO 这里的if语句需要读取当前关卡信息，判断是否可以续关
+                    if false then
+                        ext.PushPauseMenuOrder(pause_menu_text[self.pos])
+                        self:FlyOut()
+                    else
+                        PlaySound('cancel00', 0.3)
+                        self.shake = 20
+                    end
                 else
                     self.choose = true
                 end
@@ -175,7 +185,9 @@ function ext.pausemenu:render()
     RenderRect('white', 0, screen.width, 0, screen.height)
     --渲染底图
     SetImageState('pause_eff', '', Color(pm.mask_alph[1] / 3, 200 * self.eff / 15 + 55, 200 * (1 - self.eff / 15) + 55, 200 * (1 - self.eff / 15) + 55))
-    Render('pause_eff', -150 + 180 * self.eff / 15 + dx, -90 + dy, 4 + 4 * sin(self.timer * 3), 0.4, 0.6)
+    if not lstg.tmpvar.death then
+        Render('pause_eff', -150 + 180 * self.eff / 15 + dx, -90 + dy, 4 + 4 * sin(self.timer * 3), 0.4, 0.6)
+    end
     --准备选项
     local pause_menu_text
     local pause_menu_choose = { 'yes', 'no' }
@@ -206,7 +218,8 @@ function ext.pausemenu:render()
                 else
                     SetImageState('pause_gameover', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
                 end
-                Render('pause_gameover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
+                --Render('pause_gameover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
+                Render("pause_gameover", 320, 240, 0, 0.25, 0.25)
             end
         else
             --没有现有的文字时高亮处理
@@ -227,33 +240,65 @@ function ext.pausemenu:render()
             end
         end
         --渲染选项列表
-        for i = 1, textnumber do
-            if not (self.choose) then
-                if i == self.pos and pm.mask_alph[i] + 15 >= 245 then
-                    SetImageState('pause_' .. pause_menu_text[i], '', Color(pm.mask_alph[i] + 15, 155 + 100 * sin(self.timer * 4.5), 255, 222))
+        if not lstg.tmpvar.death then
+            for i = 1, textnumber do
+                if not (self.choose) then
+                    if i == self.pos and pm.mask_alph[i] + 15 >= 245 then
+                        SetImageState('pause_' .. pause_menu_text[i], '', Color(pm.mask_alph[i] + 15, 155 + 100 * sin(self.timer * 4.5), 255, 222))
+                    else
+                        SetImageState('pause_' .. pause_menu_text[i], '', Color(pm.mask_alph[i] + 15, 100, 100, 100))
+                    end
                 else
-                    SetImageState('pause_' .. pause_menu_text[i], '', Color(pm.mask_alph[i] + 15, 100, 100, 100))
+                    if i == self.pos and pm.mask_alph[i] + 15 >= 245 then
+                        SetImageState('pause_' .. pause_menu_text[i], '', Color(55, 255, 255, 255))
+                    else
+                        SetImageState('pause_' .. pause_menu_text[i], '', Color(55, 100, 100, 100))
+                    end
                 end
-            else
-                if i == self.pos and pm.mask_alph[i] + 15 >= 245 then
-                    SetImageState('pause_' .. pause_menu_text[i], '', Color(55, 255, 255, 255))
-                else
-                    SetImageState('pause_' .. pause_menu_text[i], '', Color(55, 100, 100, 100))
-                end
+                Render('pause_' .. pause_menu_text[i], pm.mask_x[i] + (1 + i) * 10 + dx, -30 - i * 40 + dy, 0, 0.62, 0.62)
             end
-            Render('pause_' .. pause_menu_text[i], pm.mask_x[i] + (1 + i) * 10 + dx, -30 - i * 40 + dy, 0, 0.62, 0.62)
+        else
+            for i = 1, textnumber do
+                local color = {}
+                local offx = 0
+                if not (self.choose) then
+                    if i == self.pos and pm.mask_alph[i] + 15 >= 245 then
+                        SetImageState('pause_' .. pause_menu_text[i], '', Color(pm.mask_alph[i] + 15, 155 + 100 * sin(self.timer * 4.5), 255, 222))
+                        color = Color(pm.mask_alph[i] + 15, 155 + 100 * sin(self.timer * 4.5), 255, 222)
+                        offx = self.shake * math.sin(self.timer)
+                    else
+                        SetImageState('pause_' .. pause_menu_text[i], '', Color(pm.mask_alph[i] + 15, 100, 100, 100))
+                        color = Color(pm.mask_alph[i] + 15, 100, 100, 100)
+                    end
+                else
+                    if i == self.pos and pm.mask_alph[i] + 15 >= 245 then
+                        SetImageState('pause_' .. pause_menu_text[i], '', Color(55, 255, 255, 255))
+                        color = Color(55, 255, 255, 255)
+                    else
+                        SetImageState('pause_' .. pause_menu_text[i], '', Color(55, 100, 100, 100))
+                        color = Color(55, 255, 255, 255)
+                    end
+                end
+                RenderTTF2('menuttf', pause_menu_text[i], 320 + offx, 320 + offx, -30 - i * 40 + dy, -30 - i * 40 + dy, ui.menu.font_size, color, 'center', "vcenter", "noclip")
+                --Render('pause_' .. pause_menu_text[i], pm.mask_x[i] + (1 + i) * 10 + dx, -30 - i * 40 + dy, 0, 0.62, 0.62)
+            end
         end
     end
     --渲染确定选项
     if self.choose then
-        Render('pause_really', 0 + dx, -50 + dy, 0, 0.62, 0.62)
+        local color = {}
+        --Render('pause_really', 0 + dx, -50 + dy, 0, 0.62, 0.62)
+        RenderTTF2('menuttf', "真的要这样吗", 400, 400, -50 + dy, -50 + dy, ui.menu.font_size, Color(255,255,255,255), 'left', "vcenter", "noclip")
         for i = 1, 2 do
             if i == self.pos2 then
                 SetImageState('pause_' .. pause_menu_choose[i], '', Color(pm.mask_alph[i] + 15, 155 + 100 * sin(self.timer * 4.5), 255, 255))
+                color = Color(pm.mask_alph[i] + 15, 155 + 100 * sin(self.timer * 4.5), 255, 255)
             else
                 SetImageState('pause_' .. pause_menu_choose[i], '', Color(pm.mask_alph[i] + 15, 100, 100, 100))
+                color = Color(pm.mask_alph[i] + 15, 100, 100, 100)
             end
-            Render('pause_' .. pause_menu_choose[i], 15 + i * 10 + dx, -50 - i * 40 + dy, 0, 0.62, 0.62)
+            --Render('pause_' .. pause_menu_choose[i], 15 + i * 10 + dx, -50 - i * 40 + dy, 0, 0.62, 0.62)
+            RenderTTF2('menuttf', pause_menu_choose[i], 420, 420, -50 - i * 40 + dy, -50 - i * 40 + dy, ui.menu.font_size, color, 'left', "vcenter", "noclip")
         end
     end
     SetViewMode 'world'
@@ -282,23 +327,40 @@ function ext.pausemenu:FlyIn()
     task.New(self, function()
         self:PauseSound()
         PlaySound('pause', 0.5)
-
-        for i = 1, 50 do
-            self.mask_color = Color(i * 4.1, 0, 0, 0)
-            self.mask_alph = {
-                min(i * 8, 239),
-                max(min((i - 10) * 8, 239), 0),
-                max(min((i - 20) * 8, 239), 0),
-            }
-            self.mask_x = {
-                min(-210 + i, -180),
-                min(-220 + i, -180),
-                min(-230 + i, -180),
-            }
-            task.Wait(1)
+        if not lstg.tmpvar.death then
+            for i = 1, 50 do
+                self.mask_color = Color(i * 4.1, 0, 0, 0)
+                self.mask_alph = {
+                    min(i * 8, 239),
+                    max(min((i - 10) * 8, 239), 0),
+                    max(min((i - 20) * 8, 239), 0),
+                }
+                self.mask_x = {
+                    min(-210 + i, -180),
+                    min(-220 + i, -180),
+                    min(-230 + i, -180),
+                }
+                task.Wait(1)
+            end
+            self.lock = false
+        elseif lstg.tmpvar.death then
+            for i = 1, 50 do
+                self.mask_color = Color(i * 4.1, 0, 0, 0)
+                self.mask_alph = {
+                    min(i * 8, 239),
+                    max(min((i - 10) * 8, 239), 0),
+                    max(min((i - 20) * 8, 239), 0),
+                }
+                self.mask_x = {
+                    min(-210 + i, -180),
+                    min(-220 + i, -180),
+                    min(-230 + i, -180),
+                }
+                task.Wait(2)
+            end
+            self.lock = false
         end
-        self.lock = false
-    end)
+    end)  
 end
 
 function ext.pausemenu:FlyOut()
@@ -399,8 +461,9 @@ LoadMusic(deathmusic, "THlib/music/消亡与涌现的循环 ~ Player's Score.ogg
 LoadTexture('pause', 'THlib/UI/pause.png')
 LoadImage('pause_pausemenu', 'pause', 2, 0, 168, 70)
 SetImageCenter('pause_pausemenu', 0, 35)
-LoadImage('pause_gameover', 'pause', 172, 0, 170, 70)
-SetImageCenter('pause_gameover', 0, 35)
+--LoadImage('pause_gameover', 'pause', 172, 0, 170, 70)
+LoadImageFromFile('pause_gameover', "THlib/UI/game_over.png")
+--SetImageCenter('pause_gameover', 0, 35)
 LoadImage('pause_replyover', 'pause', 352, 0, 162, 70)
 SetImageCenter('pause_replyover', 0, 35)
 LoadImage('pause_Return to Game', 'pause', 0, 80, 245, 60)
