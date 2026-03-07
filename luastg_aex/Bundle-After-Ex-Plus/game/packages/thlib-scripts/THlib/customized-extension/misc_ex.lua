@@ -28,3 +28,25 @@ function misc_ex.PlayerMiss()
         end
     end
 end
+
+---! 用于在player的视野外随机生成对象
+---@param mode number 1,2,3,4--上下左右
+function misc_ex.RandomCoor(mode)
+    -- if not IsValid(player) then return nil,nil
+    -- else
+        local b=100
+        local wo=lstg.worldoffset
+        local cx,cy=wo.centerx,wo.centery
+        local w,h=lstg.world.scrr-lstg.world.scrl,lstg.world.scrt-lstg.world.scrb
+        if(mode==1) then
+            return ran:Float(cx-w/2-b,cx+w/2+b),cy+h/2+b
+        elseif(mode==2) then
+            return ran:Float(cx-w/2-b,cx+w/2+b),cy+h/2+b
+        elseif(mode==3) then
+            return cx-w/2-b,ran:Float(cy-h/2-b,cy+h/2+b)
+        elseif(mode==4) then
+            return cx+w/2+b,ran:Float(cy-h/2-b,cy+h/2+b)
+        end
+        --return ran:Sign()*ranFloat(wo.centerx-w/2-b,wo.centerx+w/2)
+    -- end
+end

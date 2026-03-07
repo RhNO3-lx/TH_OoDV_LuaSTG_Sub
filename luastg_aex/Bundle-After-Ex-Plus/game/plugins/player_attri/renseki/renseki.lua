@@ -57,6 +57,7 @@ print("playereat colli")
 			---触发被咬死的miss效果
 			--print("enter")
 			item.LifeShrinkCheck(other.EatLifePenality,true,true,50);
+			lstg.New(renseki_hit_effect,self.x,self.y,self)
 		elseif other.a < self.a then
 			---触发咬了别人的效果
 			GetPower(other.EatPowerBonus)
@@ -108,6 +109,10 @@ function renseki_player:init(slot)
 	SetAnimationScale("renseki_bullet_ef_ani",0.65)
 
 	LoadPS("renseki_bullet_particle",dir.."renseki_bulletef2.psi","parimg11")
+	LoadPS("renseki_weaken_particle",dir.."particle_weaken.psi","parimg12")
+	LoadPS("renseki_heal_particle",dir.."particle_heal.psi","parimg11")
+	LoadPS("renseki_hit_particle",dir.."particle_hit.psi","parimg2")
+	
 	---self.testvar=1
 	player_class.init(self)
 
@@ -128,10 +133,20 @@ function renseki_player:init(slot)
 	self.LightRange=120
 	self.TargetLightRange=120
 	self.MinLightRange=120
+	self.MaxLightRange=250
 
 	self.nf=12 self.nc=8
 	self.hscale=0.25 self.vscale=0.20
+	self.FixViewportAtPlayer=false
 
+	--self.PoisonEffectTime=0
+	self.HealEffectTime=0
+	self.WeakEffectTime=0
+
+	self.MaxBuffTime=1200
+
+	self.healeff=lstg.New(renseki_heal_effect,self.x,self.y,self)
+	self.weakeneff=lstg.New(renseki_weaken_effect,self.x,self.y,self)
 	--子机位置
 	self.slist=
 	{
@@ -152,7 +167,7 @@ function renseki_player:init(slot)
 	}
 end
 
-function renseki_player:ChangeColor(r,g,b,a,blend)
+function renseki_player:ChangeColor(a,r,g,b,blend)
 	blend=blend or 'mul+alpha'
 	--todo:让它变得更加丝滑
 	self._a=a
@@ -166,6 +181,51 @@ function renseki_player:frame()
 	player_class.frame(self)
 	self.LightRange=misc_ex.approach(self.LightRange,self.TargetLightRange,0.1)
 	self.TargetLightRange=max(self.TargetLightRange-0.3,self.MinLightRange)
+	self.TargetLightRange=min(self.TargetLightRange,self.MaxLightRange)
+
+	-- if self.PoisonEffectTime>0 and self.PoisonEffectTime%3==0 then
+	-- 	item.LifeShrinkCheck(1,true,true,50);
+	-- end
+
+	if self.HealEffectTime>0 and self.HealEffectTime%6==0 then
+		lstg.var.chip=lstg.var.chip+1
+		LifeExtendCheck()
+	end
+
+	if self.WeakEffectTime>0 and self.WeakEffectTime%5==0 then
+		GetPower(-1)
+	end
+
+	--self.PoisonEffectTime=max(self.PoisonEffectTime-1,0)
+	self.HealEffectTime=max(self.HealEffectTime-1,0)
+	self.WeakEffectTime=max(self.WeakEffectTime-1,0)
+
+	self.HealEffectTime=min(self.HealEffectTime,self.MaxBuffTime)
+	self.WeakEffectTime=min(self.WeakEffectTime,self.MaxBuffTime)
+
+	if(self.FixViewportAtPlayer) then
+		local mapw,maph=lstg.world.r-lstg.world.l,lstg.world.t-lstg.world.b
+		local sw,sh=lstg.world.scrr-lstg.world.scrl,lstg.world.scrt-lstg.world.scrb
+		
+		local cxlb=-(mapw)/2+sw/2
+		local cylb=-(maph)/2+sh/2
+
+		local cx=player.x
+		local cy=player.y
+
+		if cx<cxlb then cx=cxlb
+		else if cx>-cxlb then cx=-cxlb
+			end
+		end
+
+		if cy<cylb then cy=cylb
+		else if cy>-cylb then cy=-cylb
+			end
+		end
+
+		SetWorldOffset(cx,cy,1,1)
+	end
+	
 end
 -------------------------------------------------------
 ---
@@ -235,6 +295,7 @@ function renseki_player:render()
 			Render('renseki_support_img',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],self.timer*5)
 		end
 	end
+	---render special effect
 	player_class.render(self)
 end
 -------------------------------------------------------
@@ -381,6 +442,31 @@ function renseki_bullet_ef:frame()
 	if self.timer==9 then self.y=600 Del(self) end
 	SetImgState(self,"mul+add",(9-self.timer)/9*255*0.6,140,50,140)
 end
+
+renseki_hit_effect=Class(object)
+
+function renseki_hit_effect:init(x,y,p)
+	self.x=x self.y=y self.rot=ran:Int(0,360) self.img='renseki_hit_particle' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
+	self.hscale=0.6
+	self.vscale=0.6
+	self.vy=0
+	self.pl=p
+end
+
+function renseki_hit_effect:frame()
+
+	if self.timer==4 then ParticleStop(self) end
+	if self.timer==30 or not IsValid(self.pl) then Del(self) end
+	--SetImgState(self,"mul+add",(9-self.timer)/9*255*0.6,140,50,50)
+	self.x=self.pl.x
+	self.y=self.pl.y
+end
+
+function renseki_hit_effect:render()
+	SetViewMode("world")
+	object.render(self)
+	SetViewMode("world")
+end
 -------------------------------------------------------
 ---x,y,v,angle,dmg
 renseki_bullet_slow=Class(player_bullet_straight)
@@ -417,6 +503,67 @@ function renseki_bullet_explode:frame()
 	if self.timer==4 then ParticleStop(self) end
 	if self.timer==30 then Del(self) end
 end
+
+---
+renseki_heal_effect=Class(object)
+
+function renseki_heal_effect:init(x,y,p)
+	self.x=x
+	self.y=y
+	self.img='renseki_heal_particle'
+	self.layer=LAYER_PLAYER_BULLET+50
+	self.group=GROUP_GHOST
+	self.hscale=1
+	self.vscale=1
+	self.vy=0
+	self.vx=0
+	self.pl=p
+end
+
+function renseki_heal_effect:frame()
+	if not IsValid(self.pl) then Del(self) end
+	if self.pl.HealEffectTime<=0 then ParticleStop(self) 
+	else ParticleFire(self)
+	end
+	self.x=self.pl.x
+	self.y=self.pl.y
+end
+
+function renseki_heal_effect:render()
+	--if self.pl.HealEffectTime<=0 then return end
+	SetViewMode("world")
+	object.render(self)
+	SetViewMode("world")
+end
+---
+renseki_weaken_effect=Class(object)
+function renseki_weaken_effect:init(x,y,p)
+	self.x=x
+	self.y=y
+	self.img='renseki_weaken_particle'
+	self.layer=LAYER_PLAYER_BULLET+50
+	self.group=GROUP_GHOST
+	self.hscale=0.6
+	self.vscale=0.6
+	self.vy=0
+	self.pl=p
+end
+
+function renseki_weaken_effect:frame()
+	if not IsValid(self.pl) then Del(self) end
+	if self.pl.WeakEffectTime<=0 then ParticleStop(self) 
+	else ParticleFire(self)end
+	self.x=self.pl.x
+	self.y=self.pl.y
+end
+
+function renseki_weaken_effect:render()
+	--if self.pl.WeakEffectTime<=0 then return end
+	SetViewMode("world")
+	object.render(self)
+	SetViewMode("world")
+end
+
 -------------------------------------------------------
 renseki_bullet_fast=Class(player_bullet_trail)
 function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg)

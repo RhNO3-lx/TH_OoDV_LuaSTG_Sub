@@ -150,6 +150,8 @@ function item:colli(other)
 end
 
 function GetPower(v)
+    if(-v>lstg.var.power-lstg.var.MinPower) then return end
+
     local before = int(lstg.var.power / lstg.var.PowerExtendPoint)
     lstg.var.power = min(lstg.var.PowerMax, lstg.var.power + v)
     local after = int(lstg.var.power / lstg.var.PowerExtendPoint)

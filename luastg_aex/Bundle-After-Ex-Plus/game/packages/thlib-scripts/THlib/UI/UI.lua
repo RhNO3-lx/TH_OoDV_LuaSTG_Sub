@@ -787,8 +787,10 @@ function lstg_ui:drawInfo1()
     ---! 绘制新的自机ui --RhNO3-lx
     SetViewMode("ui")
     if IsValid(lstg.player) then
-        PutPlayerUI(PlayerUI.BackGround)
-        PutPlayerUIBar()
+        if lstg.var.ShowBackground then 
+            PutPlayerUI(PlayerUI.BackGround)
+            PutPlayerUIBar()
+        end
         if lstg.var.ShowLife then
             PutPlayerUI(PlayerUI.Life)
         end

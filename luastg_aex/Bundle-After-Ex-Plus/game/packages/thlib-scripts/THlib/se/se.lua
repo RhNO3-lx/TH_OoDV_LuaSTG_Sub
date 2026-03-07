@@ -26,8 +26,6 @@ for _, v in pairs(sounds) do
     LoadSound(v, 'THlib/se/se_' .. v .. '.wav')
 end
 
----! soundeffect extension zone
-LoadSound("se_immune","THlib/se_ext/se_immune.wav")
 ----------------------------------------
 --修正的音量系统
 --！警告：该修正方法有问题
