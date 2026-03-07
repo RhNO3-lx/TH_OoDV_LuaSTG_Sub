@@ -4,7 +4,7 @@ renseki_player=Class(player_class)
 local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
-lstg.var.EatColliderSize={12,19,27,36,45}
+lstg.var.EatColliderSize={12,23,37,50,61}
 ---TODO: 允许自机power低于100
 
 EatCollider=Class(object)
@@ -12,7 +12,7 @@ function EatCollider:init(player)
 	LoadImageFromFile('EatCollider',dir..'eat_collider.png')
 
 	---! 可以访问这个字段来调整碰撞体不透明度
-	self.alpha=0.4
+	self.alpha=0.3
 	SetImageState('EatCollider','mul+add',Color(255*self.alpha,150,120,150))
 	self.img="EatCollider"
 	self.rect=false
