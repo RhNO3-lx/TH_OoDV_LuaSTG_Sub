@@ -21,7 +21,13 @@ local musicroom_content = {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 }
     },
     {
-        { "text", -280, -120, '', "(by:baiABC)", 0.675 }
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
+        { "text", -280, -180, "", 
+        "一面的bgm。\n"..
+        "数据之海，深邃而又闪烁着信息的光点。\n"..
+        "怀着表现深海的心去创作，在绝望中闪烁着希望。\n"..
+        "副歌部分效果并不是特别如意，但还是能体现深海中的光芒。\n"..
+        "DeepSeek is seeking deeply. （笑）", 0.600 }
     },
     {
         { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
@@ -409,7 +415,7 @@ function stage_menu:init()
     table.insert(menu_items, { '1.text~textextext', function ()
         
     end })
-    table.insert(menu_items, { '2.text~textextext', function ()
+    table.insert(menu_items, { '2.星罗深海 ~ Drowning in Data', function ()
         
     end })
     table.insert(menu_items, { "3.消亡与涌现的循环 ~ Player's Score ", function ()
