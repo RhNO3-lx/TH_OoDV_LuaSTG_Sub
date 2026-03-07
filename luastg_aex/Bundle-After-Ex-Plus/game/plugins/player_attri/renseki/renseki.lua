@@ -38,6 +38,7 @@ function EatCollider:frame()
 	if IsValid(self.p) then
 		self.x,self.y=self.p.x,self.p.y
 	end
+	--self.p.LightRange=misc_ex.approach(self.p.LightRange,self.TargetLightRange,0.1)
 end
 
 function EatCollider:render()
@@ -59,6 +60,7 @@ print("playereat colli")
 		elseif other.a < self.a then
 			---触发咬了别人的效果
 			GetPower(other.EatPowerBonus)
+			self.p.TargetLightRange=self.p.TargetLightRange+other.EatLightBonus
 			PlaySound("lgodsget",0.4)
 			other.eaten=true
 			Kill(other)
@@ -123,6 +125,9 @@ function renseki_player:init(slot)
 	for i=1,36 do self.imgs[i]='renseki_player'..i end
 
 	self.LightRange=200
+	self.TargetLightRange=200
+	self.MinLightRange=200
+
 	self.nf=12 self.nc=8
 	self.hscale=0.25 self.vscale=0.20
 
@@ -144,6 +149,12 @@ function renseki_player:init(slot)
 		{100,90,80,90},
 		{110,100,80,70},
 	}
+end
+
+function renseki_player:frame()
+	player_class.frame(self)
+	self.LightRange=misc_ex.approach(self.LightRange,self.TargetLightRange,0.1)
+	self.TargetLightRange=max(self.TargetLightRange-0.3,self.MinLightRange)
 end
 -------------------------------------------------------
 ---
