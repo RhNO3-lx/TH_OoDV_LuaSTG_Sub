@@ -600,6 +600,9 @@ function M.ReturnToTitle(save_rep, finish)
 
     StopMusic(deathmusic)
     stage.Set(self.group.title, 'none')
+    if title.save_replay then
+        ui.is_save_replay = true
+    end
 end
 
 ----------------------------------------

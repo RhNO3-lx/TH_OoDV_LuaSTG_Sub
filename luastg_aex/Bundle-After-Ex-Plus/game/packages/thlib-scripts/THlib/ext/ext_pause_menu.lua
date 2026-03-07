@@ -8,6 +8,8 @@
 ---@class ext.pausemenu @暂停菜单对象
 ext.pausemenu = plus.Class()
 
+lstg.var.allow_continue = false
+
 function ext.pausemenu:init()
     self.kill = true
 
