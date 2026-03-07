@@ -82,7 +82,9 @@ function death_mask:render()
     if self.open then
         SetImageState('white_', '', Color(max(0, min(255, 255 - self.timer * 8.5)), 0, 0, 0))
     else
-        SetImageState('white_', '', Color(max(0, min(255, self.timer * 8.5)), max(0, min(255, (-math.abs(self.timer - 25) + 25) * 8.5)), 0, 0))
+        SetImageState('white_', 'mul+mul', Color(max(0, min(255, 255-self.timer * 8.5)),
+                                        240-3*self.timer
+                                        , max(0,190-3*self.timer), max(0,190-3*self.timer)))
     end
     RenderRect('white_', 0, screen.width, 0, screen.height)
     SetViewMode 'world'

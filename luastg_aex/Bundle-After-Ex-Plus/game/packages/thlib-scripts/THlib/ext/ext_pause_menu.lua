@@ -326,8 +326,9 @@ function ext.pausemenu:FlyIn()
 
     task.New(self, function()
         self:PauseSound()
-        PlaySound('pause', 0.5)
+        --PlaySound('pause', 0.5)
         if not lstg.tmpvar.death then
+            PlaySound('pause', 0.5)
             for i = 1, 50 do
                 self.mask_color = Color(i * 4.1, 0, 0, 0)
                 self.mask_alph = {
@@ -344,6 +345,7 @@ function ext.pausemenu:FlyIn()
             end
             self.lock = false
         elseif lstg.tmpvar.death then
+            --PlaySound('pause', 0.5)
             for i = 1, 50 do
                 self.mask_color = Color(i * 4.1, 0, 0, 0)
                 self.mask_alph = {
