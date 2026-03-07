@@ -17,6 +17,7 @@ lstg.var.LifeMax=7
 lstg.var.LifeMax=7
 lstg.var.PowerMax=400
 lstg.var.PowerExtendPoint=100
+lstg.var.MinPower=0
 
 ---! 改用血条和bomb系统
 ---! use lstg.var.chip, lstg.var.bombchip to idicate unfilled life or bomb
@@ -522,7 +523,7 @@ function item:PlayerMiss()
     end
     player.protect = 300
     lstg.var.lifeleft = lstg.var.lifeleft - 1
-    lstg.var.power = math.max(lstg.var.power - lstg.var.MissPowerPenality, 0)
+    lstg.var.power = math.max(lstg.var.power - lstg.var.MissPowerPenality, lstg.var.MinPower)
     lstg.var.bomb = max(lstg.var.bomb, lstg.var.MissBombCompensate)
     -- if lstg.var.lifeleft > 0 then
     --     for i = 1, 7 do
