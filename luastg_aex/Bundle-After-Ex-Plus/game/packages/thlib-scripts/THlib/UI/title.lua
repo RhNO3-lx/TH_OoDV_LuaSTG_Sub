@@ -18,7 +18,13 @@ local manual_content = {
 ---
 local musicroom_content = {
     {
-        { "text", -280, -120, '', "(by:baiABC)", 0.675 }
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
+        { "text", -280, -180, "", 
+        "标题界面曲。\n"..
+        "本来想融入一些数字化的、科幻的元素，"..
+        "但最后还是延续了东方标题曲一贯的和风与幻想感。\n"..
+        "意外的难写呢，不过高潮开始旋律就涌现而出了。\n"..
+        "前方又是怎样的异变呢？\n", 0.600 }
     },
     {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 },
@@ -98,7 +104,7 @@ end
 function stage_quit:render()
 end
 
-MusicRecord("menu", 'THlib/music/title.ogg', 126.171, 126.171)
+--MusicRecord("menu", 'THlib/music/title.ogg', 126.171, 126.171)
 MusicRecord("spellcard", 'THlib/music/spellcard.ogg', 75, 0xc36e80 / 44100 / 4)
 
 stage_menu = stage.New('menu', false, true)
@@ -412,11 +418,16 @@ function stage_menu:init()
     --
     menu_items = {}
     ---musicroom标题文本定义
-    table.insert(menu_items, { '1.text~textextext', function ()
-        
+    ---
+    table.insert(menu_items, { '1.信息之渊 ~ Data Abyss', function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('menu',0.8)
+        lstg.var.now_music = 'menu'
     end })
     table.insert(menu_items, { '2.星罗深海 ~ Drowning in Data', function ()
-        
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_stage1',0.9)
+        lstg.var.now_music = 'bgm_stage1'
     end })
     table.insert(menu_items, { "3.消亡与涌现的循环 ~ Player's Score ", function ()
         StopMusic(lstg.var.now_music)
@@ -532,7 +543,7 @@ function stage_menu:init()
         --延迟几帧加载bgm避免奇怪的黑块问题--然并乱，草死
         task.Wait(1)
         LoadMusicRecord("menu")
-        PlayMusic('menu')
+        PlayMusic('menu',0.8)
     end)
 
     menu_list = { menu_title, menu_player_select, menu_difficulty_select, menu_replay_loader, menu_replay_saver, menu_items, menu_sc_pr, menu_network, menu_player_select2, menu_player_select1, menu_playercount }--设置菜单对象表
