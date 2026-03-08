@@ -1,5 +1,5 @@
-LoadImageFromFile("_scbg", "THlib/background/spellcard/background.png", true, 0, 0, false)
-LoadImageFromFile("_scbg_mask", "THlib/background/spellcard/mask.png", true, 0, 0, false)
+LoadImageFromFile("_scbg", "spellcard/background.png", true, 0, 0, false)
+LoadImageFromFile("_scbg_mask", "spellcard/mask.png", true, 0, 0, false)
 
 spellcard_background = Class(_spellcard_background)
 spellcard_background.init = function(self)
