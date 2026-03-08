@@ -1,5 +1,5 @@
 
-LoadMusic("stage1","THlib/music/stage1.ogg",81.23,73.95)
+LoadMusic("stage1","THlib/music/星罗深海 ~ Drowning in Data.ogg",151.384615,73.846154)
 SetBGMVolume("stage1",0.7)
 
 LoadTexture("emo_bubble","THlib/emo_bubble/Balloon.png")

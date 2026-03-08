@@ -97,7 +97,7 @@ function stage1_bg:init()
     Set3D("z",0.1,7.0)
     Set3D("x",-7,7)
     Set3D("y",-3,3)
-    Set3D("fog",1.0,1.5,Color(100,0,0,0))
+    Set3D("fog",1.5,1.8,Color(255,0,0,0))
 end
 
 function stage1_bg:frame()
