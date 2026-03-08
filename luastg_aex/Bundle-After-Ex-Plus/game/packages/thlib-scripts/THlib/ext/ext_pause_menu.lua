@@ -222,7 +222,7 @@ function ext.pausemenu:render()
                 end
                 Render("pause_gameover", 320, 240, 0, 0.25, 0.25)
                 RenderTTF2("menuttf", "满身疮痍", 320, 320, 240, 240, 1, Color(pm.mask_alph[1] + 15, 200, 200, 225), "center")
-                RenderTTF2("menuttf", "severely wonded", 320, 320, 215, 215, 0.4, Color(pm.mask_alph[1], 100, 100, 175), "center")
+                RenderTTF2("menuttf", "severely wounded", 320, 320, 215, 215, 0.375, Color(pm.mask_alph[1], 100, 100, 175), "center")
             end
         else
             --没有现有的文字时高亮处理
