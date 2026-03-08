@@ -98,7 +98,7 @@ end
 function stage_quit:render()
 end
 
-MusicRecord("menu", 'THlib/music/title.ogg', 87.8, 79.26)
+MusicRecord("menu", 'THlib/music/title.ogg', 126.171, 126.171)
 MusicRecord("spellcard", 'THlib/music/spellcard.ogg', 75, 0xc36e80 / 44100 / 4)
 
 stage_menu = stage.New('menu', false, true)
