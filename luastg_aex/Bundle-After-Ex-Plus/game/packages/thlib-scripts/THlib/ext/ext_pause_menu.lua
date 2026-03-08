@@ -220,8 +220,9 @@ function ext.pausemenu:render()
                 else
                     SetImageState('pause_gameover', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
                 end
-                --Render('pause_gameover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
                 Render("pause_gameover", 320, 240, 0, 0.25, 0.25)
+                RenderTTF2("menuttf", "满身疮痍", 320, 320, 240, 240, 1, Color(pm.mask_alph[1] + 15, 200, 200, 225), "center")
+                RenderTTF2("menuttf", "severely wonded", 320, 320, 215, 215, 0.4, Color(pm.mask_alph[1], 100, 100, 175), "center")
             end
         else
             --没有现有的文字时高亮处理
@@ -282,6 +283,7 @@ function ext.pausemenu:render()
                     end
                 end
                 RenderTTF2('menuttf', pause_menu_text[i], 320 + offx, 320 + offx, -30 - i * 40 + dy, -30 - i * 40 + dy, ui.menu.font_size, color, 'center', "vcenter", "noclip")
+                --Render()
                 --Render('pause_' .. pause_menu_text[i], pm.mask_x[i] + (1 + i) * 10 + dx, -30 - i * 40 + dy, 0, 0.62, 0.62)
             end
         end
@@ -465,9 +467,9 @@ LoadMusic(deathmusic, "THlib/music/消亡与涌现的循环 ~ Player's Score.ogg
 LoadTexture('pause', 'THlib/UI/pause.png')
 LoadImage('pause_pausemenu', 'pause', 2, 0, 168, 70)
 SetImageCenter('pause_pausemenu', 0, 35)
---LoadImage('pause_gameover', 'pause', 172, 0, 170, 70)
+LoadImage('pause_gameover_', 'pause', 172, 0, 170, 70)
 LoadImageFromFile('pause_gameover', "THlib/UI/game_over.png")
---SetImageCenter('pause_gameover', 0, 35)
+SetImageCenter('pause_gameover_', 0, 35)
 LoadImage('pause_replyover', 'pause', 352, 0, 162, 70)
 SetImageCenter('pause_replyover', 0, 35)
 LoadImage('pause_Return to Game', 'pause', 0, 80, 245, 60)
