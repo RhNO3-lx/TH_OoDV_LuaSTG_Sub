@@ -43,6 +43,12 @@ local musicroom_content = {
         "难得涌现出的生命奇迹，就这样归于沉寂了，大概就是这样的绝望与希望交加之感。\n"..
         "这样来看，不允许continue也是很合理的设定\n"..
         "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
+    },
+    {
+        { "text", -280, -120, '', "(from: 东方永夜抄 by:ZUN)", 0.675 },
+        { "text", -280, -180, "", 
+        "用于符卡练习模式的经典曲目\n"..
+        "估计是刻意做成了便于循环的形式，似乎在一个非常难的符卡上死磕好久也不会觉得疲倦\n", 0.600 }
     }
 }
 
@@ -433,11 +439,16 @@ function stage_menu:init()
         StopMusic(lstg.var.now_music)
         PlayMusic('deathmusic')
         lstg.var.now_music = 'deathmusic'
-        
     end })
-    table.insert(menu_items, { 'exit', function()
-        PlayMusic('menu')
+    table.insert(menu_items, { "4.东方妖怪小町", function ()
         StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_lastword')
+        lstg.var.now_music = 'bgm_lastword'
+    end })
+
+    table.insert(menu_items, { 'exit', function()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('menu')
         lstg.var.now_music = 'menu'
         bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
