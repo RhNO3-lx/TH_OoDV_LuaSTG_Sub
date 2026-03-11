@@ -4,7 +4,7 @@ renseki_player=Class(player_class)
 local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
-lstg.var.EatColliderSize={12,23,37,50,61}
+lstg.var.EatColliderSize={12,23,34,44,55}
 ---TODO: 允许自机power低于100
 
 EatCollider=Class(object)
@@ -111,7 +111,7 @@ function renseki_player:init(slot)
 	LoadPS("renseki_bullet_particle",dir.."renseki_bulletef2.psi","parimg11")
 	LoadPS("renseki_weaken_particle",dir.."particle_weaken.psi","parimg12")
 	LoadPS("renseki_heal_particle",dir.."particle_heal.psi","parimg11")
-	LoadPS("renseki_hit_particle",dir.."particle_hit.psi","parimg2")
+	LoadPS("renseki_hit_particle",dir.."particle_hit.psi","parimg11")
 	
 	---self.testvar=1
 	player_class.init(self)
@@ -236,14 +236,14 @@ function renseki_player:shoot()
 	PlaySound('plst00',0.3,self.x/1024)
 	---! 定义攻击间隔
 	self.nextshoot=5
-	New(renseki_bullet_main,'renseki_bullet1_ani',self.x+5,self.y,15,90,2)
-	New(renseki_bullet_main,'renseki_bullet1_ani',self.x-5,self.y,15,90,2)
+	New(renseki_bullet_main,'renseki_bullet1_ani',self.x+5,self.y,15,90,3.2)
+	New(renseki_bullet_main,'renseki_bullet1_ani',self.x-5,self.y,15,90,3.2)
 	if self.support>0 then
 		if self.slow==1 then
 			for i=1,4 do
 				if self.sp[i] and self.sp[i][3]>0.5 then
-					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]-3,self.supporty+self.sp[i][2],15,90,0.3)
-					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]+3,self.supporty+self.sp[i][2],15,90,0.25)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]-3,self.supporty+self.sp[i][2],15,90,1)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]+3,self.supporty+self.sp[i][2],15,90,1)
 				end
 			end
 		else
@@ -252,7 +252,7 @@ function renseki_player:shoot()
 			local num=int(lstg.var.power/100)+1
 			for i=1,4 do
 				if self.sp[i] and self.sp[i][3]>0.5 then
-					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],8,self.anglelist[num][i],self.target,900,0.7)
+					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],8,self.anglelist[num][i],self.target,900,1.7)
 				end
 			end
 		end --end
@@ -447,8 +447,8 @@ renseki_hit_effect=Class(object)
 
 function renseki_hit_effect:init(x,y,p)
 	self.x=x self.y=y self.rot=ran:Int(0,360) self.img='renseki_hit_particle' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
-	self.hscale=0.6
-	self.vscale=0.6
+	self.hscale=1.0
+	self.vscale=1.0
 	self.vy=0
 	self.pl=p
 end
@@ -513,8 +513,8 @@ function renseki_heal_effect:init(x,y,p)
 	self.img='renseki_heal_particle'
 	self.layer=LAYER_PLAYER_BULLET+50
 	self.group=GROUP_GHOST
-	self.hscale=1
-	self.vscale=1
+	self.hscale=1.0
+	self.vscale=1.0
 	self.vy=0
 	self.vx=0
 	self.pl=p
