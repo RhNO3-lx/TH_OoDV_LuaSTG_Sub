@@ -50,3 +50,22 @@ function misc_ex.RandomCoor(mode)
         --return ran:Sign()*ranFloat(wo.centerx-w/2-b,wo.centerx+w/2)
     -- end
 end
+
+function misc_ex.InitializeSystem()
+    lstg.var.LifeExtendPoint=100
+    lstg.var.BombExtendPoint=100
+    lstg.var.LifechipPoint=30
+    lstg.var.BombchipPoint=30
+    lstg.var.LifeMax=7
+    lstg.var.LifeMax=7
+    lstg.var.PowerMax=400
+    lstg.var.PowerExtendPoint=100
+    lstg.var.MinPower=0
+    ResetWorld()
+    lstg.var.block_shoot=false
+    lstg.var.block_spell=false
+    lstg.var.ShowLife=true
+    lstg.var.ShowBomb=true
+    lstg.var.ShowPower=true
+    lstg.var.ShowBackground=true
+end

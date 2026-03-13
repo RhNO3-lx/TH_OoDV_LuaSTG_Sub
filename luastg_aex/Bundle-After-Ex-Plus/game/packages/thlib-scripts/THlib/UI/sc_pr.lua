@@ -50,6 +50,7 @@ local s = stage.group.AddStage('Spell Practice', 'Spell Practice@Spell Practice'
 s.sc_pr_stage = true
 stage.group.DefStageFunc('Spell Practice@Spell Practice', 'init', function(self)
     _init_item(self)
+    misc_ex.InitializeSystem()
     New(mask_fader, 'open')
     New(_G[lstg.var.player_name])
     task.New(self, function()
