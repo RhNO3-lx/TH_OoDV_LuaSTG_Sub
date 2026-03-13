@@ -87,6 +87,7 @@ ui.menu_bulr = 0
 ui.bg_blk = 1
 ui.lihui_alpha = 1
 ui.is_save_replay = false
+ui.is_SCPractice = false
 
 function ui.DrawMenu(title, text, pos, x, y, alpha, timer, shake, text_offx, align)
     local _text_offx = text_offx
@@ -520,7 +521,7 @@ ui.is_bg_render_create = false
 function lstg_ui:drawMenuBG1()
     SetViewMode "ui"
     if not ui.is_bg_render_create then
-        if not ui.is_save_replay then
+        if not ui.is_save_replay and not ui.is_SCPractice then
             ui.menu_bulr = 0
             ui.bg_blk = 1
             ui.lihui_alpha = 1
@@ -529,6 +530,7 @@ function lstg_ui:drawMenuBG1()
             ui.bg_blk = 0.76
             ui.lihui_alpha = 0
             ui.is_save_replay = false
+            ui.is_SCPractice = false
         end
 
         lstg.CreateRenderTarget("rt:background")

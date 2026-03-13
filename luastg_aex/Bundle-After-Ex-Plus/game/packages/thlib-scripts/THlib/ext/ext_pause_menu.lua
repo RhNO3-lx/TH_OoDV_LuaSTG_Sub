@@ -141,7 +141,7 @@ function ext.pausemenu:frame()
                 if self.pos == 1 then
                     ---对第一个选项特化处理
                     ---TODO 这里的if语句需要读取当前关卡信息，判断是否可以续关
-                    if false or not lstg.tmpvar.death then
+                    if lstg.var.allow_continue or not lstg.tmpvar.death or lstg.var.is_practice then
                         ext.PushPauseMenuOrder(pause_menu_text[self.pos])
                         self:FlyOut()
                     else
@@ -348,7 +348,7 @@ function ext.pausemenu:FlyIn()
                 task.Wait(1)
             end
             self.lock = false
-        elseif lstg.tmpvar.death then
+        elseif lstg.tmpvar.death and not lstg.var.is_practice then
             --PlaySound('pause', 0.5)
             for i = 1, 50 do
                 self.mask_color = Color(i * 4.1, 0, 0, 0)
@@ -363,6 +363,22 @@ function ext.pausemenu:FlyIn()
                     min(-230 + i, -180),
                 }
                 task.Wait(2)
+            end
+            self.lock = false
+        else
+            for i = 1, 50 do
+                self.mask_color = Color(i * 4.1, 0, 0, 0)
+                self.mask_alph = {
+                    min(i * 8, 239),
+                    max(min((i - 10) * 8, 239), 0),
+                    max(min((i - 20) * 8, 239), 0),
+                }
+                self.mask_x = {
+                    min(-210 + i, -180),
+                    min(-220 + i, -180),
+                    min(-230 + i, -180),
+                }
+                task.Wait(1)
             end
             self.lock = false
         end

@@ -381,6 +381,7 @@ function stage_menu:init()
                 task.Wait(30)
                 New(mask_fader, 'close')
                 task.Wait(30)
+                
                 if practice == 'stage' then
                     stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])
                 elseif practice == 'spell' then
