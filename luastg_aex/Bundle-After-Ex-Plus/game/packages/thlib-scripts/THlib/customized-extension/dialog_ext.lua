@@ -48,7 +48,7 @@ function DialogDisplayer:init(sentences)
     f(self)
 
     self.group=GROUP_GHOST
-    self.layer=LAYER_TOP
+    self.layer=LAYER_TOP+18
 
     self.alpha=255
 
@@ -191,7 +191,8 @@ function DialogSentence:render()
 
     ---shade below
     local delta=0.3
-    local ShadeColor=Color(160,0,0,0)
+    local alp=attri.color.a
+    local ShadeColor=Color(160*alp/255.0,0,0,0)
     local scale=attri.size/24
     RenderTTF2(attri.font,attri.text,l+delta,r+delta,b+delta,t+delta,scale,ShadeColor,attri.align,attri.alignv)
     RenderTTF2(attri.font,attri.text,l-delta,r-delta,b+delta,t+delta,scale,ShadeColor,attri.align,attri.alignv)

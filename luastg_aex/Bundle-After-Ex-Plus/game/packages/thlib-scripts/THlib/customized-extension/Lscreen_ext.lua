@@ -70,6 +70,26 @@ function GetPlayerScr()
     local player_scry=player.y-wo.centery+cy
     return player_scrx,player_scry
 end
+
+function ChangeWorldTo(w,h,duration,PlaySE,SEName)
+    PlaySE=PlaySE or true
+    SEName=SEName or "boon01"
+    duration=duration or 180
+    PlaySound(SEName, 0.5)
+    local wo=lstg.world
+    local cw=wo.r-wo.l
+    local ch=wo.t-wo.b
+    local sl,sr,sb,st=wo.scrl,wo.scrr,wo.scrb,wo.scrt
+    local sw=sr-sl
+    local sh=st-sb
+    for i=1,duration do
+        task.Wait(1)
+        local la=sin(i/duration*90)
+        local setw=cw*(1-la)+w*la
+        local seth=ch*(1-la)+h*la
+        SetWorldV2(sl,sb,sw,sh,setw,seth)
+    end
+end
 ---! invoke example:
 --[[
 
