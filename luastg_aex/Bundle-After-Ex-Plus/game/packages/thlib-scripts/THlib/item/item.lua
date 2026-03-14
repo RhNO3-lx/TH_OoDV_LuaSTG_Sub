@@ -71,7 +71,7 @@ function item.LifeShrinkCheck(v,TriggerDeath,is_PlaySound,RemoveBulletRadius)
             lstg.var.chip = 0
         end
         if is_PlaySound then
-            PlaySound("se_immune", 0.5)
+            PlaySound("se_immune", 0.8)
         end
     else
         if is_PlaySound then

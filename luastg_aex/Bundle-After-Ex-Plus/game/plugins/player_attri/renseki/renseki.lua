@@ -6,7 +6,7 @@ local dir= "renseki/"
 
 lstg.var.EatColliderSize={12,23,34,44,55}
 ---TODO: 允许自机power低于100
-
+--#region
 EatCollider=Class(object)
 function EatCollider:init(player)
 	LoadImageFromFile('EatCollider',dir..'eat_collider.png')
@@ -73,7 +73,9 @@ print("playereat colli")
 		end
 	end
 end
+--#endregion
 ---!todo: add class member var to enable shooting direction locked/released
+--#region
 function renseki_player:init(slot)
 	LoadTexture('renseki_player',dir..'renseki_full.png')
 	LoadTexture('reimu_kekkai',dir..'reimu_kekkai.png')
@@ -112,6 +114,8 @@ function renseki_player:init(slot)
 	LoadPS("renseki_weaken_particle",dir.."particle_weaken.psi","parimg12")
 	LoadPS("renseki_heal_particle",dir.."particle_heal.psi","parimg11")
 	LoadPS("renseki_hit_particle",dir.."particle_hit.psi","parimg11")
+	LoadPS("renseki_powerup_particle",dir.."particle_powerup.psi","parimg10")
+	LoadPS("renseki_powerup_bullet_effect",dir.."bullet_powerup_particle.psi","parimg11")
 	
 	---self.testvar=1
 	player_class.init(self)
@@ -142,11 +146,13 @@ function renseki_player:init(slot)
 	--self.PoisonEffectTime=0
 	self.HealEffectTime=0
 	self.WeakEffectTime=0
+	self.PowerupEffectTime=0
 
 	self.MaxBuffTime=1200
 
 	self.healeff=lstg.New(renseki_heal_effect,self.x,self.y,self)
 	self.weakeneff=lstg.New(renseki_weaken_effect,self.x,self.y,self)
+	self.powerupeff=lstg.New(renseki_powerup_effect,self.x,self.y,self)
 	--子机位置
 	self.slist=
 	{
@@ -206,9 +212,11 @@ function renseki_player:frame()
 	--self.PoisonEffectTime=max(self.PoisonEffectTime-1,0)
 	self.HealEffectTime=max(self.HealEffectTime-1,0)
 	self.WeakEffectTime=max(self.WeakEffectTime-1,0)
+	self.PowerupEffectTime=max(self.PowerupEffectTime-1,0)
 
 	self.HealEffectTime=min(self.HealEffectTime,self.MaxBuffTime)
 	self.WeakEffectTime=min(self.WeakEffectTime,self.MaxBuffTime)
+	self.PowerupEffectTime=min(self.PowerupEffectTime,self.MaxBuffTime)
 
 	if(self.FixViewportAtPlayer) then
 		local mapw,maph=lstg.world.r-lstg.world.l,lstg.world.t-lstg.world.b
@@ -241,10 +249,12 @@ end
 ---!todo: may fine move func to change dir
 function renseki_player:shoot()
 	PlaySound('plst00',0.3,self.x/1024)
+	local Powerup=self.PowerupEffectTime>0
+
 	---! 定义攻击间隔
 	self.nextshoot=5
-	New(renseki_bullet_main,'renseki_bullet1_ani',self.x+5,self.y,15,90,2.5)
-	New(renseki_bullet_main,'renseki_bullet1_ani',self.x-5,self.y,15,90,2.5)
+	New(renseki_bullet_main,'renseki_bullet1_ani',self.x+5,self.y,15,90,2.1,Powerup)
+	New(renseki_bullet_main,'renseki_bullet1_ani',self.x-5,self.y,15,90,2.1,Powerup)
 	if self.support>0 then
 		if self.slow==1 then
 			local num=int(lstg.var.power/100)+1
@@ -252,8 +262,8 @@ function renseki_player:shoot()
 			for i=1,4 do
 				if self.sp[i] and self.sp[i][3]>0.5 then
 					local dtheta=dtheta_max*abs(i-num/2.0)/num
-					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]-3,self.supporty+self.sp[i][2],15,self.anglelistSlow[num][i]+dtheta,1.7)
-					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]+3,self.supporty+self.sp[i][2],15,self.anglelistSlow[num][i]-dtheta,1.7)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]-3,self.supporty+self.sp[i][2],15,self.anglelistSlow[num][i]+dtheta,1.3,Powerup)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp[i][1]+3,self.supporty+self.sp[i][2],15,self.anglelistSlow[num][i]-dtheta,1.3,Powerup)
 				end
 			end
 		else
@@ -262,7 +272,7 @@ function renseki_player:shoot()
 			local num=int(lstg.var.power/100)+1
 			for i=1,4 do
 				if self.sp[i] and self.sp[i][3]>0.5 then
-					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],7.3,self.anglelist[num][i]+ran:Float(-5,5),self.target,900,2.1)
+					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp[i][1],self.supporty+self.sp[i][2],7.3,self.anglelist[num][i]+ran:Float(-5,5),self.target,900,1.8,Powerup)
 				end
 			end
 		end --end
@@ -308,6 +318,7 @@ function renseki_player:render()
 	---render special effect
 	player_class.render(self)
 end
+--#endregion
 -------------------------------------------------------
 ---! tmd,迟早给你换掉
 --#region
@@ -437,9 +448,20 @@ end
 
 -------------------------------------------------------
 renseki_bullet_main=Class(player_bullet_straight)
+function renseki_bullet_main:init(img,x,y,v,angle,dmg,Powerup)
+	player_bullet_straight.init(self,img,x,y,v,angle,dmg)
+
+	Powerup=Powerup or false
+	if Powerup then
+		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
+		SetImgState(self,"mul+add",255,255,90,190)
+		self.dmg=self.dmg*1.5
+	end
+end
 
 function renseki_bullet_main:kill()
 	New(renseki_bullet_ef,self.x,self.y,self.rot+180)
+	Del(self)
 end
 -------------------------------------------------------
 renseki_bullet_ef=Class(object)
@@ -447,46 +469,33 @@ renseki_bullet_ef=Class(object)
 function renseki_bullet_ef:init(x,y)
 	self.x=x self.y=y self.rot=ran:Int(0,360) self.img='renseki_bullet_ef_ani' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
 	self.vy=0
+	self.t=0
 end
 function renseki_bullet_ef:frame()
-	if self.timer==9 then self.y=600 Del(self) end
-	SetImgState(self,"mul+add",(9-self.timer)/9*255*0.6,140,50,140)
+	self.t=self.t+1
+	if self.t>=9 then self.y=600 Del(self) end
+	SetImgState(self,"mul+add",(9-self.t)/9*255*0.6,140,50,140)
 end
 
-renseki_hit_effect=Class(object)
-
-function renseki_hit_effect:init(x,y,p)
-	self.x=x self.y=y self.rot=ran:Int(0,360) self.img='renseki_hit_particle' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
-	self.hscale=1.0
-	self.vscale=1.0
-	self.vy=0
-	self.pl=p
-end
-
-function renseki_hit_effect:frame()
-
-	if self.timer==4 then ParticleStop(self) end
-	if self.timer==30 or not IsValid(self.pl) then Del(self) end
-	--SetImgState(self,"mul+add",(9-self.timer)/9*255*0.6,140,50,50)
-	self.x=self.pl.x
-	self.y=self.pl.y
-end
-
-function renseki_hit_effect:render()
-	SetViewMode("world")
-	object.render(self)
-	SetViewMode("world")
-end
--------------------------------------------------------
 ---x,y,v,angle,dmg
 renseki_bullet_slow=Class(player_bullet_straight)
+function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
+	player_bullet_straight.init(self,img,x,y,v,angle,dmg)
 
+	Powerup=Powerup or false
+	if Powerup then
+		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
+		SetImgState(self,"mul+add",255,255,140,215)
+		self.dmg=self.dmg*1.5
+	end
+end
 function renseki_bullet_slow:kill()
 	---todo:add particle eff
 	--New(reimu_bullet_orange_ef,self.x,self.y,self.rot+180+ran:Float(-15,15))
 	--New(reimu_bullet_orange_ef2,self.x,self.y)
 	--local vx,vy=self.vx,self.vy
 	New(renseki_bullet_ef,self.x+self.vx/2,self.y+self.vx/2)
+	Del(self)
 end
 
 renseki_bullet_explode=Class(object)
@@ -510,11 +519,83 @@ function renseki_bullet_explode:render()
 end
 
 function renseki_bullet_explode:frame()
-	if self.timer==4 then ParticleStop(self) end
-	if self.timer==30 then Del(self) end
+	if self.timer==5 then ParticleStop(self) end
+	if self.timer==40 then Del(self) end
 end
 
 ---
+-------------------------------------------------------
+renseki_bullet_fast=Class(player_bullet_trail)
+function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg,Powerup)
+	self.group=GROUP_PLAYER_BULLET
+	self.layer=LAYER_PLAYER_BULLET
+	self.img=img
+	self.x=x
+	self.y=y
+	self.vscale=0.7
+	self.rot=angle
+	self.v=v
+	self.target=target
+	self.trail=trail
+	self.dmg=dmg
+
+	Powerup=Powerup or false
+	if Powerup then
+		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
+		SetImgState(self,"mul+add",255,255,140,215)
+		self.dmg=self.dmg*1.5
+	end
+end
+
+function renseki_bullet_fast:frame()
+	player_class.findtarget(self)
+	if IsValid(self.target) and self.target.colli then
+		local a=math.mod(Angle(self,self.target)-self.rot+720,360)
+		if a>180 then a=a-360 end
+		local da=self.trail/(Dist(self,self.target)+1)
+		if da>=abs(a) then self.rot=Angle(self,self.target)
+		else self.rot=self.rot+sign(a)*da end
+	end
+	self.vx=self.v*cos(self.rot)
+	self.vy=self.v*sin(self.rot)
+end
+
+function renseki_bullet_fast:kill()
+	--todo:add particle effect
+	---New(reimu_bullet_blue_ef,self.x,self.y,self.rot)
+	New(renseki_bullet_explode,self.x+self.vx/2,self.y+self.vy/2)
+	Del(self)
+end
+-------------------------------------------------------
+---
+
+--#region
+renseki_hit_effect=Class(object)
+
+function renseki_hit_effect:init(x,y,p)
+	self.x=x self.y=y self.rot=ran:Int(0,360) self.img='renseki_hit_particle' self.layer=LAYER_PLAYER_BULLET+50 self.group=GROUP_GHOST
+	self.hscale=1.0
+	self.vscale=1.0
+	self.vy=0
+	self.pl=p
+end
+
+function renseki_hit_effect:frame()
+
+	if self.timer==10 then ParticleStop(self) end
+	if self.timer==50 or not IsValid(self.pl) then Del(self) end
+	--SetImgState(self,"mul+add",(9-self.timer)/9*255*0.6,140,50,50)
+	self.x=self.pl.x
+	self.y=self.pl.y
+end
+
+function renseki_hit_effect:render()
+	SetViewMode("world")
+	object.render(self)
+	SetViewMode("world")
+end
+--#endregion
+
 renseki_heal_effect=Class(object)
 
 function renseki_heal_effect:init(x,y,p)
@@ -574,41 +655,66 @@ function renseki_weaken_effect:render()
 	SetViewMode("world")
 end
 
--------------------------------------------------------
-renseki_bullet_fast=Class(player_bullet_trail)
-function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg)
-	self.group=GROUP_PLAYER_BULLET
-	self.layer=LAYER_PLAYER_BULLET
-	self.img=img
+renseki_powerup_bullet_effect=Class(object)
+function renseki_powerup_bullet_effect:init(x,y,target)
 	self.x=x
 	self.y=y
-	self.vscale=0.7
-	self.rot=angle
-	self.v=v
-	self.target=target
-	self.trail=trail
-	self.dmg=dmg
+	self.img='renseki_powerup_bullet_effect'
+	self.layer=LAYER_PLAYER_BULLET+50
+	self.group=GROUP_GHOST
+	self.hscale=1.0
+	self.vscale=1.0
+	self.vy=0
+	self.vx=0
+	self.tar=target
+	self.DeathTimer=0
 end
 
-function renseki_bullet_fast:frame()
-	player_class.findtarget(self)
-	if IsValid(self.target) and self.target.colli then
-		local a=math.mod(Angle(self,self.target)-self.rot+720,360)
-		if a>180 then a=a-360 end
-		local da=self.trail/(Dist(self,self.target)+1)
-		if da>=abs(a) then self.rot=Angle(self,self.target)
-		else self.rot=self.rot+sign(a)*da end
+function renseki_powerup_bullet_effect:frame()
+	task.Do(self)
+	if IsValid(self.tar) then
+		self.x=self.tar.x
+		self.y=self.tar.y
+	else
+		ParticleStop(self)
+		task.New(self,function()
+			task.Wait(50)
+			Del(self)
+		end)
 	end
-	self.vx=self.v*cos(self.rot)
-	self.vy=self.v*sin(self.rot)
+end
+--#region
+renseki_powerup_effect=Class(object)
+function renseki_powerup_effect:init(x,y,p)
+	self.x=x
+	self.y=y
+	self.img='renseki_powerup_particle'
+	self.layer=LAYER_PLAYER_BULLET+50
+	self.group=GROUP_GHOST
+	self.hscale=1.0
+	self.vscale=1.0
+	self.vy=0
+	self.vx=0
+	self.pl=p
 end
 
-function renseki_bullet_fast:kill()
-	--todo:add particle effect
-	---New(reimu_bullet_blue_ef,self.x,self.y,self.rot)
-	New(renseki_bullet_explode,self.x+self.vx/2,self.y+self.vy/2)
+function renseki_powerup_effect:frame()
+	if not IsValid(self.pl) then Del(self) end
+	if self.pl.PowerupEffectTime<=0 then ParticleStop(self) 
+	else ParticleFire(self)
+	end
+	self.x=self.pl.x
+	self.y=self.pl.y
 end
--------------------------------------------------------
+
+function renseki_powerup_effect:render()
+	--if self.pl.HealEffectTime<=0 then return end
+	SetViewMode("world")
+	object.render(self)
+	SetViewMode("world")
+end
+--#endregion
+
 -- reimu_bullet_blue_ef=Class(object)
 
 -- function reimu_bullet_blue_ef:init(x,y,rot)
