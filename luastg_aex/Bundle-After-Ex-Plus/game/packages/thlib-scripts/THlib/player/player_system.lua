@@ -155,8 +155,8 @@ local defaultFrameEvent = {
                 end
                 dx = v * dx
                 dy = v * dy
-                self.x = self.x + dx
-                self.y = self.y + dy
+                self.x = self.x + dx + self.gx
+                self.y = self.y + dy + self.gy
                 self.x = math.max(math.min(self.x, lstg.world.pr - 8), lstg.world.pl + 8)
                 self.y = math.max(math.min(self.y, lstg.world.pt - 32), lstg.world.pb + 16)
             end

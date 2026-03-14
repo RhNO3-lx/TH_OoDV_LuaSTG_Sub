@@ -43,6 +43,9 @@ function player_class:init(slot)
     self.y = -176
     self._wisys = PlayerWalkImageSystem(self) --by OLC，自机行走图系统
     self._playersys = player_lib.system(self, slot) --by OLC，自机逻辑系统
+    self.gravity_circle_size = 200
+    self.gx = 0
+    self.gy = 0
     lstg.player = self
     player = self
     if not lstg.var.init_player_data then
