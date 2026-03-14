@@ -315,7 +315,9 @@ function M.frame(self)
                 --     SetViewMode("world")
                 --     task.Wait(1)
                 -- end
-                task.Wait(70)
+                if not lstg.var.is_practice then
+                    task.Wait(70)
+                end
                 PlayMusic(deathmusic, 0.8)
                 ext.pop_pause_menu = true
                 lstg.tmpvar.death = true
@@ -590,6 +592,12 @@ function M.ReturnToTitle(save_rep, finish)
     ---@cast self -stage.Stage, +stage.group.Stage
     local title = stage.stages[self.group.title]
     title.finish = finish or 0
+    if stage.IsSCpractice then
+        ui.is_SCPractice = true
+    end
+    if title.save_replay then
+        ui.is_save_replay = true
+    end
     if ext.replay.IsReplay() then
         title.save_replay = nil
     elseif not save_rep then
@@ -600,9 +608,6 @@ function M.ReturnToTitle(save_rep, finish)
 
     StopMusic(deathmusic)
     stage.Set(self.group.title, 'none')
-    if title.save_replay then
-        ui.is_save_replay = true
-    end
 end
 
 ----------------------------------------
