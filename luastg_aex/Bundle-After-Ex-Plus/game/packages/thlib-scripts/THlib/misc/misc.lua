@@ -25,28 +25,37 @@ function hinter:init(img, size, x, y, t1, t2, fade)
     self.t2 = t2
     self.fade = fade
     self.group = GROUP_GHOST
-    self.layer = LAYER_TOP
+    self.bound = false
+    self.layer = LAYER_TOP+5
     self.size = size
     self.t = 0
+    self.tim=0
     self.hscale = self.size
 end
 function hinter:frame()
     ---! 修正提示信息渲染位置
     self.x=self.cx+self.scx
     self.y=self.cy+self.scy
+    print(self.x,self.y)
+    print(self.t1,self.t2,self.fade)
 
-    if self.timer < self.t1 then
-        self.t = self.timer / self.t1
-    elseif self.timer < self.t1 + self.t2 then
+    self.tim = self.tim + 1
+    if self.tim < self.t1 then
+        print("enter t1")
+        self.t = self.tim / self.t1
+    elseif self.tim < self.t1 + self.t2 then
+        print("enter t2")
         self.t = 1
-    elseif self.timer < self.t1 * 2 + self.t2 then
-        self.t = (self.t1 * 2 + self.t2 - self.timer) / self.t1
+    elseif self.tim < self.t1 * 2 + self.t2 then
+        print("enter t3")
+        self.t = (self.t1 * 2 + self.t2 - self.tim) / self.t1
     else
         Del(self)
     end
 end
 function hinter:render()
     SetViewMode("ui")
+    print("enter render")
     if self.fade then
         SetImageState(self.img, '', Color(self.t * 255, 255, 255, 255))
         self.vscale = self.size
