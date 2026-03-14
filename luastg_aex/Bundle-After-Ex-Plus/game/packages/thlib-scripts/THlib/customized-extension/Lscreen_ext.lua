@@ -71,7 +71,7 @@ function GetPlayerScr()
     return player_scrx,player_scry
 end
 
-function ChangeWorldTo(w,h,duration,PlaySE)
+function ChangeWorldTo(w,h,duration,PlaySE,SEName)
     PlaySE=PlaySE or true
     SEName=SEName or "boon01"
     duration=duration or 180
