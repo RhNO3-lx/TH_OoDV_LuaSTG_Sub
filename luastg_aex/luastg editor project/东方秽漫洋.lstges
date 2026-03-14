@@ -677,6 +677,7 @@
 8,{"$type":".General.IfThen, LuaSTGEditorSharp","Attributes":[]}
 9,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"renseki_player.ChangeColor(player,255,150,150,150)\r\nplayer.MinLightRange=350\r\nplayer.MaxLightRange=480\r\nlstg.var.block_spell=true\r\nm.al=100","EditWindow":"code"}],"AttributeCount":1}
 9,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"emo_bubble\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"\"happy\",player","EditWindow":"objectParam"}],"AttributeCount":3}
+9,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"ChangeWorldTo(640,480)","EditWindow":"code"}],"AttributeCount":1}
 9,{"$type":".General.Break, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"","EditWindow":""}],"AttributeCount":1}
 8,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
 6,{"$type":".General.Repeat, LuaSTGEditorSharp","Attributes":[{"attrCap":"Times","attrInput":"_infinite","EditWindow":"yield"},{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"","EditWindow":""},{"attrCap":"Var 1 increment","attrInput":"","EditWindow":""}],"AttributeCount":5}
