@@ -64,7 +64,7 @@ print("playereat colli")
 			self.p.TargetLightRange=self.p.TargetLightRange+other.EatLightBonus
 			PlaySound("lgodsget",0.4)
 			other.eaten=true
-			Kill(other)
+			other.kill_flag=true
 			---todo: 对于food，同样注册他的colli函数，以便我们额外定义被咬死之后的效果
 			---至于food的判定大小显示，考虑：
 			---1.加入鱼的属性字段，随后通过在外面创建一个task，组遍历，挨个按属性绘制碰撞范围
