@@ -919,6 +919,7 @@ function system:resultSpell(info)
             lstg.var.score = lstg.var.score + score
             PlaySound('cardget', 1.0, 0)
             --New(hinter_bonus, 'hint.getbonus', 0.6, 0, yoffset[1], 15, 120, true, score)
+            print("enter resultspell")
             New(hinter, 'hint.getbonus', 0.6, 0, yoffset[1], 15, 120)
             --New(kill_timer, 0, yoffset[2], info.current_timer)
             --New(kill_timer2, 0, yoffset[3], info.real_timer)
