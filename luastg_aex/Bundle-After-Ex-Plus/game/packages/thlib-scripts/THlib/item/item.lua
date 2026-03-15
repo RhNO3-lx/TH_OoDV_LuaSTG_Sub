@@ -19,6 +19,7 @@ lstg.var.PowerMax=400
 lstg.var.PowerExtendPoint=100
 lstg.var.MinPower=0
 lstg.var.GravityConst=0.3
+lstg.var.GravityArrowR=50
 
 ---! 改用血条和bomb系统
 ---! use lstg.var.chip, lstg.var.bombchip to idicate unfilled life or bomb
