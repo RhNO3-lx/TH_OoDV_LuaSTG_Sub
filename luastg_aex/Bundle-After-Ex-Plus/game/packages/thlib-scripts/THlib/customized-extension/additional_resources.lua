@@ -32,3 +32,18 @@ LoadSound("se_poison","THlib/se_ext/Poison.ogg")
 LoadSound("se_heal","THlib/se_ext/se_heal.ogg")
 LoadSound("se_broaden","THlib/se_ext/se_broaden_horizon.ogg")
 LoadSound("se_fusion","THlib/se_ext/se_fusion.ogg")
+
+---from dnh
+
+DNHSoundList={
+    "dnh_alert_n1",
+    "dnh_alert_n2",
+    "dnh_alertline",
+    "dnh_ice",
+    "dnh_pause",
+    "dnh_release"
+}
+
+for i,v in ipairs(DNHSoundList) do
+    LoadSound(v,"THlib/se_ext/dnh/"..v..".wav")
+end

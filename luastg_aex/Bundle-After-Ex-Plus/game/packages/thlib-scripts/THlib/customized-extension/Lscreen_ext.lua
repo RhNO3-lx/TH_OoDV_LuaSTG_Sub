@@ -18,7 +18,7 @@ end
 ---! w,h ->world size param
 ---! l3d,r3d,b3d,t3d ->3d render world rect, =scr by default
 function SetWorldV2(sl, sb,sw,sh, w, h,bound, m)
-    bound = bound or 32
+    bound = bound or 100
     m = m or 15
     local l=-w / 2
     local r=w/2
@@ -34,12 +34,12 @@ function SetWorldV2(sl, sb,sw,sh, w, h,bound, m)
     )
     SetBound(lstg.world.boundl, lstg.world.boundr, lstg.world.boundb, lstg.world.boundt)
 
-    print("in setworldv2:")
-    local tmp=""
-    for k,v in pairs(lstg.world) do
-        tmp=tmp..k..":"..v..","
-    end
-    print(tmp)
+    --print("in setworldv2:")
+    -- local tmp=""
+    -- for k,v in pairs(lstg.world) do
+    --     tmp=tmp..k..":"..v..","
+    -- end
+    -- print(tmp)
 end
 
 ---! warning: 3dworld中绘制出的图形会被拉伸
