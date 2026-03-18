@@ -178,7 +178,7 @@ function renseki_player:init(slot)
 		{90,90,90,90},
 		{85,95,90,90},
 		{80,90,100,70},
-		{85,97,83,95},
+		{83,92,88,97},
 	}
 end
 
@@ -456,10 +456,10 @@ function renseki_bullet_main:init(img,x,y,v,angle,dmg,Powerup)
 	Powerup=Powerup or false
 	if Powerup then
 		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
-		_object.set_color(self,"mul+add",255,255,90,190)
+		_object.set_color(self,"mul+add",255,255,40,160)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",255,255,255,255)
+		_object.set_color(self,"mul+add",255,255,160,220)
 	end
 	--assert(self._a~=nil,"?")
 	
@@ -490,6 +490,7 @@ end
 renseki_bullet_slow=Class(player_bullet_straight)
 function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
 	player_bullet_straight.init(self,img,x,y,v,angle,dmg)
+	self.a,self.b=12,12
 
 	Powerup=Powerup or false
 	if Powerup then
