@@ -51,7 +51,7 @@ function EatCollider:render()
 end
 
 function EatCollider:colli(other)
-print("playereat colli")
+--print("playereat colli")
 	if other.group == GROUP_FOOD then
 		if other.a >= self.a and lstg.player.protect == 0 then
 			---触发被咬死的miss效果
@@ -456,11 +456,18 @@ function renseki_bullet_main:init(img,x,y,v,angle,dmg,Powerup)
 	Powerup=Powerup or false
 	if Powerup then
 		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
-		SetImgState(self,"mul+add",255,255,90,190)
+		_object.set_color(self,"mul+add",255,255,90,190)
 		self.dmg=self.dmg*1.5
+	else
+		_object.set_color(self,"mul+add",255,255,255,255)
 	end
+	--assert(self._a~=nil,"?")
+	
 end
-
+function renseki_bullet_main:render()
+	SetImgState(self,'mul+add',self._a,self._r,self._g,self._b)
+	object.render(self)
+end
 function renseki_bullet_main:kill()
 	New(renseki_bullet_ef,self.x,self.y,self.rot+180)
 	Del(self)
@@ -476,7 +483,7 @@ end
 function renseki_bullet_ef:frame()
 	self.t=self.t+1
 	if self.t>=9 then self.y=600 Del(self) end
-	SetImgState(self,"mul+add",(9-self.t)/9*255*0.6,140,50,140)
+	_object.set_color(self,"mul+add",(9-self.t)/9*255*0.6,140,50,140)
 end
 
 ---x,y,v,angle,dmg
@@ -487,9 +494,15 @@ function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
 	Powerup=Powerup or false
 	if Powerup then
 		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
-		SetImgState(self,"mul+add",255,255,140,215)
+		_object.set_color(self,"mul+add",255,255,140,215)
 		self.dmg=self.dmg*1.5
+	else
+		_object.set_color(self,"mul+add",255,255,255,255)
 	end
+end
+function renseki_bullet_slow:render()
+	SetImgState(self,'mul+add',self._a,self._r,self._g,self._b)
+	object.render(self)
 end
 function renseki_bullet_slow:kill()
 	---todo:add particle eff
@@ -544,8 +557,10 @@ function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg,Powerup)
 	Powerup=Powerup or false
 	if Powerup then
 		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
-		SetImgState(self,"mul+add",255,255,140,215)
+		_object.set_color(self,"mul+add",255,255,140,215)
 		self.dmg=self.dmg*1.5
+	else
+		_object.set_color(self,"mul+add",255,255,255,255)
 	end
 end
 
@@ -562,6 +577,10 @@ function renseki_bullet_fast:frame()
 	self.vy=self.v*sin(self.rot)
 end
 
+function renseki_bullet_fast:render()
+	SetImgState(self,'mul+add',self._a,self._r,self._g,self._b)
+	object.render(self)
+end
 function renseki_bullet_fast:kill()
 	--todo:add particle effect
 	---New(reimu_bullet_blue_ef,self.x,self.y,self.rot)
