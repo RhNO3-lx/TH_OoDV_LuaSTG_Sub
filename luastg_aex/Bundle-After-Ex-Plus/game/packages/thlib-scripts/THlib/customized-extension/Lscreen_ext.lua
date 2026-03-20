@@ -71,6 +71,14 @@ function GetPlayerScr()
     return player_scrx,player_scry
 end
 
+function GetScr(obj)
+    local cx,cy=GetUIOffset()
+    local wo=lstg.worldoffset
+    local obj_scrx=obj.x-wo.centerx+cx
+    local obj_scry=obj.y-wo.centery+cy
+    return obj_scrx,obj_scry
+end
+
 function ChangeWorldTo(w,h,duration,PlaySE,SEName)
     PlaySE=PlaySE or true
     SEName=SEName or "boon01"

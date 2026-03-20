@@ -118,6 +118,8 @@ function renseki_player:init(slot)
 	LoadPS("renseki_hit_particle",dir.."particle_hit.psi","parimg11")
 	LoadPS("renseki_powerup_particle",dir.."particle_powerup.psi","parimg10")
 	LoadPS("renseki_powerup_bullet_effect",dir.."bullet_powerup_particle.psi","parimg11")
+
+	LoadFX("renseki_bomb1",dir.."renseki_bomb1.hlsl")
 	
 	---self.testvar=1
 	player_class.init(self)
@@ -284,18 +286,20 @@ end
 
 -------------------------------------------------------
 function renseki_player:spell()
-	self.collect_line=self.collect_line-300
+	local infi=2000
+	self.collect_line=self.collect_line-infi
 	New(tasker,function()
 		task.Wait(90)
-		self.collect_line=self.collect_line+300
+		self.collect_line=self.collect_line+infi
 	end)
 	if self.slow==1 then
 		PlaySound('power1',0.8)
 		PlaySound('cat00',0.8)
 		misc.ShakeScreen(210,3)
 --		New(bullet_killer,self.x,self.y)
-		New(player_spell_mask,64,64,255,30,210,30)
-		New(reimu_kekkai,self.x,self.y,1.25,12,20,12)
+		--New(player_spell_mask,64,64,255,30,210,30)
+		--New(reimu_kekkai,self.x,self.y,1.25,12,20,12)
+		New(renseki_bomb1,self.x,self.y,1.7)
 		self.nextspell=240
 		self.protect=360
 	else
@@ -803,7 +807,103 @@ end
 -- end
 -- -------------------------------------------------------
 
+--#region
+renseki_bomb1=Class(object)
+
+function renseki_bomb1:init(x,y,dmg)
+	self.x=x
+	self.y=y
+	self.dmg=dmg
+	self.group=GROUP_PLAYER_BULLET
+	self.layer=LAYER_PLAYER_BULLET
+	self.list={}
+	self.killflag=true---自行管理生命周期
+	self.img="img_void"
+	self.hscale=20.0
+	self.vscale=20.0
+	self.vy=0
+	self.vx=0
+	self.timer=0
+
+	self.r=0
+	self.al=0
+
+	self.rmax=300
+	self.absorb=100
+	self.a=280
+	self.b=280
+	task.New(self,function()
+		for i=1,60 do
+			task.Wait(1)
+			local lambda=(i/60)*(i/60)
+			self.r=self.rmax*lambda
+			self.al=255*lambda
+		end
+		task.Wait(240)
+		for i=30,1,-1 do
+			task.Wait(1)
+			local lambda=(i/30)*(i/30)
+			self.r=self.rmax*lambda
+			self.al=255*lambda
+		end
+		New(bomb_bullet_killer,self.x,self.y,500,500,false)
+		PlaySound('slash',0.8)
+		Del(self)
+	end)
+end
+--#endregion
+
+function renseki_bomb1:frame()
+	task.Do(self)
+	--New(bomb_bullet_killer,self.x,self.y,self.r*1.6,self.r*1.6,false)
+	self.timer=self.timer+1
+	if self.timer>30 then
+		for _,unit in ObjList(GROUP_ENEMY_BULLET) do
+			if(IsValid(unit)) then
+				_set_a(unit,0.5,Angle(unit,self),false)
+				--unit._angle=Angle(unit,self)
+				if(Dist(unit,self)<self.absorb+ran:Float(-30,30)) then
+					if(ran:Float(0,1)<0.25) then
+						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit),self.target,900,2,true)
+						PlaySound("se_immune",0.7)
+					end
+					Kill(unit)
+				end
+			end
+		end
+	end
+	self.x,self.y=player.x,player.y
+end
+
+function renseki_bomb1:render()
+	SetViewMode("world")
+	CreateRenderTarget("bomb_black")
+	PushRenderTarget("bomb_black")
+	RenderClear(Color(0,0,0,0))
+	SetImgState(self,"mul+add",self.al,0,0,0)
+	object.render(self)
+	PopRenderTarget()
+	-- PostEffect("bomb_black","renseki_bomb1","mul+add",{
+	-- 	center_pos={self.x,self.y,0,0},
+	-- 	effect_param={self.r,self.timer,0,0}
+	-- })
+	local x, y = GetScr(self)
+    local x1 = x * screen.scale
+    local y1 = (screen.height - y) * screen.scale
+	local scrh=lstg.world.scrt-lstg.world.scrb
+	lstg.PostEffect('renseki_bomb1','bomb_black',6,"mul+add",{
+		{x1,y1,0,0},
+		{self.r*screen.scale,self.timer/60,0,0}
+	},{
+		-- {self.x,self.y,0,0},
+		-- {self.r,self.timer,0,0}
+	})
+	--SetImgState(self,"mul+add",self.al,255,255,255)
+	SetViewMode("world")
+end
+---
 ---! 这个倒是挺有保留的价值
+--#region
 reimu_kekkai=Class(object)
 
 function reimu_kekkai:init(x,y,dmg,dr,n,t)
@@ -857,5 +957,5 @@ function reimu_kekkai:render()
 		Render('reimu_kekkai',self.x,self.y,self.list[i].rot,self.list[i].scale)
 	end
 end
-
+--#endregion
 AddPlayerToPlayerList('Kyuukai Renseki','renseki_player','Renseki')
