@@ -165,7 +165,7 @@ PS_Output main(PS_Input input)
         result=result+weight*base3*float4(0.4,0,0.8,1);
 
         //light line
-        float base4=fbm3D(float3(cos(13*a),sin(7*a),cr*1.1+timer*3));
+        float base4=fbm3D(float3(cos(13*a),sin(7*a),cr*1.6+timer*5));
         base4=(1-cos(PI*base4*base4))/2;
         base4=(1-cos(PI*base4))/2;
 

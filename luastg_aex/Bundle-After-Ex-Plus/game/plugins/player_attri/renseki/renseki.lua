@@ -118,6 +118,7 @@ function renseki_player:init(slot)
 	LoadPS("renseki_hit_particle",dir.."particle_hit.psi","parimg11")
 	LoadPS("renseki_powerup_particle",dir.."particle_powerup.psi","parimg10")
 	LoadPS("renseki_powerup_bullet_effect",dir.."bullet_powerup_particle.psi","parimg11")
+	LoadPS("renseki_bomb1_particle",dir.."renseki_bomb_particle.psi","parimg11")
 
 	LoadFX("renseki_bomb1",dir.."renseki_bomb1.hlsl")
 	
@@ -299,7 +300,7 @@ function renseki_player:spell()
 --		New(bullet_killer,self.x,self.y)
 		--New(player_spell_mask,64,64,255,30,210,30)
 		--New(reimu_kekkai,self.x,self.y,1.25,12,20,12)
-		New(renseki_bomb1,self.x,self.y,1.25)
+		New(renseki_bomb1,self.x,self.y,1.1)
 		self.nextspell=240
 		self.protect=360
 	-- else
@@ -832,6 +833,8 @@ function renseki_bomb1:init(x,y,dmg)
 	self.absorb=130
 	self.a=280
 	self.b=280
+
+	self.maxlife=240
 	task.New(self,function()
 		for i=1,60 do
 			task.Wait(1)
@@ -839,7 +842,7 @@ function renseki_bomb1:init(x,y,dmg)
 			self.r=self.rmax*lambda
 			self.al=255*lambda
 		end
-		task.Wait(240)
+		task.Wait(self.maxlife)
 		for i=30,1,-1 do
 			task.Wait(1)
 			local lambda=(i/30)*(i/30)
@@ -850,13 +853,18 @@ function renseki_bomb1:init(x,y,dmg)
 		PlaySound('slash',0.8)
 		Del(self)
 	end)
+	--New(ParticleEx,self.x,self.y,0,0)
+	CreateRenderTarget("bomb_black")
+	--New(renseki_bomb1_particle,self)
 end
 --#endregion
 
 function renseki_bomb1:frame()
 	task.Do(self)
+	--免疫不良状态
+	player.WeakEffectTime=0
 	--New(bomb_bullet_killer,self.x,self.y,self.r*1.6,self.r*1.6,false)
-	self.timer=self.timer+1
+	--self.timer=self.timer+1
 	if self.timer>30 then
 		for _,unit in ObjList(GROUP_ENEMY_BULLET) do
 			if(IsValid(unit)) then
@@ -866,13 +874,32 @@ function renseki_bomb1:frame()
 					unit._angle=Angle(unit,self)
 				end
 				if(Dist(unit,self)<self.absorb+ran:Float(-40,40)) then
-					if(ran:Float(0,1)<0.25) then
-						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit),self.target,900,1.3,false)
+					if(ran:Float(0,1)<0.3) then
+						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit),self.target,900,2,false)
 						PlaySound("enep00",0.5)
 					end
 					Del(unit)
 				end
 			end
+		end
+
+		for _,unit in ObjList(GROUP_FOOD) do
+			if(IsValid(unit)) then
+				_set_a(unit,0.3,Angle(unit,self),false)
+				unit.navi=true
+				if(Dist(unit,self)<self.absorb+60+ran:Float(-10,10)) then
+					unit._angle=Angle(unit,self)
+				end
+			end
+		end
+		---闪烁粒子
+		local pp=ParticlePresets
+		if self.timer<self.maxlife+20 then
+			--print("enter timer stamp")
+			local r=ran:Float(self.r*0.45,self.r*0.65)
+			local s=ran:Float(0.65,1.35)
+			local weight=(self.r-r)/self.r
+			pp.DynamicScatter(self,Color((110+ran:Int(-70,50))*weight,10+ran:Int(10,50),180,180+ran:Int(10,50)),r,0,"parimg6",45,s*weight,0,true,0.3,-0.1)
 		end
 	end
 	self.x,self.y=player.x,player.y
@@ -880,7 +907,6 @@ end
 
 function renseki_bomb1:render()
 	SetViewMode("world")
-	CreateRenderTarget("bomb_black")
 	PushRenderTarget("bomb_black")
 	RenderClear(Color(0,0,0,0))
 	SetImgState(self,"mul+add",self.al,0,0,0)
@@ -904,6 +930,41 @@ function renseki_bomb1:render()
 	--SetImgState(self,"mul+add",self.al,255,255,255)
 	SetViewMode("world")
 end
+
+renseki_bomb1_particle=Class(object)
+
+function renseki_bomb1_particle:init(target)
+	self.tar=target
+	self.img="renseki_bomb1_particle"
+	self.hscale=1
+	self.vscale=1
+	self.vy=0
+	self.vx=0
+	self.x=target.x
+	self.y=target.y
+	self.layer=LAYER_PLAYER_BULLET+50 
+	self.group=GROUP_GHOST
+end
+
+function renseki_bomb1_particle:frame()
+	local t=self.tar
+	if(not IsValid(t)) then Del(self) 
+	else if(t.timer<t.maxlife+20 and t.timer>30) then
+			self.x=t.x
+			self.y=t.y
+			ParticleFire(self)
+		else
+			ParticleStop(self)
+		end
+	end
+end
+
+function renseki_bomb1_particle:render()
+	SetViewMode("world")
+	object.render(self)
+	SetViewMode("world")
+end
+
 ---
 ---! 这个倒是挺有保留的价值
 --#region
