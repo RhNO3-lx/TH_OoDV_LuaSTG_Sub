@@ -875,7 +875,7 @@ function renseki_bomb1:frame()
 				end
 				if(Dist(unit,self)<self.absorb+ran:Float(-40,40)) then
 					if(ran:Float(0,1)<0.3) then
-						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit),self.target,900,2,false)
+						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit)+ran:Float(-4,4),self.target,900,2,false)
 						PlaySound("enep00",0.5)
 					end
 					Del(unit)
