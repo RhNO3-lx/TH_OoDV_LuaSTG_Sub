@@ -151,26 +151,26 @@ PS_Output main(PS_Input input)
         float cr=pow(r,2);
         float base=fbm3D(float3(cos(ca),sin(ca),cr/2+3*timer));
         float base2=fbm3D(float3(cos(ca_bar),sin(ca_bar),r-0.6*timer));
-        float4 mask=float4(0.0,0.4,0.8,1);
-        float4 mask2=float4(0.4,0.0,0.8,1);
+        float4 mask=float4(0.0,0.4,0.9,1);
+        float4 mask2=float4(0.4,0.0,0.9,1);
         float weight=1-smoothstep(0,es+0.1,r);
-        float weight1=1-smoothstep(0,es,r);
+        float weight1=1-smoothstep(0,es-0.2,r);
         
-        result=result+max(weight*weight*2.5,0)*float4(0.05,0.3,0.4,1);
+        result=result+max(weight,0)*float4(0.05,0.5,0.7,1);
         result=result+base*mask*weight1;
         result=result+base2*mask2*(weight);
         //solid part
         float la=a;
         float base3=fbm3D(float3(cos(la),sin(la),cr*2+4*timer));
-        result=result+weight*base3*float4(0.3,0,0.6,1);
+        result=result+weight*base3*float4(0.4,0,0.8,1);
 
         //light line
-        float base4=fbm3D(float3(cos(13*a),sin(7*a),cr*0.9+timer*4));
-        base4=(1-cos(PI*base4))/2;
+        float base4=fbm3D(float3(cos(13*a),sin(7*a),cr*1.1+timer*3));
+        base4=(1-cos(PI*base4*base4))/2;
         base4=(1-cos(PI*base4))/2;
 
         float weight4=1-smoothstep(0,es-0.10,r);
-        result=result+base4*float4(0,0.3,0.95,1)*(weight4)*0.6;
+        result=result+base4*float4(0,0.3,0.7,1)*(weight4);
 
         result=min(result,float4(1,1,1,1));
     }
