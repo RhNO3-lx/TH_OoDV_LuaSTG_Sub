@@ -525,6 +525,7 @@ function lstg_ui:drawMenuBG1()
             ui.menu_bulr = 0
             ui.bg_blk = 1
             ui.lihui_alpha = 1
+            print("is_save_replay")
         else
             ui.menu_bulr = 1
             ui.bg_blk = 0.76

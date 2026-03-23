@@ -595,14 +595,14 @@ function M.ReturnToTitle(save_rep, finish)
     if stage.IsSCpractice then
         ui.is_SCPractice = true
     end
-    if title.save_replay then
-        ui.is_save_replay = true
-    end
     if ext.replay.IsReplay() then
         title.save_replay = nil
     elseif not save_rep then
         title.save_replay = nil
         moveoverflag = true
+    end
+    if title.save_replay then
+        ui.is_save_replay = true
     end
     gamecontinueflag = false
 
