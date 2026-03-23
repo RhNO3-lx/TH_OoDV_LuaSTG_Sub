@@ -51,7 +51,7 @@ function EatCollider:render()
 end
 
 function EatCollider:colli(other)
-print("playereat colli")
+--print("playereat colli")
 	if other.group == GROUP_FOOD then
 		if other.a >= self.a and lstg.player.protect == 0 then
 			---触发被咬死的miss效果
@@ -60,11 +60,13 @@ print("playereat colli")
 			lstg.New(renseki_hit_effect,self.x,self.y,self)
 		elseif other.a < self.a then
 			---触发咬了别人的效果
-			GetPower(other.EatPowerBonus)
-			self.p.TargetLightRange=self.p.TargetLightRange+other.EatLightBonus
-			PlaySound("lgodsget",0.4)
-			other.eaten=true
-			other.kill_flag=true
+			if other.kill_flag~=true then 
+				GetPower(other.EatPowerBonus)
+				self.p.TargetLightRange=self.p.TargetLightRange+other.EatLightBonus
+				PlaySound("lgodsget",0.4)
+				other.eaten=true
+				other.kill_flag=true
+			end
 			---todo: 对于food，同样注册他的colli函数，以便我们额外定义被咬死之后的效果
 			---至于food的判定大小显示，考虑：
 			---1.加入鱼的属性字段，随后通过在外面创建一个task，组遍历，挨个按属性绘制碰撞范围
@@ -116,6 +118,9 @@ function renseki_player:init(slot)
 	LoadPS("renseki_hit_particle",dir.."particle_hit.psi","parimg11")
 	LoadPS("renseki_powerup_particle",dir.."particle_powerup.psi","parimg10")
 	LoadPS("renseki_powerup_bullet_effect",dir.."bullet_powerup_particle.psi","parimg11")
+	LoadPS("renseki_bomb1_particle",dir.."renseki_bomb_particle.psi","parimg11")
+
+	LoadFX("renseki_bomb1",dir.."renseki_bomb1.hlsl")
 	
 	---self.testvar=1
 	player_class.init(self)
@@ -176,7 +181,7 @@ function renseki_player:init(slot)
 		{90,90,90,90},
 		{85,95,90,90},
 		{80,90,100,70},
-		{85,97,83,95},
+		{83,92,88,97},
 	}
 end
 
@@ -282,31 +287,33 @@ end
 
 -------------------------------------------------------
 function renseki_player:spell()
-	self.collect_line=self.collect_line-300
+	local infi=2000
+	self.collect_line=self.collect_line-infi
 	New(tasker,function()
 		task.Wait(90)
-		self.collect_line=self.collect_line+300
+		self.collect_line=self.collect_line+infi
 	end)
-	if self.slow==1 then
+	-- if self.slow==1 then
 		PlaySound('power1',0.8)
 		PlaySound('cat00',0.8)
 		misc.ShakeScreen(210,3)
 --		New(bullet_killer,self.x,self.y)
-		New(player_spell_mask,64,64,255,30,210,30)
-		New(reimu_kekkai,self.x,self.y,1.25,12,20,12)
+		--New(player_spell_mask,64,64,255,30,210,30)
+		--New(reimu_kekkai,self.x,self.y,1.25,12,20,12)
+		New(renseki_bomb1,self.x,self.y,1.1)
 		self.nextspell=240
 		self.protect=360
-	else
-		PlaySound('nep00',0.8)
-		PlaySound('slash',0.8)
-		New(player_spell_mask,200,0,0,30,180,30)
-		local rot=ran:Int(0,360)
-		for i=1,8 do
-			New(reimu_sp_ef1,'reimu_sp_ef',self.x,self.y,8,rot+i*45,tar1,1200,1,40-10*i,self)
-		end
-		self.nextspell=300
-		self.protect=360
-	end
+	-- else
+	-- 	PlaySound('nep00',0.8)
+	-- 	PlaySound('slash',0.8)
+	-- 	New(player_spell_mask,200,0,0,30,180,30)
+	-- 	local rot=ran:Int(0,360)
+	-- 	for i=1,8 do
+	-- 		New(reimu_sp_ef1,'reimu_sp_ef',self.x,self.y,8,rot+i*45,tar1,1200,1,40-10*i,self)
+	-- 	end
+	-- 	self.nextspell=300
+	-- 	self.protect=360
+	-- end
 end
 -------------------------------------------------------
 function renseki_player:render()
@@ -454,11 +461,18 @@ function renseki_bullet_main:init(img,x,y,v,angle,dmg,Powerup)
 	Powerup=Powerup or false
 	if Powerup then
 		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
-		SetImgState(self,"mul+add",255,255,90,190)
+		_object.set_color(self,"mul+add",255,255,40,160)
 		self.dmg=self.dmg*1.5
+	else
+		_object.set_color(self,"mul+add",255,255,160,220)
 	end
+	--assert(self._a~=nil,"?")
+	
 end
-
+function renseki_bullet_main:render()
+	SetImgState(self,'mul+add',self._a,self._r,self._g,self._b)
+	object.render(self)
+end
 function renseki_bullet_main:kill()
 	New(renseki_bullet_ef,self.x,self.y,self.rot+180)
 	Del(self)
@@ -474,20 +488,27 @@ end
 function renseki_bullet_ef:frame()
 	self.t=self.t+1
 	if self.t>=9 then self.y=600 Del(self) end
-	SetImgState(self,"mul+add",(9-self.t)/9*255*0.6,140,50,140)
+	_object.set_color(self,"mul+add",(9-self.t)/9*255*0.6,140,50,140)
 end
 
 ---x,y,v,angle,dmg
 renseki_bullet_slow=Class(player_bullet_straight)
 function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
 	player_bullet_straight.init(self,img,x,y,v,angle,dmg)
+	self.a,self.b=12,12
 
 	Powerup=Powerup or false
 	if Powerup then
 		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
-		SetImgState(self,"mul+add",255,255,140,215)
+		_object.set_color(self,"mul+add",255,255,140,215)
 		self.dmg=self.dmg*1.5
+	else
+		_object.set_color(self,"mul+add",255,255,255,255)
 	end
+end
+function renseki_bullet_slow:render()
+	SetImgState(self,'mul+add',self._a,self._r,self._g,self._b)
+	object.render(self)
 end
 function renseki_bullet_slow:kill()
 	---todo:add particle eff
@@ -542,8 +563,10 @@ function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg,Powerup)
 	Powerup=Powerup or false
 	if Powerup then
 		lstg.New(renseki_powerup_bullet_effect,self.x,self.y,self)
-		SetImgState(self,"mul+add",255,255,140,215)
+		_object.set_color(self,"mul+add",255,255,140,215)
 		self.dmg=self.dmg*1.5
+	else
+		_object.set_color(self,"mul+add",255,255,255,255)
 	end
 end
 
@@ -560,6 +583,10 @@ function renseki_bullet_fast:frame()
 	self.vy=self.v*sin(self.rot)
 end
 
+function renseki_bullet_fast:render()
+	SetImgState(self,'mul+add',self._a,self._r,self._g,self._b)
+	object.render(self)
+end
 function renseki_bullet_fast:kill()
 	--todo:add particle effect
 	---New(reimu_bullet_blue_ef,self.x,self.y,self.rot)
@@ -726,20 +753,20 @@ end
 -- 	if self.timer>14 then Del(self) end
 -- end
 -------------------------------------------------------
-reimu_sp_ef=Class(player_bullet_trail)
+-- reimu_sp_ef=Class(player_bullet_trail)
 
-function reimu_sp_ef:kill()
-	PlaySound('explode',0.3)
-	New(bubble,'parimg12',self.x,self.y,30,4,6,Color(0xFFFFFFFF),Color(0x00FFFFFF),LAYER_ENEMY_BULLET_EF,'')
-	for i=1,16 do
-		New(reimu_sp_ef2,16,16,self.x,self.y,3,360/16*i,0.25,4,30)
-	end
-	misc.KeepParticle(self)
-end
+-- function reimu_sp_ef:kill()
+-- 	PlaySound('explode',0.3)
+-- 	New(bubble,'parimg12',self.x,self.y,30,4,6,Color(0xFFFFFFFF),Color(0x00FFFFFF),LAYER_ENEMY_BULLET_EF,'')
+-- 	for i=1,16 do
+-- 		New(reimu_sp_ef2,16,16,self.x,self.y,3,360/16*i,0.25,4,30)
+-- 	end
+-- 	misc.KeepParticle(self)
+-- end
 
-function reimu_sp_ef:del()
-	misc.KeepParticle(self)
-end
+-- function reimu_sp_ef:del()
+-- 	misc.KeepParticle(self)
+-- end
 -- -------------------------------------------------------
 -- reimu_bullet_ef=Class(object)
 
@@ -781,59 +808,218 @@ end
 -- end
 -- -------------------------------------------------------
 
----! 这个倒是挺有保留的价值
-reimu_kekkai=Class(object)
+--#region
+renseki_bomb1=Class(object)
 
-function reimu_kekkai:init(x,y,dmg,dr,n,t)
+function renseki_bomb1:init(x,y,dmg)
 	self.x=x
 	self.y=y
 	self.dmg=dmg
-	SetImageState('reimu_kekkai','mul+add',Color(0x804040FF))
-	self.killflag=true
 	self.group=GROUP_PLAYER_BULLET
 	self.layer=LAYER_PLAYER_BULLET
-	self.r=0
-	self.a=0
-	self.b=0
-	self.dr=dr
-	self.ds=dr/256
-	self.n=0
-	self.mute=true
 	self.list={}
+	self.killflag=true---自行管理生命周期
+	self.img="img_void"
+	self.hscale=20.0
+	self.vscale=20.0
+	self.vy=0
+	self.vx=0
+	self.timer=0
+
+	self.r=0
+	self.al=0
+
+	self.rmax=300
+	self.absorb=130
+	self.a=280
+	self.b=280
+
+	self.maxlife=240
 	task.New(self,function()
-		for i=1,n do
-			self.list[i]={scale=0,rot=0}
-			self.n=self.n+1
-			task.Wait(t)
-		end
-		self.dmg=0
-		PlaySound('slash',1.0)
---		New(bullet_killer,self.x,self.y)
-		for i=128,0,-4 do
-			SetImageState('reimu_kekkai','mul+add',Color(0x004040FF)+i*Color(0x01000000))
+		for i=1,60 do
 			task.Wait(1)
+			local lambda=(i/60)*(i/60)
+			self.r=self.rmax*lambda
+			self.al=255*lambda
 		end
+		task.Wait(self.maxlife)
+		for i=30,1,-1 do
+			task.Wait(1)
+			local lambda=(i/30)*(i/30)
+			self.r=self.rmax*lambda
+			self.al=255*lambda
+		end
+		New(bomb_bullet_killer,self.x,self.y,500,500,false)
+		PlaySound('slash',0.8)
 		Del(self)
 	end)
+	--New(ParticleEx,self.x,self.y,0,0)
+	CreateRenderTarget("bomb_black")
+	--New(renseki_bomb1_particle,self)
 end
+--#endregion
 
-function reimu_kekkai:frame()
+function renseki_bomb1:frame()
 	task.Do(self)
-	if self.timer%6==0 then self.mute=false else self.mute=true end
-	self.r=self.r+self.dr
-	self.a=self.r
-	self.b=self.r
-	for i=1,self.n do
-		self.list[i].scale=self.list[i].scale+self.ds
-		self.list[i].rot=self.list[i].rot+(-1)^i
+	--免疫不良状态
+	player.WeakEffectTime=0
+	--New(bomb_bullet_killer,self.x,self.y,self.r*1.6,self.r*1.6,false)
+	--self.timer=self.timer+1
+	if self.timer>30 then
+		for _,unit in ObjList(GROUP_ENEMY_BULLET) do
+			if(IsValid(unit)) then
+				_set_a(unit,0.3,Angle(unit,self),false)
+				unit.navi=true
+				if(Dist(unit,self)<self.absorb+60+ran:Float(-10,10)) then
+					unit._angle=Angle(unit,self)
+				end
+				if(Dist(unit,self)<self.absorb+ran:Float(-40,40)) then
+					if(ran:Float(0,1)<0.3) then
+						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit)+ran:Float(-4,4),self.target,900,2,false)
+						PlaySound("enep00",0.5)
+					end
+					Del(unit)
+				end
+			end
+		end
+
+		for _,unit in ObjList(GROUP_FOOD) do
+			if(IsValid(unit)) then
+				_set_a(unit,0.3,Angle(unit,self),false)
+				unit.navi=true
+				if(Dist(unit,self)<self.absorb+60+ran:Float(-10,10)) then
+					unit._angle=Angle(unit,self)
+				end
+			end
+		end
+		---闪烁粒子
+		local pp=ParticlePresets
+		if self.timer<self.maxlife+20 then
+			--print("enter timer stamp")
+			local r=ran:Float(self.r*0.45,self.r*0.65)
+			local s=ran:Float(0.65,1.35)
+			local weight=(self.r-r)/self.r
+			pp.DynamicScatter(self,Color((110+ran:Int(-70,50))*weight,10+ran:Int(10,50),180,180+ran:Int(10,50)),r,0,"parimg6",45,s*weight,0,true,0.3,-0.1)
+		end
 	end
-	New(bomb_bullet_killer,self.x,self.y,self.a/1.25,self.b/1.25,false)
+	self.x,self.y=player.x,player.y
 end
 
-function reimu_kekkai:render()
-	for i=1,self.n do
-		Render('reimu_kekkai',self.x,self.y,self.list[i].rot,self.list[i].scale)
+function renseki_bomb1:render()
+	SetViewMode("world")
+	PushRenderTarget("bomb_black")
+	RenderClear(Color(0,0,0,0))
+	SetImgState(self,"mul+add",self.al,0,0,0)
+	object.render(self)
+	PopRenderTarget()
+	-- PostEffect("bomb_black","renseki_bomb1","mul+add",{
+	-- 	center_pos={self.x,self.y,0,0},
+	-- 	effect_param={self.r,self.timer,0,0}
+	-- })
+	local x, y = GetScr(self)
+    local x1 = x * screen.scale
+    local y1 = (screen.height - y) * screen.scale
+	local scrh=lstg.world.scrt-lstg.world.scrb
+	lstg.PostEffect('renseki_bomb1','bomb_black',6,"mul+add",{
+		{x1,y1,0,0},
+		{self.r*screen.scale,self.timer/60,0,0}
+	},{
+		-- {self.x,self.y,0,0},
+		-- {self.r,self.timer,0,0}
+	})
+	--SetImgState(self,"mul+add",self.al,255,255,255)
+	SetViewMode("world")
+end
+
+renseki_bomb1_particle=Class(object)
+
+function renseki_bomb1_particle:init(target)
+	self.tar=target
+	self.img="renseki_bomb1_particle"
+	self.hscale=1
+	self.vscale=1
+	self.vy=0
+	self.vx=0
+	self.x=target.x
+	self.y=target.y
+	self.layer=LAYER_PLAYER_BULLET+50 
+	self.group=GROUP_GHOST
+end
+
+function renseki_bomb1_particle:frame()
+	local t=self.tar
+	if(not IsValid(t)) then Del(self) 
+	else if(t.timer<t.maxlife+20 and t.timer>30) then
+			self.x=t.x
+			self.y=t.y
+			ParticleFire(self)
+		else
+			ParticleStop(self)
+		end
 	end
 end
 
+function renseki_bomb1_particle:render()
+	SetViewMode("world")
+	object.render(self)
+	SetViewMode("world")
+end
+
+---
+---! 这个倒是挺有保留的价值
+--#region
+-- reimu_kekkai=Class(object)
+
+-- function reimu_kekkai:init(x,y,dmg,dr,n,t)
+-- 	self.x=x
+-- 	self.y=y
+-- 	self.dmg=dmg
+-- 	SetImageState('reimu_kekkai','mul+add',Color(0x804040FF))
+-- 	self.killflag=true
+-- 	self.group=GROUP_PLAYER_BULLET
+-- 	self.layer=LAYER_PLAYER_BULLET
+-- 	self.r=0
+-- 	self.a=0
+-- 	self.b=0
+-- 	self.dr=dr
+-- 	self.ds=dr/256
+-- 	self.n=0
+-- 	self.mute=true
+-- 	self.list={}
+-- 	task.New(self,function()
+-- 		for i=1,n do
+-- 			self.list[i]={scale=0,rot=0}
+-- 			self.n=self.n+1
+-- 			task.Wait(t)
+-- 		end
+-- 		self.dmg=0
+-- 		PlaySound('slash',1.0)
+-- --		New(bullet_killer,self.x,self.y)
+-- 		for i=128,0,-4 do
+-- 			SetImageState('reimu_kekkai','mul+add',Color(0x004040FF)+i*Color(0x01000000))
+-- 			task.Wait(1)
+-- 		end
+-- 		Del(self)
+-- 	end)
+-- end
+
+-- function reimu_kekkai:frame()
+-- 	task.Do(self)
+-- 	if self.timer%6==0 then self.mute=false else self.mute=true end
+-- 	self.r=self.r+self.dr
+-- 	self.a=self.r
+-- 	self.b=self.r
+-- 	for i=1,self.n do
+-- 		self.list[i].scale=self.list[i].scale+self.ds
+-- 		self.list[i].rot=self.list[i].rot+(-1)^i
+-- 	end
+-- 	New(bomb_bullet_killer,self.x,self.y,self.a/1.25,self.b/1.25,false)
+-- end
+
+-- function reimu_kekkai:render()
+-- 	for i=1,self.n do
+-- 		Render('reimu_kekkai',self.x,self.y,self.list[i].rot,self.list[i].scale)
+-- 	end
+-- end
+--#endregion
 AddPlayerToPlayerList('Kyuukai Renseki','renseki_player','Renseki')

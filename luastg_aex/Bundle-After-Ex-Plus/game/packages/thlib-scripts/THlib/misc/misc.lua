@@ -36,18 +36,18 @@ function hinter:frame()
     ---! 修正提示信息渲染位置
     self.x=self.cx+self.scx
     self.y=self.cy+self.scy
-    print(self.x,self.y)
-    print(self.t1,self.t2,self.fade)
+    --print(self.x,self.y)
+    --print(self.t1,self.t2,self.fade)
 
     self.tim = self.tim + 1
     if self.tim < self.t1 then
-        print("enter t1")
+        --print("enter t1")
         self.t = self.tim / self.t1
     elseif self.tim < self.t1 + self.t2 then
-        print("enter t2")
+        --print("enter t2")
         self.t = 1
     elseif self.tim < self.t1 * 2 + self.t2 then
-        print("enter t3")
+        --print("enter t3")
         self.t = (self.t1 * 2 + self.t2 - self.tim) / self.t1
     else
         Del(self)

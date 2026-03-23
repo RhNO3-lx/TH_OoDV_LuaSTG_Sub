@@ -434,7 +434,8 @@ function system:explode()
     local angle = ran:Float(-15, 15)
     local sign, v = ran:Sign(), 1.5
     b.is_exploding = true
-    b.killed = true
+    ---!注意：改了这里可能会导致一些奇怪的bug
+    --b.killed = true
     b.no_killeff = true
     PlaySound("enep01", 0.5)
     b._colli = false
@@ -468,6 +469,8 @@ function system:explode()
         self:popSpellResult()
         self:popResult(true)
         self:refresh(1)
+        ---!注意：改了这里可能会导致一些奇怪的bug
+        b.killed = true
         if card and card.after then
             task.New(b, function()
                 card.after(b)
