@@ -459,7 +459,7 @@ function system:explode()
                 lifetime = ran:Int(60, 90)
                 l = ran:Float(100, 250)
                 New(boss_death_ef_unit, b.x, b.y, l / lifetime, ran:Float(0, 360), lifetime, ran:Float(2, 3))
-                task.Wait(2)
+                task.Wait(1)
             end
         end
         PlaySound("enep01", 0.5, b.x / 256)
