@@ -1,19 +1,5 @@
 stage1_bg=Class(object)
-S1BG_Attri={}
-local attri=S1BG_Attri
-attri.eye_to_cx=0
-attri.eye_to_cz=0.5
-attri.eye_x=0
-attri.eye_z=0.5
 
----! todo:可以在stage结束的时候使劲增加这个值来实现腾空而起的视觉效果
-attri.eye_y=0.53
-
-attri.eye_to_dx=0
-attri.eye_to_dz=0
-
-attri.eye_dx=0
-attri.eye_dz=0
 
 local dir="stage1/"
 ---@param tex string
@@ -90,6 +76,23 @@ function stage1_bg:init()
     self.edx=0
     self.edz=0
 
+
+    self.S1BG_Attri={}
+    local attri=self.S1BG_Attri
+    attri.eye_to_cx=0
+    attri.eye_to_cz=0.5
+    attri.eye_x=0
+    attri.eye_z=0.5
+
+    ---! todo:可以在stage结束的时候使劲增加这个值来实现腾空而起的视觉效果
+    attri.eye_y=0.53
+
+    attri.eye_to_dx=0
+    attri.eye_to_dz=0
+
+    attri.eye_dx=0
+    attri.eye_dz=0
+
     Set3D("eye",attri.eye_x,attri.eye_y,attri.eye_z)
     Set3D("at",attri.eye_to_cx,0,attri.eye_to_cz)
     Set3D("up",0,0,1)
@@ -101,6 +104,7 @@ function stage1_bg:init()
 end
 
 function stage1_bg:frame()
+    local attri=self.S1BG_Attri
     task.Do(self)
     self.timer=self.timer+1
 
