@@ -157,7 +157,7 @@ function DialogSentence:init(text,color,CanSkip,size,font,align,alignv)
     ---淡入
     task.New(self,function()
         local attri=self.TextAttri
-        for i=1,30 do
+        for i=1,15 do
             task.Wait(1)
             attri.color.a=attri.color.a+self.TargetAlpha/30
         end
@@ -175,7 +175,7 @@ function DialogSentence:frame()
     end
 
     ---检测玩家是否按z继续
-    if KeyIsDown 'shoot' and self.TextAttri.CanSkip then
+    if KeyIsPressed 'shoot' and self.TextAttri.CanSkip then
         DialogSentence.FadeOut(self)
     end
 end
@@ -208,7 +208,7 @@ function DialogSentence:FadeOut()
     ---淡出+死亡
     task.New(self,function()
         local attri=self.TextAttri
-        for i=1,30 do
+        for i=1,15 do
             task.Wait(1)
             attri.color.a=attri.color.a-self.TargetAlpha/30
         end
