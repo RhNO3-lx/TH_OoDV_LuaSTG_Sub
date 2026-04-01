@@ -43,7 +43,7 @@ function DialogDisplayer:init(sentences)
     self.CurrentSentenceIndex=1
 
     local s=self.SentenceList[1]
-    self.CurrentSentence=New(DialogSentence,s.text,s.color,s.size,s.font)
+    self.CurrentSentence=New(DialogSentence,s.text,s.color,s.CanSkip,s.size,s.font,s.align,s.alignv,s.lifetime)
     local f=s.func or function(self) end
     f(self)
 
@@ -71,7 +71,7 @@ function DialogDisplayer:frame()
         if not IsValid(self.CurrentSentence) then
             self.CurrentSentenceIndex=self.CurrentSentenceIndex+1
             local s=self.SentenceList[self.CurrentSentenceIndex]
-            self.CurrentSentence=New(DialogSentence,s.text,s.color,s.size,s.font)
+            self.CurrentSentence=New(DialogSentence,s.text,s.color,s.CanSkip,s.size,s.font,s.align,s.alignv,s.lifetime)
             local f=s.func or function(self) end
             f(self)
         end
@@ -131,6 +131,15 @@ function DialogDisplayer:RemoveChara(self,name)
     end
 end
 
+function DialogDisplayer:del()
+    for k,v in pairs(self.CharacterList) do
+        if IsValid(v) then
+            CharacterDisplayer.FadeOut(v)
+        end
+    end
+    object.del(self)
+end
+
 --#endregion
 
 --#region
@@ -138,7 +147,7 @@ end
 
 ---DialogSentence
 ---自行控制自己的生命周期
-function DialogSentence:init(text,color,CanSkip,size,font,align,alignv)
+function DialogSentence:init(text,color,CanSkip,size,font,align,alignv,lifetime)
     self.TextAttri={
         text=text or "Test text.",
         color=color or Color(255,195, 255, 245),
@@ -148,7 +157,7 @@ function DialogSentence:init(text,color,CanSkip,size,font,align,alignv)
         font=font or "dialog",---ttfname
         CanSkip=CanSkip or true
     }
-    self.lifetime=300
+    self.lifetime=lifetime or 300
     self.IsActive=true
     self.group=GROUP_GHOST
     self.layer=LAYER_TOP+20

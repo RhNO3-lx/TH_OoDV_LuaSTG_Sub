@@ -263,7 +263,7 @@ function stage4a_bg:frame()
     Set3D("at",cx,cy,cz)
 
     att.at={cx,cy,cz}
-    print("cx,cy,cz:"..cx..","..cy..","..cz)
+    -- print("cx,cy,cz:"..cx..","..cy..","..cz)
     -- 计算up方向
     -- 方便起见，这里默认把top按照初始分量（0,1,0）开始旋转
     -- 请不要让视线严格竖直向上或向下，否则会因为180°而崩掉
@@ -278,11 +278,11 @@ function stage4a_bg:frame()
     top_to_ortho[1]=top_to_ortho[1]/top_to_len
     top_to_ortho[2]=top_to_ortho[2]/top_to_len
     top_to_ortho[3]=top_to_ortho[3]/top_to_len
-    print("toptoortho:"..top_to_ortho[1]..","..top_to_ortho[2]..","..top_to_ortho[3])
+    -- print("toptoortho:"..top_to_ortho[1]..","..top_to_ortho[2]..","..top_to_ortho[3])
     Set3D("up",top_to_ortho[1],top_to_ortho[2],top_to_ortho[3])
     
     att.top={top_to_ortho[1],top_to_ortho[2],top_to_ortho[3]}
-    print("att.top:"..att.top[1]..","..att.top[2]..","..att.top[3])
+    -- print("att.top:"..att.top[1]..","..att.top[2]..","..att.top[3])
 
     
 
@@ -301,7 +301,7 @@ function stage4a_bg:render()
     if(self.mode~=Stage4Mode.Normal) then
         --渲染把上面两个黑窟窿遮住的通道
         local halfcoor={att.c0[1]+r,att.c0[2],att.c0[3]+Stage4Mode.length+r}
-        print(halfcoor[3])
+        -- print(halfcoor[3])
         local dir_at={-1,0,0}
         local dir_ht={0,0,-1}
         RenderChannelHalf("stage4a_star_dark",halfcoor,dir_at,dir_ht,(-self.tim/600)%1,Color(255,20,0,40),"add+add",0.096)
