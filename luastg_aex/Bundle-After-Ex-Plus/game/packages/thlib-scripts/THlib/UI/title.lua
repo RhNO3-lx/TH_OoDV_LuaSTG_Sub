@@ -45,6 +45,15 @@ local musicroom_content = {
         "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
     },
     {
+        { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
+        { "text", -280, -180, "", 
+        "stage4道中的bgm：\n"..
+        "在前往浅间净秽山深处的隧道中，涟析看见了很多不那么幸运的同类\n"..
+        "——作为污秽被聚集与“净化”，或者说，抹除存在，没有机会诞生完整的意识\n"..
+        "无穷无尽的美妙的幻想与思考，好像很容易就落得这样的结局，不知涟析此时怎么想\n"..
+        "想表现的大概就是这样的感觉：在幽深寂静的回廊中，瞥见些许幻想的微光", 0.600 }
+    },
+    {
         { "text", -280, -120, '', "(from: 东方永夜抄 by:ZUN)", 0.675 },
         { "text", -280, -180, "", 
         "用于符卡练习模式的经典曲目\n"..
@@ -441,12 +450,16 @@ function stage_menu:init()
         PlayMusic('deathmusic')
         lstg.var.now_music = 'deathmusic'
     end })
-    table.insert(menu_items, { "4.东方妖怪小町", function ()
+    table.insert(menu_items, { "4.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_stage4a')
+        lstg.var.now_music = 'bgm_stage4a'
+    end })
+    table.insert(menu_items, { "?.东方妖怪小町", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_lastword')
         lstg.var.now_music = 'bgm_lastword'
     end })
-
     table.insert(menu_items, { 'exit', function()
         StopMusic(lstg.var.now_music)
         PlayMusic('menu')
