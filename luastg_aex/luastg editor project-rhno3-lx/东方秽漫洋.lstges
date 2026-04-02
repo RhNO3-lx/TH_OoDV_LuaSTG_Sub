@@ -1157,7 +1157,7 @@
 9,{"$type":".Bullet.CreateBullet, ","Attributes":[{"attrCap":"Name","attrInput":"\"fish_wall_bullet\"","EditWindow":"bulletDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"self, 1.7, 1, bullet_co","EditWindow":"bulletParam"}],"AttributeCount":3}
 6,{"$type":".Task.TaskNode, ","Attributes":[]}
 7,{"$type":".General.Repeat, LuaSTGEditorSharp","Attributes":[{"attrCap":"Times","attrInput":"_infinite","EditWindow":"yield"},{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"","EditWindow":""},{"attrCap":"Var 1 increment","attrInput":"","EditWindow":""}],"AttributeCount":5}
-8,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"100+120","EditWindow":"yield"}],"AttributeCount":1,"IsSelected":true}
+8,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"100+120","EditWindow":"yield"}],"AttributeCount":1}
 8,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"变色然后发射弹幕","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
 9,{"$type":".General.Repeat, LuaSTGEditorSharp","Attributes":[{"attrCap":"Times","attrInput":"20","EditWindow":"yield"},{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"i","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"0","EditWindow":""},{"attrCap":"Var 1 increment","attrInput":"1","EditWindow":""}],"AttributeCount":5}
 10,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"4","EditWindow":"yield"}],"AttributeCount":1}
@@ -2405,7 +2405,7 @@
 9,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
 6,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.lock=false\r\nlstg.var.block_shoot=false","EditWindow":"code"}],"AttributeCount":1}
 5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"240","EditWindow":"yield"}],"AttributeCount":1}
-5,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"phase2","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2,"IsExpanded":false}
+5,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"phase2","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
 6,{"$type":".General.Repeat, LuaSTGEditorSharp","Attributes":[{"attrCap":"Times","attrInput":"_infinite","EditWindow":"yield"},{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"i","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"0","EditWindow":""},{"attrCap":"Var 1 increment","attrInput":"1","EditWindow":""}],"AttributeCount":5}
 7,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"45","EditWindow":"yield"}],"AttributeCount":1}
 7,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local s=ran:Int(1,3)\r\n\r\nlocal s2=ran:Int(2,4)\r\nlocal s3=ran:Int(2,4)\r\nlocal s4=ran:Int(2,3)\r\n\r\nlocal cx,cy=misc_ex.RandomCoor(1)\r\nlocal cx2,cy2=misc_ex.RandomCoor(2)\r\nlocal cx3,cy3=misc_ex.RandomCoor(3)\r\nlocal cx4,cy4=misc_ex.RandomCoor(4)\r\n\r\nlocal xtable={cx,cx2,cx3,cx4}\r\nlocal ytable={cy,cy2,cy3,cy4}\r\nlocal t=ran:Int(1,4)\r\nlocal t2=ran:Int(1,4)\r\nlocal t3=ran:Int(1,4)","EditWindow":"code"}],"AttributeCount":1}
@@ -2422,11 +2422,14 @@
 9,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"fish_gravity_protect\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"xtable[t3],ytable[t3]","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"s4","EditWindow":"objectParam"}],"AttributeCount":3}
 8,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
 9,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"fish_gravity_protect2\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"xtable[t3],ytable[t3]","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"s4","EditWindow":"objectParam"}],"AttributeCount":3}
-7,{"$type":".General.IfNode, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"ran:Float(0,1)<0.55 and i%2==0","EditWindow":""}],"AttributeCount":1}
+7,{"$type":".General.IfNode, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"i%2==0","EditWindow":""}],"AttributeCount":1}
 8,{"$type":".General.IfThen, LuaSTGEditorSharp","Attributes":[]}
-9,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"fish_danmaku_protect\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"xtable[t3],ytable[t3]","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"s4","EditWindow":"objectParam"}],"AttributeCount":3}
+9,{"$type":".General.IfNode, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"ran:Float(0,1)<0.55","EditWindow":""}],"AttributeCount":1,"IsSelected":true}
+10,{"$type":".General.IfThen, LuaSTGEditorSharp","Attributes":[]}
+11,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"fish_danmaku_protect\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"xtable[t3],ytable[t3]","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"s4","EditWindow":"objectParam"}],"AttributeCount":3}
+10,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
+11,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"fish_danmaku_attack\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"xtable[t3],ytable[t3]","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"s4","EditWindow":"objectParam"}],"AttributeCount":3}
 8,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
-9,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"fish_danmaku_attack\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"xtable[t3],ytable[t3]","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"s4","EditWindow":"objectParam"}],"AttributeCount":3}
 7,{"$type":".General.IfNode, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"lstg.var.power>=300","EditWindow":""}],"AttributeCount":1}
 8,{"$type":".General.IfThen, LuaSTGEditorSharp","Attributes":[]}
 9,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"renseki_player.ChangeColor(player,255,170,170,170)\r\nplayer.MinLightRange=300\r\nplayer.MaxLightRange=430\r\nlstg.var.block_spell=true\r\nm.al=170\r\nlstg.var.MinPower=300","EditWindow":"code"}],"AttributeCount":1}
