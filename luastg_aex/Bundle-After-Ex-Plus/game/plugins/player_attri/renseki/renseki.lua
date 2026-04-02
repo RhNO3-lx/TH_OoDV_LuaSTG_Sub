@@ -868,12 +868,14 @@ function renseki_bomb1:frame()
 	if self.timer>30 then
 		for _,unit in ObjList(GROUP_ENEMY_BULLET) do
 			if(IsValid(unit)) then
-				_set_a(unit,0.3,Angle(unit,self),false)
+				local d=Dist(unit,self)
+				local frac=(d/120)*(d/120)
+				_set_a(unit,0.5/frac,Angle(unit,self),false)
 				unit.navi=true
-				if(Dist(unit,self)<self.absorb+60+ran:Float(-10,10)) then
+				if(d<self.absorb+60+ran:Float(-10,10)) then
 					unit._angle=Angle(unit,self)
 				end
-				if(Dist(unit,self)<self.absorb+ran:Float(-40,40)) then
+				if(d<self.absorb+ran:Float(-40,40)) then
 					if(ran:Float(0,1)<0.3) then
 						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit)+ran:Float(-4,4),self.target,900,2,false)
 						PlaySound("enep00",0.5)
