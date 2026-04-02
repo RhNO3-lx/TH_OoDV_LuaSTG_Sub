@@ -4,7 +4,7 @@ renseki_player=Class(player_class)
 local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
-lstg.var.EatColliderSize={12,23,34,44,55}
+lstg.var.EatColliderSize={10,18,26,34,44}
 ---TODO: 允许自机power低于100
 --#region
 EatCollider=Class(object)
