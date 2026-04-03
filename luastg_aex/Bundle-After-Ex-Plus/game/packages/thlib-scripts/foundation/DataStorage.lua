@@ -6,7 +6,7 @@ local M = {}
 ---@generic T
 ---@param t T
 ---@return T
-local function deep_copy(t)
+function deep_copy(t)
     local tt = type(t)
     if tt == "boolean" or tt == "number" or tt == "string" then
         return t

@@ -2,9 +2,8 @@ stage4a_bg=Class(object)
 
 Stage4Mode={}
 Stage4Mode.Normal=1
-Stage4Mode.BentLeft=2
-Stage4Mode.BentRight=3
-Stage4Mode.BentDown=4
+Stage4Mode.BentHorizonal=2
+Stage4Mode.BentVertical=3
 
 Stage4Mode.length=0.3
 Stage4Mode.radius=0.096
@@ -135,8 +134,11 @@ end
 
 function stage4a_bg:InitView()
     local att=self.attri
-    att.at={0,0,1}
-    att.top={0,1,0}
+    att.eye_to_theta=0 --x，z平面上，与z的夹角
+    att.eye_to_phi=90 --与y的夹角
+
+    --头顶与y轴夹角
+    att.top_phi=0
 
     local r=Stage4Mode.radius
     local l=Stage4Mode.length
@@ -148,6 +150,159 @@ function stage4a_bg:InitView()
     att.eye_to_theta=0 --x，z平面上，与z的夹角
 end
 
+function stage4a_bg:RenderBranch(Isvertical)
+    local dir_at,dir_ht,dir_top,dir_at2,dir_at3,halfcoor
+    local r=Stage4Mode.radius
+    local att=self.attri
+    if not Isvertical then
+        dir_top={0,1,0}
+        halfcoor={att.c0[1]+r,att.c0[2],att.c0[3]+Stage4Mode.length+r}
+        dir_at={-1,0,0}
+        dir_ht={0,0,-1}
+        dir_at2={-1,0,0}
+        dir_at3={1,0,0}
+    else
+        dir_top={0,1,0}
+        halfcoor={att.c0[1],att.c0[2]-r,att.c0[3]+Stage4Mode.length+r}
+        dir_at={0,1,0}
+        dir_ht={0,0,-1}
+        dir_at2={-1,0,0}
+        dir_at3={1,0,0}
+    end
+
+    -- print(halfcoor[3])
+    RenderChannelHalf("stage4a_star_dark",halfcoor,dir_at,dir_ht,(-self.tim/600)%1,att.cols[1],"add+add",0.096)
+    RenderChannelHalf("stage4a_star_light",halfcoor,dir_at,dir_ht,(-self.tim/900)%1,att.cols[2],"mul+add",0.096)
+    RenderChannelHalf("stage4a_sora",halfcoor,dir_at,dir_ht,(-self.tim/1200)%1,att.cols[3],"mul+alpha",0.098)
+
+    --渲染两条岔路
+    RenderChannel("stage4a_star_dark",att.c1,dir_at2,dir_top,(-self.tim/600)%1,att.cols[1],"add+alpha")
+    RenderChannel("stage4a_star_light",att.c1,dir_at2,dir_top,(-self.tim/900)%1,att.cols[2],"mul+add",0.096)
+    RenderChannel("stage4a_sora",att.c1,dir_at2,dir_top,(-self.tim/1200)%1,att.cols[3],"mul+alpha",0.098)
+
+    RenderChannel("stage4a_star_dark",att.c2,dir_at3,dir_top,(-self.tim/600)%1,att.cols[1],"add+alpha")
+    RenderChannel("stage4a_star_light",att.c2,dir_at3,dir_top,(-self.tim/900)%1,att.cols[2],"mul+add",0.096)
+    RenderChannel("stage4a_sora",att.c2,dir_at3,dir_top,(-self.tim/1200)%1,att.cols[3],"mul+alpha",0.098)
+end
+
+function stage4a_bg:ChangeColor(mode,duration)
+    duration=duration or 240
+    local att=self.attri
+    local oc={}
+    for i=1,3 do
+        oc[i]=Color(att.cols[i].a,att.cols[i].r,att.cols[i].g,att.cols[i].b)
+    end
+    local cols={}
+    if mode=="purple" then 
+        cols={
+            Color(255,20,0,40),
+            Color(240,180,150,245),
+            Color(70,220,150,220)
+        }
+    elseif mode=="red" then
+        cols={
+            Color(255,50,0,30),
+            Color(240,245,150,210),
+            Color(70,250,150,190)
+        }
+    elseif mode=="blue" then
+        cols={
+            Color(255,20,10,60),
+            Color(240,140,170,250),
+            Color(70,150,190,245)
+        }
+    end
+
+    task.New(self,function()
+        for i=1,duration do
+            task.Wait(1)
+            local lambda=0.5*(1-cos(i*180/duration))
+            for j=1,3 do
+                att.cols[j]=Color(oc[j].a*(1-lambda)+cols[j].a*lambda,
+                                oc[j].r*(1-lambda)+cols[j].r*lambda,
+                                oc[j].g*(1-lambda)+cols[j].g*lambda,
+                                oc[j].b*(1-lambda)+cols[j].b*lambda)
+            end
+        end
+    end)
+end
+
+function stage4a_bg:TurnTo(mode,target_top_phi)
+    if mode=="right" or mode=="left" then 
+        self.mode=Stage4Mode.BentHorizontal
+    else
+        self.mode=Stage4Mode.BentVertical
+    end
+
+    target_top_phi=target_top_phi or 0
+    local att=self.attri
+    task.New(self,function()
+        local r=Stage4Mode.radius
+        local dl=r
+        local z0=att.c0[3]
+        local z1=att.c1[3]
+        local z2=att.c2[3]
+
+        for i=1,240 do
+            task.Wait(1)
+            local lambda=0.43*(1-cos(i*180/240))
+            att.c0[3]=z0*(1-lambda)-(Stage4Mode.length+r)*lambda
+            att.c1[3]=z1*(1-lambda)
+            att.c2[3]=z2*(1-lambda)
+        end
+
+        z0=att.c0[3]
+        z1=att.c1[3]
+        z2=att.c2[3]
+        if mode=="left" then
+            local t=att.eye_to_theta
+
+            local x0=att.c0[1]
+            local x1=att.c1[1]
+            local x2=att.c2[1]
+            for i=1,240 do
+                task.Wait(1)
+                local lambda=0.5*(1-cos(i*180/240))
+                -- att.c0[3]=z0-1*r*lambda
+                att.c0[1]=x0+r*lambda
+
+                att.c1[1]=x1*(1-lambda)
+                att.c2[1]=x2*(1-lambda)+lambda*2*r
+                att.c1[3]=z1*(1-lambda)
+                att.c2[3]=z2*(1-lambda)
+
+                att.eye_to_theta=t*(1-lambda)+lambda*(-90)
+                att.top_phi=0*(1-lambda)+lambda*(target_top_phi)
+            end
+        elseif mode=="right" then
+            local t=att.eye_to_theta
+
+            local x0=att.c0[1]
+            local x1=att.c1[1]
+            local x2=att.c2[1]
+            for i=1,240 do
+                task.Wait(1)
+                local lambda=0.5*(1-cos(i*180/240))
+                -- att.c0[3]=z0-1*r*lambda
+                att.c0[1]=x0+r*lambda
+
+                att.c2[1]=x1*(1-lambda)
+                att.c1[1]=x2*(1-lambda)+lambda*2*r
+                att.c2[3]=z1*(1-lambda)
+                att.c1[3]=z2*(1-lambda)
+
+                att.eye_to_theta=t*(1-lambda)+lambda*(90)
+                att.top_phi=0*(1-lambda)+lambda*(target_top_phi)
+            end
+        end
+
+
+        self.mode=Stage4Mode.Normal
+        stage4a_bg.InitView(self)
+        stage4a_bg.ChangeColor(self,"red")
+        self.mode=Stage4Mode.Normal
+    end)
+end
 function stage4a_bg:init()
     --print("stage1_bg:init-1")
     background.init(self,false)
@@ -176,6 +331,9 @@ function stage4a_bg:init()
     --头顶与y轴夹角
     att.top_phi=0
 
+    att.cols={Color(255,20,0,40),
+    Color(240,180,150,245),
+    Color(70,220,150,220)}
 
     local r=Stage4Mode.radius
     local l=Stage4Mode.length
@@ -202,50 +360,52 @@ function stage4a_bg:init()
 
     self.tim=0
 
-    task.New(self,function()
-        local r=Stage4Mode.radius
-        self.mode=2
-        local dl=r
-        local z0=att.c0[3]
-        local z1=att.c1[3]
-        local z2=att.c2[3]
+    -- task.New(self,function()
+    --     local r=Stage4Mode.radius
+    --     self.mode=Stage4Mode.BentHorizonal
+    --     local dl=r
+    --     local z0=att.c0[3]
+    --     local z1=att.c1[3]
+    --     local z2=att.c2[3]
 
-        for i=1,240 do
-            task.Wait(1)
-            local lambda=0.43*(1-cos(i*180/240))
-            att.c0[3]=z0*(1-lambda)-(Stage4Mode.length+r)*lambda
-            att.c1[3]=z1*(1-lambda)
-            att.c2[3]=z2*(1-lambda)
-        end
+    --     for i=1,240 do
+    --         task.Wait(1)
+    --         local lambda=0.43*(1-cos(i*180/240))
+    --         att.c0[3]=z0*(1-lambda)-(Stage4Mode.length+r)*lambda
+    --         att.c1[3]=z1*(1-lambda)
+    --         att.c2[3]=z2*(1-lambda)
+    --     end
 
-        z0=att.c0[3]
-        z1=att.c1[3]
-        z2=att.c2[3]
-        local t=att.eye_to_theta
+    --     z0=att.c0[3]
+    --     z1=att.c1[3]
+    --     z2=att.c2[3]
+    --     local t=att.eye_to_theta
 
-        local x0=att.c0[1]
-        local x1=att.c1[1]
-        local x2=att.c2[1]
-        for i=1,240 do
-            task.Wait(1)
-            local lambda=0.5*(1-cos(i*180/240))
-            -- att.c0[3]=z0-1*r*lambda
-            att.c0[1]=x0+r*lambda
+    --     local x0=att.c0[1]
+    --     local x1=att.c1[1]
+    --     local x2=att.c2[1]
+    --     for i=1,240 do
+    --         task.Wait(1)
+    --         local lambda=0.5*(1-cos(i*180/240))
+    --         -- att.c0[3]=z0-1*r*lambda
+    --         att.c0[1]=x0+r*lambda
 
-            att.c1[1]=x1*(1-lambda)
-            att.c2[1]=x2*(1-lambda)+lambda*2*r
-            att.c1[3]=z1*(1-lambda)
-            att.c2[3]=z2*(1-lambda)
+    --         att.c1[1]=x1*(1-lambda)
+    --         att.c2[1]=x2*(1-lambda)+lambda*2*r
+    --         att.c1[3]=z1*(1-lambda)
+    --         att.c2[3]=z2*(1-lambda)
 
-            att.eye_to_theta=t*(1-lambda)+lambda*(-90)
-        end
-        self.mode=Stage4Mode.Normal
-        stage4a_bg.InitView(self)
-
-        self.mode=Stage4Mode.Normal
-    end)
+    --         att.eye_to_theta=t*(1-lambda)+lambda*(-90)
+    --         att.top_phi=0*(1-lambda)+lambda*(-90)
+    --     end
+    --     self.mode=Stage4Mode.Normal
+    --     stage4a_bg.InitView(self)
+    --     stage4a_bg.ChangeColor(self,"red")
+    --     self.mode=Stage4Mode.Normal
+    -- end)
 
     self.mode=Stage4Mode.Normal
+    -- stage4a_bg.TurnTo(self,"left")
 end
 
 function stage4a_bg:frame()
@@ -294,37 +454,18 @@ function stage4a_bg:render()
     SetViewMode("3d")
 	background.WarpEffectCapture()
     local att=self.attri
-    local dir_at={0,0,1}
-    local dir_top={0,1,0}
-    local r=Stage4Mode.radius
 
-    if(self.mode~=Stage4Mode.Normal) then
-        --渲染把上面两个黑窟窿遮住的通道
-        local halfcoor={att.c0[1]+r,att.c0[2],att.c0[3]+Stage4Mode.length+r}
-        -- print(halfcoor[3])
-        local dir_at={-1,0,0}
-        local dir_ht={0,0,-1}
-        RenderChannelHalf("stage4a_star_dark",halfcoor,dir_at,dir_ht,(-self.tim/600)%1,Color(255,20,0,40),"add+add",0.096)
-        RenderChannelHalf("stage4a_star_light",halfcoor,dir_at,dir_ht,(-self.tim/900)%1,Color(240,180,150,245),"mul+add",0.096)
-        RenderChannelHalf("stage4a_sora",halfcoor,dir_at,dir_ht,(-self.tim/1200)%1,Color(70,220,150,220),"mul+alpha",0.098)
-
-        --渲染两条岔路
-        dir_at={-1,0,0}
-        RenderChannel("stage4a_star_dark",att.c1,dir_at,dir_top,(-self.tim/600)%1,Color(255,20,0,40),"add+alpha")
-        RenderChannel("stage4a_star_light",att.c1,dir_at,dir_top,(-self.tim/900)%1,Color(240,180,150,245),"mul+add",0.096)
-        RenderChannel("stage4a_sora",att.c1,dir_at,dir_top,(-self.tim/1200)%1,Color(70,220,150,220),"mul+alpha",0.098)
-
-        dir_at={1,0,0}
-        RenderChannel("stage4a_star_dark",att.c2,dir_at,dir_top,(-self.tim/600)%1,Color(255,20,0,40),"add+alpha")
-        RenderChannel("stage4a_star_light",att.c2,dir_at,dir_top,(-self.tim/900)%1,Color(240,180,150,245),"mul+add",0.096)
-        RenderChannel("stage4a_sora",att.c2,dir_at,dir_top,(-self.tim/1200)%1,Color(70,220,150,220),"mul+alpha",0.098)
+    if(self.mode==Stage4Mode.BentHorizonal) then
+        stage4a_bg.RenderBranch(self,false)
+    elseif (self.mode==Stage4Mode.BentVertical) then
+        stage4a_bg.RenderBranch(self,true)
     end
 
-    dir_at={0,0,1}
-    dir_top={0,1,0}
-    RenderChannel("stage4a_star_dark",att.c0,dir_at,dir_top,(-self.tim/600)%1,Color(255,20,0,40),"add+alpha")
-    RenderChannel("stage4a_star_light",att.c0,dir_at,dir_top,(-self.tim/900)%1,Color(240,180,150,245),"mul+add",0.096)
-    RenderChannel("stage4a_sora",att.c0,dir_at,dir_top,(-self.tim/1200)%1,Color(70,220,150,220),"mul+alpha",0.098)
+    local dir_at={0,0,1}
+    local dir_top={0,1,0}
+    RenderChannel("stage4a_star_dark",att.c0,dir_at,dir_top,(-self.tim/600)%1,att.cols[1],"add+alpha")
+    RenderChannel("stage4a_star_light",att.c0,dir_at,dir_top,(-self.tim/900)%1,att.cols[2],"mul+add",0.096)
+    RenderChannel("stage4a_sora",att.c0,dir_at,dir_top,(-self.tim/1200)%1,att.cols[3],"mul+alpha",0.098)
     --Render4V("stage4a_star_dark",-1,-1,0,1,-1,0,1,-1,2,-1,-1,2)
     --local co=Color(255,255,255,255)
     --RenderTexture("stage4a_star_dark","mul+alpha",{-0.3,-0.3,0,0,0,co},{-0.3,0.3,0,0,512,co},{0.3,0.3,0.6,512,512,co},{0.3,-0.3,0.6,512,0,co})
