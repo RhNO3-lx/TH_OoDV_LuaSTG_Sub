@@ -5,12 +5,15 @@ ContinueHinter=Class(object)
 DialogSentence=Class(object)
 CharacterDisplayer=Class(object)
 
+LoadImageFromFile("dialog_box_ext","THlib/UI/dialog.png")
+SetImageScale("dialog_box_ext",0.65)
+
 local w=lstg.world
 DialogAttri={
     cy=w.scrb+60,
     cx=(w.scrl+w.scrr)/2,
-    w=360,---!规定：这是文字部分的边界
-    h=55
+    w=400,---!规定：这是文字部分的边界
+    h=70
 }
 
 --#region
@@ -21,7 +24,7 @@ DialogAttri={
 ---@param sentences table{{text,color,size,font,func},...}
 ---func 函数里可以定义与角色立绘有关的事件
 function DialogDisplayer:init(sentences)
-    self.img="dialog_box"
+    self.img="dialog_box_ext"
     self.ShowBackground=true
     self.CharacterList={}---约定：表内字段格式："charactername","character_image"
     self.y=DialogAttri.cy ---预期纹理素材：dialog_box_ext.png,400*80
