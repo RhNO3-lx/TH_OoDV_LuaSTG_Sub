@@ -12,8 +12,8 @@ local w=lstg.world
 DialogAttri={
     cy=w.scrb+60,
     cx=(w.scrl+w.scrr)/2,
-    w=360,---!规定：这是文字部分的边界
-    h=65
+    w=400,---!规定：这是文字部分的边界
+    h=70
 }
 
 --#region
