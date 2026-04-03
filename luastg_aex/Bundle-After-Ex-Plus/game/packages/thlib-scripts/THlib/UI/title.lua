@@ -322,53 +322,56 @@ function stage_menu:init()
     end })
     menu_difficulty_select_pr = New(simple_menu, 'Select Difficulty', menu_items)
     --
-    for _, sg in ipairs(stage.groups) do
-        if stage.groups[sg].allow_practice then
-            local menu_items = {}
-            for _, s in ipairs(stage.groups[sg]) do
-                if stage.stages[s].allow_practice then
-                    table.insert(menu_items, { string.match(s, "^[%w_][%w_ ]*"), function()
-                        menu.FlyOut(menu_practice[sg], 'left')
-                        last_menu = menu_practice[sg]
-                        --
-                        scoredata.player_select = 1
-                        lstg.var.player_name = player_list[1][2]
-                        lstg.var.rep_player = player_list[1][3]
-                        task.New(stage_menu_self, function()
-                            for i = 1, 60 do
-                                SetBGMVolume('menu', 1 - i / 60)
-                                task.Wait()
-                            end
-                        end)
-                        task.New(stage_menu_self, function()
-                            task.Wait(30)
-                            New(mask_fader, 'close')
-                            task.Wait(30)
-                            if practice == 'stage' then
-                                stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])
-                            elseif practice == 'spell' then
-                                stage.IsSCpractice = true--判定进入符卡练习的flag add by OLC
-                                stage.group.PracticeStart('Spell Practice@Spell Practice')
-                            else
-                                stage.group.Start(last_menu.group_name)
-                            end
-                        end)
-                        --
-                    end })
-                end
-            end
-            table.insert(menu_items, { 'exit', function()
-                menu.FlyIn(menu_difficulty_select_pr, 'left')
-                menu.FlyOut(menu_practice[sg], 'right')
-            end })
-            menu_practice[sg] = New(simple_menu, 'Select Stage', menu_items)
-            menu_practice[sg].stage_name = {}
-            for _, s in ipairs(stage.groups[sg]) do
-                if stage.stages[s].allow_practice then
-                    table.insert(menu_practice[sg].stage_name, s)
-                end
-            end
-        end
+    for _, sg in ipairs(stage.groups) do  
+        if stage.groups[sg].allow_practice then  
+            local menu_items = {}  
+            for _, s in ipairs(stage.groups[sg]) do  
+                if stage.stages[s].allow_practice then  
+                    -- 过滤掉包含"Ending"的stage  
+                    if not string.find(s, "Ending") then  
+                        table.insert(menu_items, { string.match(s, "^[%w_][%w_ ]*"), function()  
+                            menu.FlyOut(menu_practice[sg], 'left')  
+                            last_menu = menu_practice[sg]  
+                            --  
+                            scoredata.player_select = 1  
+                            lstg.var.player_name = player_list[1][2]  
+                            lstg.var.rep_player = player_list[1][3]  
+                            task.New(stage_menu_self, function()  
+                                for i = 1, 60 do  
+                                    SetBGMVolume('menu', 1 - i / 60)  
+                                    task.Wait()  
+                                end  
+                            end)  
+                            task.New(stage_menu_self, function()  
+                                task.Wait(30)  
+                                New(mask_fader, 'close')  
+                                task.Wait(30)  
+                                if practice == 'stage' then  
+                                    stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])  
+                                elseif practice == 'spell' then  
+                                    stage.IsSCpractice = true--判定进入符卡练习的flag add by OLC  
+                                    stage.group.PracticeStart('Spell Practice@Spell Practice')  
+                                else  
+                                    stage.group.Start(last_menu.group_name)  
+                                end  
+                            end)  
+                            --  
+                        end })  
+                    end  
+                end  
+            end  
+            table.insert(menu_items, { 'exit', function()  
+                menu.FlyIn(menu_difficulty_select_pr, 'left')  
+                menu.FlyOut(menu_practice[sg], 'right')  
+            end })  
+            menu_practice[sg] = New(simple_menu, 'Select Stage', menu_items)  
+            menu_practice[sg].stage_name = {}  
+            for _, s in ipairs(stage.groups[sg]) do  
+                if stage.stages[s].allow_practice and not string.find(s, "Ending") then  
+                    table.insert(menu_practice[sg].stage_name, s)  
+                end  
+            end  
+        end  
     end
     --
     menu_sc_pr = New(sc_pr_menu, function(index)

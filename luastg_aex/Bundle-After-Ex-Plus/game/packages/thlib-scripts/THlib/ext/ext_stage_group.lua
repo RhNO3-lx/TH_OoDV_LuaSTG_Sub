@@ -494,55 +494,65 @@ function M.FinishStage()
     local sg = self.group
     if self.number == sg.number or lstg.var.is_practice then
         if ext.replay.IsReplay() then
-            ext.rep_over = true
-            ext.pop_pause_menu = true
-            lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
-        else
-            if lstg.var.is_practice then
-                M.ReturnToTitle(true, 0)
-            else
-                M.ReturnToTitle(true, 1)
-            end
-        end
-    else
-        if ext.replay.IsReplay() then
-            -- 载入关卡并执行录像
-            stage.Set(
-                ext.replay.GetReplayStageName(ext.replay.GetCurrentReplayIdx() + 1),
-                'load',
-                ext.replay.GetReplayFilename())
-        else
-            -- 载入关卡并开始保存录像
-            stage.Set(sg[self.number + 1], 'save')
-            -- TODO: 需要重新设计
-            if stage.stages[sg.title].save_replay then
-                table.insert(stage.stages[sg.title].save_replay, sg[self.number + 1])
-            end
-        end
-    end
+            ext.rep_over = true  
+            ext.pop_pause_menu = true  
+            lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }  
+        else  
+            if lstg.var.is_practice then  
+                M.ReturnToTitle(true, 0)  
+            else  
+                M.ReturnToTitle(true, 1)  
+            end  
+        end  
+    else  
+        if ext.replay.IsReplay() then  
+            -- 检查当前stage是否为倒数第二个（下一个是结局stage）  
+            if self.number + 1 >= sg.number or string.find(sg[self.number + 1], "Ending") then  
+                ext.rep_over = true  
+                ext.pop_pause_menu = true  
+                lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }  
+            else  
+                stage.Set(  
+                    ext.replay.GetReplayStageName(ext.replay.GetCurrentReplayIdx() + 1),  
+                    'load',  
+                    ext.replay.GetReplayFilename())  
+            end  
+        else  
+            stage.Set(sg[self.number + 1], 'save')  
+            if stage.stages[sg.title].save_replay then  
+                table.insert(stage.stages[sg.title].save_replay, sg[self.number + 1])  
+            end  
+        end  
+    end  
 end
 
 --- 播放 replay 时，提前结束关卡并进入下一关  
 --- TODO: 这个设计有点奇怪
-function M.FinishReplay()
-    local self = stage.current_stage
-    ---@cast self -stage.Stage, +stage.group.Stage
-    local sg = self.group
-    if self.number == sg.number or lstg.var.is_practice then
-        if ext.replay.IsReplay() then
-            ext.rep_over = true
-            ext.pop_pause_menu = true
-            lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
-        end
-    else
-        if ext.replay.IsReplay() then
-            -- 载入关卡并执行录像
-            stage.Set(
-                ext.replay.GetReplayStageName(ext.replay.GetCurrentReplayIdx() + 1),
-                'load',
-                ext.replay.GetReplayFilename())
-        end
-    end
+function M.FinishReplay()  
+    local self = stage.current_stage  
+    ---@cast self -stage.Stage, +stage.group.Stage  
+    local sg = self.group  
+    if self.number == sg.number or lstg.var.is_practice then  
+        if ext.replay.IsReplay() then  
+            ext.rep_over = true  
+            ext.pop_pause_menu = true  
+            lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }  
+        end  
+    else  
+        if ext.replay.IsReplay() then  
+            -- 检查当前stage是否为倒数第二个（下一个是结局stage）  
+            if self.number + 1 >= sg.number or string.find(sg[self.number + 1], "Ending") then  
+                ext.rep_over = true  
+                ext.pop_pause_menu = true  
+                lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }  
+            else  
+                stage.Set(  
+                    ext.replay.GetReplayStageName(ext.replay.GetCurrentReplayIdx() + 1),  
+                    'load',  
+                    ext.replay.GetReplayFilename())  
+            end  
+        end  
+    end  
 end
 
 ---@param number number
@@ -562,8 +572,17 @@ function M.GoToStage(number)
             M.ReturnToTitle(true, 1)
         end
     else
-        if ext.replay.IsReplay() then
-            stage.Set(sg[number], 'load', ext.replay.GetReplayFilename())
+        if ext.replay.IsReplay() then  
+            -- 获取目标stage名称
+            local targetStageName = sg[number]
+            -- 如果是结局stage，直接结束replay
+            if string.find(targetStageName, "Ending") then
+                ext.rep_over = true
+                ext.pop_pause_menu = true
+                lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
+            else
+                stage.Set(targetStageName, 'load', ext.replay.GetReplayFilename())
+            end
         else
             stage.Set(sg[number], 'save')
             -- TODO: 需要重新设计
