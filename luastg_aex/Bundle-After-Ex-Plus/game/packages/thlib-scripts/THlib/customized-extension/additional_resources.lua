@@ -5,6 +5,8 @@ LoadMusic("bgm_stage1","THlib/music/星罗深海 ~ Drowning in Data.ogg",151.384
 LoadMusic("menu", 'THlib/music/title.ogg', 126.171, 126.171)
 --SetBGMVolume("menu",0.7)
 
+LoadMusic("bgm_stage4a","THlib/music/碎梦的回廊 ~ Undefined and Missing Ideas.ogg",282.4615,141.2308)
+
 LoadMusic('bgm_lastword','THlib\\music\\spellcard.ogg',75,0xc36e80/44100/4)
 LoadTexture("emo_bubble","THlib/emo_bubble/Balloon.png")
 

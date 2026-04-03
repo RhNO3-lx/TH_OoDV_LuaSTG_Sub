@@ -79,6 +79,11 @@ function GetScr(obj)
     return obj_scrx,obj_scry
 end
 
+function GetWorldOffset()
+    local wo=lstg.worldoffset
+    return wo.centerx,wo.centery
+end
+
 function ChangeWorldTo(w,h,duration,PlaySE,SEName)
     PlaySE=PlaySE or true
     SEName=SEName or "boon01"

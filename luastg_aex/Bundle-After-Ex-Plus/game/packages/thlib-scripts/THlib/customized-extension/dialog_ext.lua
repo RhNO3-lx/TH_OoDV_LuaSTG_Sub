@@ -5,12 +5,15 @@ ContinueHinter=Class(object)
 DialogSentence=Class(object)
 CharacterDisplayer=Class(object)
 
+LoadImageFromFile("dialog_box_ext","THlib/UI/dialog.png")
+SetImageScale("dialog_box_ext",0.65)
+
 local w=lstg.world
 DialogAttri={
     cy=w.scrb+60,
     cx=(w.scrl+w.scrr)/2,
-    w=360,---!规定：这是文字部分的边界
-    h=55
+    w=400,---!规定：这是文字部分的边界
+    h=70
 }
 
 --#region
@@ -21,7 +24,7 @@ DialogAttri={
 ---@param sentences table{{text,color,size,font,func},...}
 ---func 函数里可以定义与角色立绘有关的事件
 function DialogDisplayer:init(sentences)
-    self.img="dialog_box"
+    self.img="dialog_box_ext"
     self.ShowBackground=true
     self.CharacterList={}---约定：表内字段格式："charactername","character_image"
     self.y=DialogAttri.cy ---预期纹理素材：dialog_box_ext.png,400*80
@@ -43,7 +46,7 @@ function DialogDisplayer:init(sentences)
     self.CurrentSentenceIndex=1
 
     local s=self.SentenceList[1]
-    self.CurrentSentence=New(DialogSentence,s.text,s.color,s.size,s.font)
+    self.CurrentSentence=New(DialogSentence,s.text,s.color,s.CanSkip,s.size,s.font,s.align,s.alignv,s.lifetime)
     local f=s.func or function(self) end
     f(self)
 
@@ -71,7 +74,7 @@ function DialogDisplayer:frame()
         if not IsValid(self.CurrentSentence) then
             self.CurrentSentenceIndex=self.CurrentSentenceIndex+1
             local s=self.SentenceList[self.CurrentSentenceIndex]
-            self.CurrentSentence=New(DialogSentence,s.text,s.color,s.size,s.font)
+            self.CurrentSentence=New(DialogSentence,s.text,s.color,s.CanSkip,s.size,s.font,s.align,s.alignv,s.lifetime)
             local f=s.func or function(self) end
             f(self)
         end
@@ -131,6 +134,15 @@ function DialogDisplayer:RemoveChara(self,name)
     end
 end
 
+function DialogDisplayer:del()
+    for k,v in pairs(self.CharacterList) do
+        if IsValid(v) then
+            CharacterDisplayer.FadeOut(v)
+        end
+    end
+    object.del(self)
+end
+
 --#endregion
 
 --#region
@@ -138,7 +150,7 @@ end
 
 ---DialogSentence
 ---自行控制自己的生命周期
-function DialogSentence:init(text,color,CanSkip,size,font,align,alignv)
+function DialogSentence:init(text,color,CanSkip,size,font,align,alignv,lifetime)
     self.TextAttri={
         text=text or "Test text.",
         color=color or Color(255,195, 255, 245),
@@ -148,7 +160,7 @@ function DialogSentence:init(text,color,CanSkip,size,font,align,alignv)
         font=font or "dialog",---ttfname
         CanSkip=CanSkip or true
     }
-    self.lifetime=300
+    self.lifetime=lifetime or 300
     self.IsActive=true
     self.group=GROUP_GHOST
     self.layer=LAYER_TOP+20
@@ -157,7 +169,7 @@ function DialogSentence:init(text,color,CanSkip,size,font,align,alignv)
     ---淡入
     task.New(self,function()
         local attri=self.TextAttri
-        for i=1,30 do
+        for i=1,15 do
             task.Wait(1)
             attri.color.a=attri.color.a+self.TargetAlpha/30
         end
@@ -175,7 +187,7 @@ function DialogSentence:frame()
     end
 
     ---检测玩家是否按z继续
-    if KeyIsDown 'shoot' and self.TextAttri.CanSkip then
+    if KeyIsPressed 'shoot' and self.TextAttri.CanSkip then
         DialogSentence.FadeOut(self)
     end
 end
@@ -208,7 +220,7 @@ function DialogSentence:FadeOut()
     ---淡出+死亡
     task.New(self,function()
         local attri=self.TextAttri
-        for i=1,30 do
+        for i=1,15 do
             task.Wait(1)
             attri.color.a=attri.color.a-self.TargetAlpha/30
         end

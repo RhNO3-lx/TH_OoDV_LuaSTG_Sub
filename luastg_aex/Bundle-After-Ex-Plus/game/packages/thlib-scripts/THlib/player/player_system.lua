@@ -100,13 +100,15 @@ local defaultFrameEvent = {
         end
     end },
     ["frame.updateSlow"] = { 99, function(self)
-        if self.__death_state == 0 then
+        -- if self.__death_state == 0 then
+        if not self.lock then
             if self.__slow_flag then
                 self.slow = 1
             else
                 self.slow = 0
             end
         end
+        -- end
     end },
     ["frame.control"] = { 98, function(self, system)
         if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then

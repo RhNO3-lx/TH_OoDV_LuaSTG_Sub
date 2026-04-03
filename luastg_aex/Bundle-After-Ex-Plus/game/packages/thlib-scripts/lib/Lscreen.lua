@@ -96,7 +96,7 @@ local RAW_DEFAULT_WORLD = {--默认的world参数，只读
 }
 local DEFAULT_WORLD = {--默认的world参数，可更改
     l = -320, r = 320, b = -240, t = 240,
-    boundl = -320-30, boundr = 320+30, boundb = -240-30, boundt = 240+30,
+    boundl = -320-80, boundr = 320+80, boundb = -240-80, boundt = 240+80,
     scrl = 0, scrr = 640, scrb = 0, scrt = 480,
     pl = -320, pr = 320, pb = -240, pt = 240,
     world = 15,
