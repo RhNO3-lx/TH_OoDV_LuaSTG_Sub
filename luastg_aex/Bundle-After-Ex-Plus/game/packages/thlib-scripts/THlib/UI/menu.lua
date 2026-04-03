@@ -505,7 +505,7 @@ function replay_saver:frame()
                 PlaySound("extend", 0.5)
             end
 
-            if #self.state2UserName == REPLAY_USER_NAME_MAX then
+            if #self.state2UserName == REPLAY_USER_NAME_MAX and not (self.state2CursorX == 11 and self.state2CursorY == 6) then
                 self.state2CursorX = 12
                 self.state2CursorY = 6
             elseif self.state2CursorX == 11 and self.state2CursorY == 6 then
