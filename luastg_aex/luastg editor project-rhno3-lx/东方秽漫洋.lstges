@@ -2172,6 +2172,16 @@
 6,{"$type":".General.Repeat, LuaSTGEditorSharp","Attributes":[{"attrCap":"Times","attrInput":"6","EditWindow":"yield"},{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"","EditWindow":""},{"attrCap":"Var 1 increment","attrInput":"","EditWindow":""}],"AttributeCount":5}
 7,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"15","EditWindow":"yield"}],"AttributeCount":1,"IsExpanded":false}
 7,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"warning_circle\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"0, 0, 140, 60, {120,10,170}","EditWindow":"objectParam"}],"AttributeCount":3}
+5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"180","EditWindow":"yield"}],"AttributeCount":1}
+5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"stage4a_bg.TurnTo(bg,\"left\")","EditWindow":"code"}],"AttributeCount":1}
+5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"600","EditWindow":"yield"}],"AttributeCount":1}
+5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"stage4a_bg.TurnTo(bg,\"right\",-90)\r\nstage4a_bg.ChangeColor(bg,\"red\")","EditWindow":"code"}],"AttributeCount":1}
+5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"600","EditWindow":"yield"}],"AttributeCount":1}
+5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"stage4a_bg.TurnTo(bg,\"up\",-90)\r\nstage4a_bg.ChangeColor(bg,\"blue\")","EditWindow":"code"}],"AttributeCount":1}
+5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"600","EditWindow":"yield"}],"AttributeCount":1}
+5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"stage4a_bg.TurnTo(bg,\"down\",90)\r\nstage4a_bg.ChangeColor(bg,\"purple\")","EditWindow":"code"}],"AttributeCount":1}
+5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"600","EditWindow":"yield"}],"AttributeCount":1}
+5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"stage4a_bg.Finish(bg)","EditWindow":"code"}],"AttributeCount":1}
 5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"2400","EditWindow":"yield"}],"AttributeCount":1}
 3,{"$type":".Stage.Stage, ","Attributes":[{"attrCap":"Name","attrInput":"Stage1","EditWindow":""},{"attrCap":"Start life (practice)","attrInput":"2","EditWindow":""},{"attrCap":"Start power (practice)","attrInput":"0","EditWindow":""},{"attrCap":"Start faith (practice)","attrInput":"50000","EditWindow":""},{"attrCap":"Start bomb (practice)","attrInput":"0","EditWindow":""},{"attrCap":"Allow practice","attrInput":"true","EditWindow":"bool"}],"AttributeCount":6,"IsExpanded":false}
 4,{"$type":".Task.TaskNode, ","Attributes":[]}

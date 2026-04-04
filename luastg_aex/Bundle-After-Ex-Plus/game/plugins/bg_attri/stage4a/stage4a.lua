@@ -4,6 +4,7 @@ Stage4Mode={}
 Stage4Mode.Normal=1
 Stage4Mode.BentHorizonal=2
 Stage4Mode.BentVertical=3
+Stage4Mode.Finish=4
 
 Stage4Mode.length=0.3
 Stage4Mode.radius=0.096
@@ -68,6 +69,14 @@ function RenderChannel(img,c,dir_at,dir_top,tim,co,blend,r)
         end
         
     end
+
+    -- --把通道的尽头包住
+
+    -- local v4={{v[1][1]+l*dir_at[1] , v[1][2]+l*dir_at[2] , v[1][3]+l*dir_at[3] , 0,0,co},
+    --         {v[2][1]+l*dir_at[1], v[2][2]+l*dir_at[2], v[2][3]+l*dir_at[3], ltex,0,co},
+    --         {v[2][1]+l*dir_at[1], v[2][2]+l*dir_at[2], v[2][3]+l*dir_at[3], ltex,ltex,co},
+    --         {v[1][1]+l*dir_at[1] , v[1][2]+l*dir_at[2] , v[1][3]+l*dir_at[3] , 0,ltex,co}}
+    -- RenderTexture(img,blend,v4[1],v4[2],v4[3],v4[4])    
     
 end
 
@@ -162,12 +171,12 @@ function stage4a_bg:RenderBranch(Isvertical)
         dir_at2={-1,0,0}
         dir_at3={1,0,0}
     else
-        dir_top={0,1,0}
+        dir_top={0,0,-1}
         halfcoor={att.c0[1],att.c0[2]-r,att.c0[3]+Stage4Mode.length+r}
         dir_at={0,1,0}
         dir_ht={0,0,-1}
-        dir_at2={-1,0,0}
-        dir_at3={1,0,0}
+        dir_at2={0,1,0}
+        dir_at3={0,-1,0}
     end
 
     -- print(halfcoor[3])
@@ -228,38 +237,58 @@ function stage4a_bg:ChangeColor(mode,duration)
 end
 
 function stage4a_bg:TurnTo(mode,target_top_phi)
-    if mode=="right" or mode=="left" then 
-        self.mode=Stage4Mode.BentHorizontal
-    else
-        self.mode=Stage4Mode.BentVertical
-    end
-
     target_top_phi=target_top_phi or 0
     local att=self.attri
+    local l=Stage4Mode.length
+    local r=Stage4Mode.radius
+    local origin_vel=self.vel
     task.New(self,function()
-        local r=Stage4Mode.radius
+        if mode=="right" or mode=="left" then 
+            self.mode=Stage4Mode.BentHorizonal
+            att.c1={-r,0,l+r}
+            att.c2={ r,0,l+r}
+        else
+            self.mode=Stage4Mode.BentVertical
+            att.c1={0,r,l+r}
+            att.c2={ 0,-r,l+r}
+        end
         local dl=r
         local z0=att.c0[3]
         local z1=att.c1[3]
         local z2=att.c2[3]
 
-        for i=1,240 do
+        for i=1,300 do
             task.Wait(1)
-            local lambda=0.43*(1-cos(i*180/240))
+            local lambda=0.5*(1-cos(i*180/300))
             att.c0[3]=z0*(1-lambda)-(Stage4Mode.length+r)*lambda
             att.c1[3]=z1*(1-lambda)
             att.c2[3]=z2*(1-lambda)
+
+            local lambda2=0.5*(1-sin(i*180/300))
+            self.vel=origin_vel*(lambda2)+(1-lambda2)*0.5
         end
 
+        task.New(self,function()
+            for i=1,240 do
+                task.Wait(1)
+                local lambda2=0.5*(1-sin(i*180/240))
+                self.vel=origin_vel*(lambda2)+(1-lambda2)*0.5
+            end
+        end)
         z0=att.c0[3]
         z1=att.c1[3]
         z2=att.c2[3]
-        if mode=="left" then
-            local t=att.eye_to_theta
+        local t=att.eye_to_theta
 
-            local x0=att.c0[1]
-            local x1=att.c1[1]
-            local x2=att.c2[1]
+        local x0=att.c0[1]
+        local x1=att.c1[1]
+        local x2=att.c2[1]
+
+        local y0=att.c0[2]
+        local y1=att.c1[2]
+        local y2=att.c2[2]
+
+        if mode=="left" then
             for i=1,240 do
                 task.Wait(1)
                 local lambda=0.5*(1-cos(i*180/240))
@@ -267,40 +296,160 @@ function stage4a_bg:TurnTo(mode,target_top_phi)
                 att.c0[1]=x0+r*lambda
 
                 att.c1[1]=x1*(1-lambda)
-                att.c2[1]=x2*(1-lambda)+lambda*2*r
-                att.c1[3]=z1*(1-lambda)
-                att.c2[3]=z2*(1-lambda)
+                att.c2[1]=x2*(1-lambda)+lambda*r
+                -- att.c1[3]=z1*(1-lambda)
+                -- att.c2[3]=z2*(1-lambda)
 
                 att.eye_to_theta=t*(1-lambda)+lambda*(-90)
                 att.top_phi=0*(1-lambda)+lambda*(target_top_phi)
             end
         elseif mode=="right" then
-            local t=att.eye_to_theta
-
-            local x0=att.c0[1]
-            local x1=att.c1[1]
-            local x2=att.c2[1]
             for i=1,240 do
                 task.Wait(1)
                 local lambda=0.5*(1-cos(i*180/240))
                 -- att.c0[3]=z0-1*r*lambda
-                att.c0[1]=x0+r*lambda
+                att.c0[1]=x0-r*lambda
 
-                att.c2[1]=x1*(1-lambda)
-                att.c1[1]=x2*(1-lambda)+lambda*2*r
-                att.c2[3]=z1*(1-lambda)
-                att.c1[3]=z2*(1-lambda)
+                att.c2[1]=x2*(1-lambda)
+                att.c1[1]=x1*(1-lambda)-lambda*r
+                -- att.c2[3]=z2*(1-lambda)
+                -- att.c1[3]=z1*(1-lambda)
 
                 att.eye_to_theta=t*(1-lambda)+lambda*(90)
                 att.top_phi=0*(1-lambda)+lambda*(target_top_phi)
             end
+        elseif mode=="up" then
+            for i=1,240 do
+                task.Wait(1)
+                local lambda=0.5*(1-cos(i*180/240))
+                -- att.c0[3]=z0-1*r*lambda
+                att.c0[2]=y0-r*lambda
+
+                att.c2[2]=y2*(1-lambda)-lambda*r
+                att.c1[2]=y1*(1-lambda)+lambda*0  --目标是0
+                -- att.c2[3]=z2*(1-lambda)
+                -- att.c1[3]=z1*(1-lambda)
+
+                att.eye_to_theta=t*(1-lambda)+lambda*(t+target_top_phi)
+                --att.top_phi=0*(1-lambda)+lambda*(-90)
+                att.eye_to_phi=90*(1-lambda)+lambda*0
+            end
+        elseif mode=="down" then
+            for i=1,240 do
+                task.Wait(1)
+                local lambda=0.5*(1-cos(i*180/240))
+                -- att.c0[3]=z0-1*r*lambda
+                att.c0[2]=y0+r*lambda
+
+                att.c1[2]=y1*(1-lambda)+lambda*r --撤出
+                att.c2[2]=y2*(1-lambda)+lambda*0  --目标是0
+                -- att.c2[3]=z2*(1-lambda)
+                -- att.c1[3]=z1*(1-lambda)
+
+                att.eye_to_theta=t*(1-lambda)+lambda*(t+target_top_phi)
+                --att.top_phi=0*(1-lambda)+lambda*(-90)
+                att.eye_to_phi=(90)*(1-lambda)+lambda*(180)
+            end
         end
-
-
         self.mode=Stage4Mode.Normal
         stage4a_bg.InitView(self)
-        stage4a_bg.ChangeColor(self,"red")
+        -- stage4a_bg.ChangeColor(self,"red")
         self.mode=Stage4Mode.Normal
+    end)
+    -- task.New(self,function()
+    --     if mode=="right" or mode=="left" then 
+    --         self.mode=Stage4Mode.BentHorizontal
+    --     else
+    --         self.mode=Stage4Mode.BentVertical
+    --     end
+
+    --     target_top_phi=target_top_phi or 0
+    --     local att=self.attri
+
+    --     local r=Stage4Mode.radius
+    --     local dl=r
+    --     local z0=att.c0[3]
+    --     local z1=att.c1[3]
+    --     local z2=att.c2[3]
+
+    --     for i=1,240 do
+    --         task.Wait(1)
+    --         local lambda=0.43*(1-cos(i*180/240))
+    --         att.c0[3]=z0*(1-lambda)-(Stage4Mode.length+r)*lambda
+    --         att.c1[3]=z1*(1-lambda)
+    --         att.c2[3]=z2*(1-lambda)
+    --     end
+
+    --     z0=att.c0[3]
+    --     z1=att.c1[3]
+    --     z2=att.c2[3]
+    --     if mode=="left" then
+    --         local t=att.eye_to_theta
+
+    --         local x0=att.c0[1]
+    --         local x1=att.c1[1]
+    --         local x2=att.c2[1]
+    --         for i=1,240 do
+    --             task.Wait(1)
+    --             local lambda=0.5*(1-cos(i*180/240))
+    --             -- att.c0[3]=z0-1*r*lambda
+    --             att.c0[1]=x0+r*lambda
+
+    --             att.c1[1]=x1*(1-lambda)
+    --             att.c2[1]=x2*(1-lambda)+lambda*2*r
+    --             att.c1[3]=z1*(1-lambda)
+    --             att.c2[3]=z2*(1-lambda)
+
+    --             att.eye_to_theta=t*(1-lambda)+lambda*(-90)
+    --             att.top_phi=0*(1-lambda)+lambda*(target_top_phi)
+    --         end
+    --     elseif mode=="right" then
+    --         local t=att.eye_to_theta
+
+    --         local x0=att.c0[1]
+    --         local x1=att.c1[1]
+    --         local x2=att.c2[1]
+    --         for i=1,240 do
+    --             task.Wait(1)
+    --             local lambda=0.5*(1-cos(i*180/240))
+    --             -- att.c0[3]=z0-1*r*lambda
+    --             att.c0[1]=x0+r*lambda
+
+    --             att.c2[1]=x1*(1-lambda)
+    --             att.c1[1]=x2*(1-lambda)+lambda*2*r
+    --             att.c2[3]=z1*(1-lambda)
+    --             att.c1[3]=z2*(1-lambda)
+
+    --             att.eye_to_theta=t*(1-lambda)+lambda*(90)
+    --             att.top_phi=0*(1-lambda)+lambda*(target_top_phi)
+    --         end
+    --     end
+
+
+    --     self.mode=Stage4Mode.Normal
+    --     stage4a_bg.InitView(self)
+    --     stage4a_bg.ChangeColor(self,"red")
+    --     self.mode=Stage4Mode.Normal
+    -- end)
+end
+
+function stage4a_bg:Finish()
+    task.New(self,function()
+        self.mode=Stage4Mode.Finish
+        for i=1,360 do
+            task.Wait(1)
+            local lambda=i/360
+            -- local t=1-lambda
+            -- local r=Stage4Mode.radius
+            -- local l=Stage4Mode.length
+            local att=self.attri
+            att.bglight=lambda
+            -- local li=att.bglight*255
+
+            -- Set3D("fog",att.fogmin*t,att.fogmax,Color(255,li,li,li))
+        end
+        task.Wait(300)
+        Del(self)
     end)
 end
 function stage4a_bg:init()
@@ -310,6 +459,7 @@ function stage4a_bg:init()
     LoadImageFromFile("stage4a_star_dark",dir.."void_background_space_outside.png")
     LoadImageFromFile("stage4a_star_light",dir.."void_background_space_inside.png")
     LoadImageFromFile("stage4a_sora",dir.."ocean_sora_1.png")
+    LoadImageFromFile("stage4a_light",dir.."light.png")
 
     --采用这样的思路：在未遇到分叉的时候，墙壁按照与自机视线平行的方向移动
     --遇到分叉时，先使得拐弯中心移动至眼睛所在位置，然后视线方向调整
@@ -347,16 +497,23 @@ function stage4a_bg:init()
 
     att.cv=0
 
+    att.bglight=0
+
+    att.fogmax=0.30
+    att.fogmin=0.15
+
     Set3D("eye",att.eye_x,att.eye_y,att.eye_z)
     Set3D("at",0,0,1)
     Set3D("up",0,1,0)
     -- Set3D("at",attri.eye_to_cx,0,attri.eye_to_cz)
     -- Set3D("up",0,0,1)
     Set3D("fovy",1.7)
-    Set3D("z",0.01,3)
-    Set3D("x",-3,3)
-    Set3D("y",-3,3)
-    Set3D("fog",0.09,0.25,Color(255,0,0,0))
+    Set3D("z",0.00001,5)
+    Set3D("x",-5,5)
+    Set3D("y",-5,5)
+    Set3D("fog",att.fogmin,att.fogmax,Color(255,0,0,0))
+
+    self.vel=1.5 --背景移动速率的比例系数
 
     self.tim=0
 
@@ -405,7 +562,7 @@ function stage4a_bg:init()
     -- end)
 
     self.mode=Stage4Mode.Normal
-    -- stage4a_bg.TurnTo(self,"left")
+    
 end
 
 function stage4a_bg:frame()
@@ -447,18 +604,29 @@ function stage4a_bg:frame()
     
 
     --维护用于让背景流动的计时器
-    self.tim=self.tim+1
+    self.tim=self.tim+1*self.vel
 end
 
 function stage4a_bg:render()
+
     SetViewMode("3d")
 	background.WarpEffectCapture()
+
     local att=self.attri
+
+
 
     if(self.mode==Stage4Mode.BentHorizonal) then
         stage4a_bg.RenderBranch(self,false)
     elseif (self.mode==Stage4Mode.BentVertical) then
         stage4a_bg.RenderBranch(self,true)
+    -- elseif (self.mode==Stage4Mode.Finish) then
+    --     local r=Stage4Mode.radius
+    --     local ratio=self.attri.bglight
+    --     SetImageState("white","mul+alpha",Color(255,255,255,255))
+    --     -- print("enter")
+    --     local z=att.fogmax*(1-ratio)+0.01*ratio
+    --     -- Render4V("white",-r,r,z,r,r,z,r,-r,z,-r,-r,z)
     end
 
     local dir_at={0,0,1}
@@ -471,7 +639,15 @@ function stage4a_bg:render()
     --RenderTexture("stage4a_star_dark","mul+alpha",{-0.3,-0.3,0,0,0,co},{-0.3,0.3,0,0,512,co},{0.3,0.3,0.6,512,512,co},{0.3,-0.3,0.6,512,0,co})
     background.WarpEffectApply()
 
-
+    if (self.mode==Stage4Mode.Finish) then
+        local ratio=self.attri.bglight
+        -- print("ratio:"..ratio)
+        SetImageState("stage4a_light","mul+alpha",Color(255*ratio,255*ratio,255*ratio,255*ratio))
+        local r=Stage4Mode.radius
+        local z=att.fogmax*(1-ratio)*0.8+0.001*ratio
+        -- print("enter")
+        Render4V("stage4a_light",-r,r,z,r,r,z,r,-r,z,-r,-r,z)
+    end
     SetViewMode("world")
     ---! todo:可以再加一些粒子？
 end
