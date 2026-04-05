@@ -513,7 +513,7 @@ function stage4a_bg:init()
     Set3D("y",-5,5)
     Set3D("fog",att.fogmin,att.fogmax,Color(255,0,0,0))
 
-    self.vel=1.5 --背景移动速率的比例系数
+    self.vel=2.5 --背景移动速率的比例系数
 
     self.tim=0
 
