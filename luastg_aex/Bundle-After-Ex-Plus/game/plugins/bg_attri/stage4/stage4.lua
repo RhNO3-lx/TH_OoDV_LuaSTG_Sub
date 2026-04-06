@@ -9,7 +9,7 @@ Stage4Mode.Finish=4
 Stage4Mode.length=0.3
 Stage4Mode.radius=0.096
 
-local dir="stage4a/"
+local dir="stage4/"
 
 ---默认背景向后移动，即与dir_at相反的方向
 ---约定用于渲染的图片是512*512的，否则请自行去最后的渲染循环中修改参数
@@ -18,7 +18,7 @@ local dir="stage4a/"
 ---@param dir_at table at_x,at_y,at_z
 ---@param dir_top table up_x,up_y,up_z
 ---@param tim number 0~1
-function RenderChannel(img,c,dir_at,dir_top,tim,co,blend,r)
+local function RenderChannel(img,c,dir_at,dir_top,tim,co,blend,r)
     --计算up与at的叉乘
     local up_cross_at={dir_top[2]*dir_at[3]-dir_top[3]*dir_at[2],dir_top[3]*dir_at[1]-dir_top[1]*dir_at[3],dir_top[1]*dir_at[2]-dir_top[2]*dir_at[1]}
     --print("up_cross_at")
@@ -86,7 +86,7 @@ end
 ---@param dir_at table at_x,at_y,at_z
 ---@param dir_top table up_x,up_y,up_z
 ---@param tim number 0~1
-function RenderChannelHalf(img,c,dir_at,dir_top,tim,co,blend,r,mode)
+local function RenderChannelHalf(img,c,dir_at,dir_top,tim,co,blend,r,mode)
     --计算up与at的叉乘
     local up_cross_at={dir_top[2]*dir_at[3]-dir_top[3]*dir_at[2],dir_top[3]*dir_at[1]-dir_top[1]*dir_at[3],dir_top[1]*dir_at[2]-dir_top[2]*dir_at[1]}
     --print("up_cross_at")
@@ -652,3 +652,120 @@ function stage4a_bg:render()
     ---! todo:可以再加一些粒子？
 end
 
+--#region stage4b_bg
+stage4b_bg=class(background)
+
+---comment
+---@param center table
+---@param forward_dir table
+---@param aside_dir table
+---@param width number
+---@param length number
+---@param color lstg.Color
+---@param tim number
+---@param img string
+---@param blend string
+local function RenderLayer(img,blend,center,forward_dir,aside_dir,width,length,color,tim)
+    --计算图像起始点
+    local sp={{},{}}
+    for i=1,3 do
+        sp[1][i]=center[i]+aside_dir[i]*length/2
+        sp[2][i]=center[i]-aside_dir[i]*length/2
+    end
+
+
+    --计算三段图像的起止长度
+    local sr={0,1,tim,(tim+0.5)%1}--分割成三段的比例因子
+    table.sort(sr)
+    local l=length
+    local ltex,wtex=GetImageSize(img)
+    local lr={sr[1]*l,sr[2]*l,sr[3]*l,sr[4]*l}--三维坐标系下的长度
+    local ur={{ltex*(1-(sr[2]-sr[1])*2),ltex},--前段保留图像的后半截
+                {0,ltex},--中段的全保留
+                {0,(sr[4]-sr[3])*2*ltex}}--后段保留图像的前半截，后端点理论上来说等于第一个table的前端点
+
+    for i=1,3 do
+        local r={lr[i],lr[i+1]}
+        local u=ur[i]
+        local v4={{sp[1][1]+forward_dir[1]*r[1],sp[1][2]+forward_dir[2]*r[1],sp[1][3]+forward_dir[3]*r[1],u[1],wtex,color},
+                {sp[1][1]+forward_dir[1]*r[2],sp[1][2]+forward_dir[2]*r[2],sp[1][3]+forward_dir[3]*r[2],u[1],0,color},
+                {sp[2][1]+forward_dir[1]*r[2],sp[2][2]+forward_dir[2]*r[2],sp[2][3]+forward_dir[3]*r[2],u[2],0,color},
+                {sp[2][1]+forward_dir[1]*r[1],sp[2][2]+forward_dir[2]*r[1],sp[2][3]+forward_dir[3]*r[1],u[2],wtex,color},}
+        RenderTexture(img,blend,v4[1],v4[2],v4[3],v4[4])
+    end
+end
+
+function stage4b_bg:RenderFloor()
+    local att=self.attri
+    local dir_at={1,0,0}
+    local dir_aside={0,0,1}
+    local c0={-1,0,0.2}
+    RenderLayer("stage4b_star_dark","add+alpha",c0,dir_at,dir_aside,att.width[1],att.depth[1],att.cols[1],self.tim)
+    RenderLayer("stage4b_star_light","mul+add",c0,dir_at,dir_aside,att.width[2],att.depth[2],att.cols[2],self.tim)
+    RenderLayer("stage4b_sora","mul+alpha",c0,dir_at,dir_aside,att.width[3],att.depth[3],att.cols[3],self.tim)
+
+    -- RenderChannel("stage4a_star_dark",c0,dir_at,dir_top,(-self.tim/600)%1,att.cols[1],"add+alpha",att.depth[1])
+    -- RenderChannel("stage4a_star_light",c0,dir_at,dir_top,(-self.tim/900)%1,att.cols[2],"mul+add",att.depth[2])
+    -- RenderChannel("stage4a_sora",c0,dir_at,dir_top,(-self.tim/1200)%1,att.cols[3],"mul+alpha",att.depth[3])
+end
+---预留接口：变色、停转（停用着色器）
+---需实现的组件：渲染相贯正四面体、着色器处理
+function stage4b_bg:init()
+    --print("stage1_bg:init-1")
+    background.init(self,false)
+    LoadImageFromFile("stage4b_star_dark",dir.."void_background_space_outside.png")
+    LoadImageFromFile("stage4b_star_light",dir.."void_background_space_inside.png")
+    LoadImageFromFile("stage4b_sora",dir.."ocean_sora_1.png")
+    LoadImageFromFile("stage4b_light",dir.."light.png")
+
+    self.attri={}
+    local att=self.attri
+    --这些理论上来说应该不变
+    att.eye_x=0
+    att.eye_y=0
+    att.eye_z=0.00
+
+    att.eye_to_theta=0 --x，z平面上，与z的夹角
+    att.eye_to_phi=90 --与y的夹角
+
+    att.cols={Color(255,20,0,40),
+    Color(240,180,150,245),
+    Color(70,220,150,220)}
+    att.at={0,0,1}
+    att.top={0,1,0}
+    att.alpha=1
+
+    att.fogmax=0.30
+    att.fogmin=0.15
+
+    att.depth={0.097,0.098,0.099,0.2}
+    att.width={0.3,0.3,0.3,0.3}
+
+    Set3D("eye",att.eye_x,att.eye_y,att.eye_z)
+    Set3D("at",0,0,1)
+    Set3D("up",0,1,0)
+    -- Set3D("at",attri.eye_to_cx,0,attri.eye_to_cz)
+    -- Set3D("up",0,0,1)
+    Set3D("fovy",1.7)
+    Set3D("z",0.00001,5)
+    Set3D("x",-5,5)
+    Set3D("y",-5,5)
+    Set3D("fog",att.fogmin,att.fogmax,Color(255,0,0,0))
+
+    self.tim=0
+    self.dt=1
+end
+
+function stage4b_bg:frame()
+    task.Do(self)
+    self.tim=self.tim+self.dt
+    local att=self.attri
+end
+
+function stage4b_bg:render()
+    SetViewMode("3d")
+    background.WarpEffectCapture()
+    self:RenderFloor()
+    background.WarpEffectApply()
+    SetViewMode("world")
+end
