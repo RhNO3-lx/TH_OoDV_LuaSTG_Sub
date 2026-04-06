@@ -11,6 +11,26 @@ Stage4Mode.radius=0.096
 
 local dir="stage4/"
 
+local function normalize(v)
+    local len=math.sqrt(v[1]*v[1]+v[2]*v[2]+v[3]*v[3])
+    return {v[1]/len,v[2]/len,v[3]/len}
+end
+
+local function cross(v1,v2)
+    return {v1[2]*v2[3]-v1[3]*v2[2],v1[3]*v2[1]-v1[1]*v2[3],v1[1]*v2[2]-v1[2]*v2[1]}
+end
+
+local function substract(v1,v2)
+    return {v1[1]-v2[1],v1[2]-v2[2],v1[3]-v2[3]}
+end
+
+local function add(v1,v2)
+    return {v1[1]+v2[1],v1[2]+v2[2],v1[3]+v2[3]}
+end
+
+local function multiply(lambda,v)
+    return {lambda*v[1],lambda*v[2],lambda*v[3]}
+end
 ---默认背景向后移动，即与dir_at相反的方向
 ---约定用于渲染的图片是512*512的，否则请自行去最后的渲染循环中修改参数
 ---@param img string 图片名
@@ -653,7 +673,7 @@ function stage4a_bg:render()
 end
 
 --#region stage4b_bg
-stage4b_bg=class(background)
+stage4b_bg=Class(background)
 
 ---comment
 ---@param center table
@@ -669,8 +689,8 @@ local function RenderLayer(img,blend,center,forward_dir,aside_dir,width,length,c
     --计算图像起始点
     local sp={{},{}}
     for i=1,3 do
-        sp[1][i]=center[i]+aside_dir[i]*length/2
-        sp[2][i]=center[i]-aside_dir[i]*length/2
+        sp[1][i]=center[i]+aside_dir[i]*width/2
+        sp[2][i]=center[i]-aside_dir[i]*width/2
     end
 
 
@@ -684,40 +704,159 @@ local function RenderLayer(img,blend,center,forward_dir,aside_dir,width,length,c
                 {0,ltex},--中段的全保留
                 {0,(sr[4]-sr[3])*2*ltex}}--后段保留图像的前半截，后端点理论上来说等于第一个table的前端点
 
+    -- print("---in a render layer")
     for i=1,3 do
         local r={lr[i],lr[i+1]}
         local u=ur[i]
         local v4={{sp[1][1]+forward_dir[1]*r[1],sp[1][2]+forward_dir[2]*r[1],sp[1][3]+forward_dir[3]*r[1],u[1],wtex,color},
-                {sp[1][1]+forward_dir[1]*r[2],sp[1][2]+forward_dir[2]*r[2],sp[1][3]+forward_dir[3]*r[2],u[1],0,color},
+                {sp[2][1]+forward_dir[1]*r[1],sp[2][2]+forward_dir[2]*r[1],sp[2][3]+forward_dir[3]*r[1],u[1],0,color},
                 {sp[2][1]+forward_dir[1]*r[2],sp[2][2]+forward_dir[2]*r[2],sp[2][3]+forward_dir[3]*r[2],u[2],0,color},
-                {sp[2][1]+forward_dir[1]*r[1],sp[2][2]+forward_dir[2]*r[1],sp[2][3]+forward_dir[3]*r[1],u[2],wtex,color},}
+                {sp[1][1]+forward_dir[1]*r[2],sp[1][2]+forward_dir[2]*r[2],sp[1][3]+forward_dir[3]*r[2],u[2],wtex,color},}
         RenderTexture(img,blend,v4[1],v4[2],v4[3],v4[4])
+
+        -- print("--------")
+        -- for j=1,4 do
+        --     print(v4[j][1]..","..v4[j][2]..","..v4[j][3]..","..v4[j][4]..","..v4[j][5])
+        -- end
     end
+        --     local r={lr[1],lr[1+1]}
+        -- local u=ur[1]
+        --     local v4={{-0.5,0.5,0.5,u[1],0,color},
+        --         {0.5,0.5,0.5,u[1],wtex,color},
+        --         {0.5,-0.5,0.5,u[2],wtex,color},
+        --         {-0.5,-0.5,0.5,u[2],0,color}}
+        -- RenderTexture(img,blend,v4[1],v4[2],v4[3],v4[4])
 end
 
-function stage4b_bg:RenderFloor()
+function stage4b_bg:RenderFloor(at,aside,c0,l,width)
     local att=self.attri
-    local dir_at={1,0,0}
-    local dir_aside={0,0,1}
-    local c0={-1,0,0.2}
-    RenderLayer("stage4b_star_dark","add+alpha",c0,dir_at,dir_aside,att.width[1],att.depth[1],att.cols[1],self.tim)
-    RenderLayer("stage4b_star_light","mul+add",c0,dir_at,dir_aside,att.width[2],att.depth[2],att.cols[2],self.tim)
-    RenderLayer("stage4b_sora","mul+alpha",c0,dir_at,dir_aside,att.width[3],att.depth[3],att.cols[3],self.tim)
+    -- local dir_at={1,0,0}
+    -- local dir_aside={0,0,1}
+    -- local c0={-0.5,-0.4,0.2}
+    local dir_at=at
+    local dir_aside=aside
+    local c0=c0
 
-    -- RenderChannel("stage4a_star_dark",c0,dir_at,dir_top,(-self.tim/600)%1,att.cols[1],"add+alpha",att.depth[1])
-    -- RenderChannel("stage4a_star_light",c0,dir_at,dir_top,(-self.tim/900)%1,att.cols[2],"mul+add",att.depth[2])
-    -- RenderChannel("stage4a_sora",c0,dir_at,dir_top,(-self.tim/1200)%1,att.cols[3],"mul+alpha",att.depth[3])
+    ---求at，aside的叉乘
+    local at_aside={dir_at[2]*dir_aside[3]-dir_at[3]*dir_aside[2],dir_at[3]*dir_aside[1]-dir_at[1]*dir_aside[3],dir_at[1]*dir_aside[2]-dir_at[2]*dir_aside[1]}
+    local dl=0.002
+    local c1={c0[1]+at_aside[1]*dl,c0[2]+at_aside[2]*dl,c0[3]+at_aside[3]*dl}
+    local c2={c0[1]-at_aside[1]*dl,c0[2]-at_aside[2]*dl,c0[3]-at_aside[3]*dl}
+
+    RenderLayer("stage4a_star_dark","add+alpha",c1,dir_at,dir_aside,width,l,att.cols[1],(self.tim/1200)%1)
+    RenderLayer("stage4a_star_light","mul+add",c0,dir_at,dir_aside,width,l,att.cols[2],(self.tim/1000)%1)
+    RenderLayer("stage4a_sora","mul+alpha",c2,dir_at,dir_aside,width,l,att.cols[3],(self.tim/900)%1)
+end
+
+function stage4b_bg:RenderBack(at,aside,c0,l,width)
+    local att=self.attri
+    -- local dir_at={1,0,0}
+    -- local dir_aside={0,0,1}
+    -- local c0={-0.5,-0.4,0.2}
+    local dir_at=at
+    local dir_aside=aside
+    local c0=c0
+    RenderLayer("stage4a_star_dark","mul+alpha",c0,dir_at,dir_aside,width,l,att.col_back,(self.tim/1600)%1)
+end
+
+function stage4b_bg:RenderLine(v1,v2,color,width,blend)
+    blend=blend or "mul+add"
+    local dir_ortho={0,0,-1}
+    --#region
+    --test
+    for i=1,3 do
+        print(v1[i]..","..v2[i])
+    end
+    --#endregion
+    local dir_norm=cross(dir_ortho,substract(v2,v1))
+    local delta=multiply(width/2,dir_norm)
+    local v4={{v1[1]+delta[1],v1[2]+delta[2],v1[3]+delta[3],0,0,color},
+                {v2[1]+delta[1],v2[2]+delta[2],v2[3]+delta[3],512,0,color},
+                {v2[1]-delta[1],v2[2]-delta[2],v2[3]-delta[3],512,512,color},
+                {v1[1]-delta[1],v1[2]-delta[2],v1[3]-delta[3],0,512,color}}
+    RenderTexture("white_texture",blend,v4[1],v4[2],v4[3],v4[4])
+end
+
+function stage4b_bg:RenderTetra(inverse)
+    local nega=1
+    if inverse then
+        nega=-1
+    end
+
+    local att=self.TetraAttri
+    local co=att.color
+    local r=att.r
+    local center=att.center
+    local alpha=att.alpha
+    local rc=att.RawCoor
+    local a=att.x_theta
+    local b=att.y_theta
+    local c=att.z_theta
+
+    local e={}
+    for i=1,4 do
+        e[i]=multiply(nega,{rc[i][1]*r,rc[i][2]*r,rc[i][3]*r})
+        e[i]=sp.math.Axis3D(e[i][1],e[i][2],e[i][3],a,b,c)
+    end
+    local v4={}
+    local coor={}
+    for i=1,4 do
+        v4[i]={e[i][1]+center[1],e[i][2]+center[2],e[i][3]+center[3],0,0,co}
+        coor[i]={e[i][1]+center[1],e[i][2]+center[2],e[i][3]+center[3]}
+    end
+
+    local blend="mul+add"
+    for i=1,4 do
+        local vt={}
+        for j=1,4 do
+            if i~=j then
+                table.insert(vt,v4[j])
+            end
+        end
+        RenderTexture("white_texture",blend,vt[1],vt[2],vt[3],vt[3])
+        -- 只允许其中一部分有补充线条
+        if nega==1 then
+            local midpoint={}
+            for j=1,3 do
+                midpoint[j]=multiply(0.5,add(vt[j],vt[j%3+1]))
+            end
+            local blend="mul+alpha"
+            local w=0.005
+
+            for j=1,3 do
+                stage4b_bg:RenderLine(midpoint[j],midpoint[j%3+1],att.color,w,blend)
+            end
+
+            -- stage4b_bg:RenderLine(midpoint[1],midpoint[2],att.color,0.003,blend)
+            -- stage4b_bg:RenderLine(midpoint[2],midpoint[3],att.color,0.003,blend)
+            -- stage4b_bg:RenderLine(midpoint[3],midpoint[1],att.color,0.003,blend)
+        end
+    end
+    -- RenderTexture("white_texture",blend,v4[1],v4[2],v4[3],v4[3])
+    -- RenderTexture("white_texture",blend,v4[2],v4[3],v4[4],v4[4])
+    -- RenderTexture("white_texture",blend,v4[3],v4[4],v4[1],v4[1])
+    -- RenderTexture("white_texture",blend,v4[4],v4[1],v4[2],v4[2])
+
+    for i=1,3 do
+        for j=i+1,4 do
+            stage4b_bg:RenderLine(coor[i],coor[j],att.color,0.008)
+        end
+    end
+
 end
 ---预留接口：变色、停转（停用着色器）
 ---需实现的组件：渲染相贯正四面体、着色器处理
 function stage4b_bg:init()
     --print("stage1_bg:init-1")
     background.init(self,false)
-    LoadImageFromFile("stage4b_star_dark",dir.."void_background_space_outside.png")
-    LoadImageFromFile("stage4b_star_light",dir.."void_background_space_inside.png")
-    LoadImageFromFile("stage4b_sora",dir.."ocean_sora_1.png")
-    LoadImageFromFile("stage4b_light",dir.."light.png")
+    LoadTexture("white_texture",dir.."white_texture.png")
 
+    --#region
+    LoadImageFromFile("stage4a_star_dark",dir.."void_background_space_outside.png")
+    LoadImageFromFile("stage4a_star_light",dir.."void_background_space_inside.png")
+    LoadImageFromFile("stage4a_sora",dir.."ocean_sora_1.png")
+    LoadImageFromFile("stage4a_light",dir.."light.png")
+    --#endregion
     self.attri={}
     local att=self.attri
     --这些理论上来说应该不变
@@ -731,15 +870,16 @@ function stage4b_bg:init()
     att.cols={Color(255,20,0,40),
     Color(240,180,150,245),
     Color(70,220,150,220)}
+    att.col_back=Color(255,165,150,235)
     att.at={0,0,1}
     att.top={0,1,0}
     att.alpha=1
 
-    att.fogmax=0.30
-    att.fogmin=0.15
+    att.fogmax=0.80
+    att.fogmin=0.55
 
     att.depth={0.097,0.098,0.099,0.2}
-    att.width={0.3,0.3,0.3,0.3}
+    att.width={0.8,0.8,0.8,0.3}
 
     Set3D("eye",att.eye_x,att.eye_y,att.eye_z)
     Set3D("at",0,0,1)
@@ -753,19 +893,91 @@ function stage4b_bg:init()
     Set3D("fog",att.fogmin,att.fogmax,Color(255,0,0,0))
 
     self.tim=0
-    self.dt=1
+    self.dt=1.6
+
+    self.TetraAttri={}
+    local ta=self.TetraAttri
+    ta.r=0.1
+    ta.center={0,0,0.3}
+    ta.color=Color(70,10,120,160)
+    ta.alpha=1
+    ta.RawCoor={
+        {0,1,0},--这是顶部方向
+        {cos(19.5),-sin(19.5),0},
+        {cos(19.5)*cos(120),-sin(19.5),cos(19.5)*sin(120)},
+        {cos(19.5)*cos(-120),-sin(19.5),cos(19.5)*sin(-120)}
+    }
+    -- ta.RawCoor={
+    --     {0,0,1},--这是顶部方向
+    --     {cos(19.5),0,-sin(19.5)},
+    --     {cos(19.5)*cos(120),cos(19.5)*sin(120),-sin(19.5)},
+    --     {cos(19.5)*cos(-120),cos(19.5)*sin(-120),-sin(19.5)}
+    -- }
+    -- ta.RawCoor={
+    --     {1,0,0},--这是顶部方向
+    --     {-sin(19.5),0,cos(19.5)},
+    --     {-sin(19.5),cos(19.5)*sin(120),cos(19.5)*cos(120)},
+    --     {-sin(19.5),cos(19.5)*sin(-120),cos(19.5)*cos(-120)}
+    -- }
+    ta.x_theta=0
+    ta.y_theta=0
+    ta.z_theta=0
+    ---绕每个轴变化的角速度
+    ta.w={0.27,0.7,0.17}
+
+    --调整背景中星星的颜色
+    task.New(self,function()
+        local t1=240
+        local t2=270
+        local t3=300
+        for i=1,1000000000 do
+            task.Wait(1)
+            att.col_back=Color(255,165-50*sin(i/t1),150+80*sin(i/t2),235+20*sin(i/t3))
+        end
+    end)
+
+    task.New(self,function()
+        for i=1,1000000000 do
+            task.Wait(1)
+            ta.x_theta=3*sin(ta.w[1]*i)
+            ta.y_theta=ta.y_theta+ta.w[2]
+            ta.z_theta=4.5*sin(ta.w[3]*i)
+        end
+    end)
+
+    -- print("coor test:")
+    -- local result=substract({1,2,3},{4,5,6})
+    -- print(result[1],result[2],result[3])
 end
 
 function stage4b_bg:frame()
     task.Do(self)
     self.tim=self.tim+self.dt
     local att=self.attri
+
+    local eye={att.eye_x,att.eye_y,att.eye_z}
+
+    --计算up和at的参数
+    -- 计算视线方向
+    local theta=att.eye_to_theta
+    local phi=att.eye_to_phi
+
+    local cx=sin(theta)*sin(phi)+eye[1]
+    local cy=cos(phi)+eye[2]
+    local cz=cos(theta)*sin(phi)+eye[3]
+    Set3D("at",cx,cy,cz)
+
+    att.at={cx,cy,cz}
 end
 
 function stage4b_bg:render()
     SetViewMode("3d")
     background.WarpEffectCapture()
-    self:RenderFloor()
+
+    stage4b_bg.RenderBack(self,{1,-0.3,0},{0.3,1,0},{-0.9,0.20,0.55},1.8,0.9)
+    stage4b_bg.RenderFloor(self,{1,0,0},{0,0,1},{-0.8,-0.25,0.25},1.6,0.7)
+    stage4b_bg.RenderTetra(self)
+    stage4b_bg.RenderTetra(self,true)
     background.WarpEffectApply()
     SetViewMode("world")
 end
