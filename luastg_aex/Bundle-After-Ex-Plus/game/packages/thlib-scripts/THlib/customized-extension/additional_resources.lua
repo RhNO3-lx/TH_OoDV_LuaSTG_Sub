@@ -6,6 +6,7 @@ LoadMusic("menu", 'THlib/music/title.ogg', 126.171, 126.171)
 --SetBGMVolume("menu",0.7)
 
 LoadMusic("bgm_stage4a","THlib/music/碎梦的回廊 ~ Undefined and Missing Ideas.ogg",282.4615,141.2308)
+LoadMusic("bgm_stage3","THlib/music/踏入未知的无尽幻想 ~ Stepped Into Utopia.ogg",174.0000,163.3333)
 
 LoadMusic('bgm_lastword','THlib\\music\\spellcard.ogg',75,0xc36e80/44100/4)
 LoadTexture("emo_bubble","THlib/emo_bubble/Balloon.png")

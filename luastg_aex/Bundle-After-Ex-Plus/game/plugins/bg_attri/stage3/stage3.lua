@@ -1,6 +1,6 @@
 stage3_bg=Class(object)
 
-local dur_sta1 = 100
+local dur_sta1 = 10000
 local t_sta2 = 0 + dur_sta1
 local dur_sta2 = 100--500
 local t_sta3 = t_sta2 + dur_sta2

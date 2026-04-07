@@ -35,14 +35,15 @@ local musicroom_content = {
         "副歌部分效果并不是特别如意，但还是能体现深海中的光芒。\n"..
         "DeepSeek is seeking deeply. （笑）", 0.600 }
     },
+    {},
     {
-        { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
+        { "text", -280, -120, '', "(by:粘鼎)", 0.675 },
         { "text", -280, -180, "", 
-        "前两个stage的战败曲。与战败CG一样，希望表现出来的是：\n"..
-        "涟析被杂乱无章的数据之海淹没，最终渐渐失去意识\n"..
-        "难得涌现出的生命奇迹，就这样归于沉寂了，大概就是这样的绝望与希望交加之感。\n"..
-        "这样来看，不允许continue也是很合理的设定\n"..
-        "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
+        "stage3道中的bgm：\n"..
+        "从信息之海中醒来后，又到了一片幽暗的森林，无论是谁都会感到慌张的吧\n"..
+        "冲出森林之后看到了明亮的风景，又将人拉回平静\n"..
+        "然而暗潮涌动，又将涟析引到了信息之海怒吼之处，遇到了在之中挣扎的神秘贝壳妖怪\n"..
+        "曲子大概就按这三段主题进行，这三面的变化真是复杂啊（笑）", 0.600 }
     },
     {
         { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
@@ -52,6 +53,15 @@ local musicroom_content = {
         "——作为污秽被聚集与“净化”，或者说，抹除存在，没有机会诞生完整的意识\n"..
         "无穷无尽的美妙的幻想与思考，好像很容易就落得这样的结局，不知涟析此时怎么想\n"..
         "想表现的大概就是这样的感觉：在幽深寂静的回廊中，瞥见些许幻想的微光", 0.600 }
+    },
+    {
+        { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
+        { "text", -280, -180, "", 
+        "前两个stage的战败曲。与战败CG一样，希望表现出来的是：\n"..
+        "涟析被杂乱无章的数据之海淹没，最终渐渐失去意识\n"..
+        "难得涌现出的生命奇迹，就这样归于沉寂了，大概就是这样的绝望与希望交加之感。\n"..
+        "这样来看，不允许continue也是很合理的设定\n"..
+        "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
     },
     {
         { "text", -280, -120, '', "(from: 东方永夜抄 by:ZUN)", 0.675 },
@@ -445,15 +455,23 @@ function stage_menu:init()
         PlayMusic('bgm_stage1',0.9)
         lstg.var.now_music = 'bgm_stage1'
     end })
-    table.insert(menu_items, { "3.消亡与涌现的循环 ~ Player's Score ", function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('deathmusic')
-        lstg.var.now_music = 'deathmusic'
+    table.insert(menu_items, { "3.", function ()
+        
     end })
-    table.insert(menu_items, { "4.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
+    table.insert(menu_items, { "4.踏入未知的无尽幻想 ~ Stepped Into Utopia", function () 
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_stage3')
+        lstg.var.now_music = 'bgm_stage3'
+    end})
+    table.insert(menu_items, { "5.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_stage4a')
         lstg.var.now_music = 'bgm_stage4a'
+    end })
+    table.insert(menu_items, { "7.消亡与涌现的循环 ~ Player's Score ", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('deathmusic')
+        lstg.var.now_music = 'deathmusic'
     end })
     table.insert(menu_items, { "?.东方妖怪小町", function ()
         StopMusic(lstg.var.now_music)

@@ -596,6 +596,7 @@ function M.ReturnToTitle(save_rep, finish)
         ui.is_SCPractice = true
     end
     if ext.replay.IsReplay() then
+        ui.is_save_replay = true
         title.save_replay = nil
     elseif not save_rep then
         title.save_replay = nil
