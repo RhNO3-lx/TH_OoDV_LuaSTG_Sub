@@ -21,10 +21,10 @@ local musicroom_content = {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 },
         { "text", -280, -180, "", 
         "标题界面曲。\n"..
-        "本来想融入一些数字化的、科幻的元素，"..
+        "本来想融入一些数字化的、科幻的元素，\n"..
         "但最后还是延续了东方标题曲一贯的和风与幻想感。\n"..
         "意外的难写呢，不过高潮开始旋律就涌现而出了。\n"..
-        "前方又是怎样的异变呢？\n", 0.600 }
+        "前方又是怎样的异变呢？", 0.600 }
     },
     {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 },
@@ -36,6 +36,15 @@ local musicroom_content = {
         "DeepSeek is seeking deeply. （笑）", 0.600 }
     },
     {
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
+        { "text", -280, -180, "", 
+        "二面的bgm。\n"..
+        "有轻松地在水中游弋的感觉，"..
+        "但是弹幕又让人不得不紧张起来呢。\n"..
+        "有引力和发射弹幕的鱼说不定很好吃。\n"..
+        "“摇曳”是轻松的意思。", 0.600 }
+    },
+    {
         { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
         { "text", -280, -180, "", 
         "前两个stage的战败曲。与战败CG一样，希望表现出来的是：\n"..
@@ -45,6 +54,15 @@ local musicroom_content = {
         "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
     },
     {
+        { "text", -280, -120, '', "(by:粘鼎)", 0.675 },
+        { "text", -280, -180, "", 
+        "stage3道中的bgm：\n"..
+        "从信息之海中醒来后，又到了一片幽暗的森林，无论是谁都会感到慌张的吧\n"..
+        "冲出森林之后看到了明亮的风景，又将人拉回平静\n"..
+        "然而暗潮涌动，又将涟析引到了信息之海怒吼之处，遇到了在之中挣扎的神秘贝壳妖怪\n"..
+        "曲子大概就按这三段主题进行，这三面的变化真是复杂啊（笑）", 0.600 }
+    },
+    {
         { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
         { "text", -280, -180, "", 
         "stage4道中的bgm：\n"..
@@ -52,6 +70,20 @@ local musicroom_content = {
         "——作为污秽被聚集与“净化”，或者说，抹除存在，没有机会诞生完整的意识\n"..
         "无穷无尽的美妙的幻想与思考，好像很容易就落得这样的结局，不知涟析此时怎么想\n"..
         "想表现的大概就是这样的感觉：在幽深寂静的回廊中，瞥见些许幻想的微光", 0.600 }
+    },
+    {
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
+        { "text", -280, -180, "", 
+        "Good Ending 呢。（虽然对丰姬不是）\n"..
+        "很光明的曲子，想体现涟析变得活泼、坚定。\n"..
+        "涟析，欢迎来到幻想乡。\n", 0.600 }
+    },
+    {
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
+        { "text", -280, -180, "", 
+        "staff曲。\n"..
+        "第一首作的曲子，原本为疮痍曲而作，后来改为staff曲。感谢游玩。\n"..
+        "给AI评价了下，是本人所作评分最高的曲子（笑）", 0.600 }
     },
     {
         { "text", -280, -120, '', "(from: 东方永夜抄 by:ZUN)", 0.675 },
@@ -448,15 +480,35 @@ function stage_menu:init()
         PlayMusic('bgm_stage1',0.9)
         lstg.var.now_music = 'bgm_stage1'
     end })
-    table.insert(menu_items, { "3.消亡与涌现的循环 ~ Player's Score ", function ()
+    table.insert(menu_items, { '3.摇曳潜行 ~ Learning in Attractors', function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_stage2',0.9)
+        lstg.var.now_music = 'bgm_stage2'
+    end })
+    table.insert(menu_items, { "4.消亡与涌现的循环 ~ Player's Score ", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('deathmusic')
         lstg.var.now_music = 'deathmusic'
     end })
-    table.insert(menu_items, { "4.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
+    table.insert(menu_items, { "5.踏入未知的无尽幻想 ~ Stepped Into Utopia ", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_stage3')
+        lstg.var.now_music = 'bgm_stage3'
+    end })
+    table.insert(menu_items, { "6.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_stage4a')
         lstg.var.now_music = 'bgm_stage4a'
+    end })
+    table.insert(menu_items, { "7.星涟心迹 ~ Starlit Cognition", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_ending')
+        lstg.var.now_music = 'bgm_ending'
+    end })
+    table.insert(menu_items, { "8.数字生命 ~ Artificial Dream", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_staff')
+        lstg.var.now_music = 'bgm_staff'
     end })
     table.insert(menu_items, { "?.东方妖怪小町", function ()
         StopMusic(lstg.var.now_music)

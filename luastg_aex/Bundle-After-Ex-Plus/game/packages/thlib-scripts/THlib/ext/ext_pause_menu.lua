@@ -213,7 +213,7 @@ function ext.pausemenu:render()
                 else
                     SetImageState('pause_replyover', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
                 end
-                Render('pause_replyover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
+                --Render('pause_replyover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
             elseif not ext.sc_pr then
                 if self.choose then
                     SetImageState('pause_gameover', '', Color(pm.mask_alph[1] + 15, 100, 100, 100))
@@ -239,7 +239,7 @@ function ext.pausemenu:render()
                 else
                     SetImageState('pause_replyover', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
                 end
-                Render('pause_replyover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
+                --Render('pause_replyover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
             end
         end
         --渲染选项列表
