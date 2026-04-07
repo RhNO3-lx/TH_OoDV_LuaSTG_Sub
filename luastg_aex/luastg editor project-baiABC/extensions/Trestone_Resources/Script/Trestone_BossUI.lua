@@ -861,6 +861,7 @@ end
 
 RhNO3_lx_hp_bar = Class(object)
 function RhNO3_lx_hp_bar:init(target)
+    self.bound=false
     self.tar = target
     self.layer=LAYER_ENEMY+5
     self.group=GROUP_GHOST
@@ -899,6 +900,10 @@ function RhNO3_lx_hp_bar:frame()
     
 end
 
+function RhNO3_lx_hp_bar:del()
+    print("del hp bar")
+    object:del()
+end
 function RhNO3_lx_hp_bar:render()
     local b = self.tar.bs
     
@@ -911,6 +916,7 @@ function RhNO3_lx_hp_bar:render()
         ---! 衬底用的血条
         SetImageState("hpbar2", "", Color(0, 255, 255, 255))
         SetImageState("life_node", "", Color(alpha1 * 255, 255, 255, 255))
+        print("rendering hp bar")
 
         local mode = b.__hpbartype
         if mode == -1 then
