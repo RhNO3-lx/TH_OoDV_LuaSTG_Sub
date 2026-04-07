@@ -15,7 +15,9 @@ local replayManager = nil --replay管理器
 local replayFilename = nil--当前打开的Replay文件名称
 local replayInfo = nil    --当前打开的Replay文件信息
 local replayStageIdx = 1  --当前正在播放的关卡
+local replayStartIdx = 1  --replay起始关卡索引
 local replayStages = {}   --记录所有关卡的录像数据
+local hasRecordedStartIdx = false
 
 ---@type plus.ReplayFrameWriter
 replayWriter = nil
@@ -64,7 +66,9 @@ function ext.replay.SaveReplay(stageNames, slot, playerName, finish)
     finish = finish or 0
     for _, v in ipairs(stageNames) do
         assert(replayStages[v], 'Stage not found')
-        table.insert(stages, replayStages[v])
+        if (string.find(v, "Ending") == nil) then
+            table.insert(stages, replayStages[v])
+        end
     end
 
     -- TODO: gameName和gameVersion可以被用来检查录像文件的合法性
@@ -135,10 +139,11 @@ function stage.Set(stageName, mode, path)
         replayReader:Close()
         replayReader = nil
     end
-    if mode ~= "load" then
-        replayFilename = nil  -- 装载时使用缓存的数据
-        replayInfo = nil
-        replayStageIdx = 0
+    if mode ~= "load" then  
+        replayFilename = nil  
+        replayInfo = nil  
+        replayStageIdx = 0  
+        replayStartIdx = 1  -- 重置起始索引  
     end
     ext.ResetTicker() -- 重置计数器
 
@@ -191,27 +196,35 @@ function stage.Set(stageName, mode, path)
         --stage.next_stage = stage.stages[stageName]
         --replayStages[stageName].stageExtendInfo = Serialize(lstg.var)
         stage.next_stage = stage.stages[stageName]--by OLC
-    elseif mode == "load" then
-        if path ~= replayFilename then
-            replayFilename = path
-            replayInfo = plus.ReplayManager.ReadReplayInfo(path)  -- 重新读取录像信息以保证准确性
-            assert(#replayInfo.stages > 0, "Replay file is empty")
-        end
-
-        -- 决定场景顺序
-        if stageName then
-            replayStageIdx = nil
-            for i, v in ipairs(replayInfo.stages) do
-                if replayInfo.stages[i].stageName == stageName then
-                    replayStageIdx = i
-                    Print(stageName, replayStageIdx)
-                    break
-                end
-            end
-            assert(replayStageIdx ~= nil, "Stage not found in replay file")
-        else
-            replayStageIdx = 1
-        end
+    elseif mode == "load" then  
+        if path ~= replayFilename then  
+            replayFilename = path  
+            replayInfo = plus.ReplayManager.ReadReplayInfo(path)  
+            assert(#replayInfo.stages > 0, "Replay file is empty")  
+            -- 重置起始索引
+            hasRecordedStartIdx = false
+        end  
+    
+        -- 决定场景顺序  
+        if stageName then  
+            replayStageIdx = nil  
+            for i, v in ipairs(replayInfo.stages) do  
+                if replayInfo.stages[i].stageName == stageName then  
+                    replayStageIdx = i  
+                    -- 只在第一次设置时记录起始索引  
+                    if not hasRecordedStartIdx then  
+                        replayStartIdx = i
+                        hasRecordedStartIdx = true
+                        Print("Set replayStartIdx to:", replayStartIdx, "for stage:", stageName)  
+                    end  
+                    break  
+                end  
+            end  
+            assert(replayStageIdx ~= nil, "Stage not found in replay file")  
+        else  
+            replayStageIdx = 1  
+            replayStartIdx = 1  
+        end  
 
         --加载数据
         local nextRecordStage = replayInfo.stages[replayStageIdx]
@@ -238,14 +251,14 @@ function stage.Set(stageName, mode, path)
 end
 
 ---重新开始场景
-function stage.Restart()
-    stage.preserve_res = true  -- 保留资源在转场时不清空
-    if ext.replay.IsReplay() then
-        stage.Set(lstg.var.stage_name, "load", ext.replay.GetReplayFilename())
-        --stage.Set(lstg.var.stage_name, "load", ext.replay.GetReplayStageName(1))
-    elseif ext.replay.IsRecording() then
-        stage.Set(lstg.var.stage_name, "save")
-    else
-        stage.Set(lstg.var.stage_name, "none")
-    end
+function stage.Restart()  
+    stage.preserve_res = true  -- 保留资源在转场时不清空  
+    if ext.replay.IsReplay() then  
+        local startStageName = ext.replay.GetReplayStageName(replayStartIdx)  
+        stage.Set(startStageName, "load", ext.replay.GetReplayFilename())  
+    elseif ext.replay.IsRecording() then  
+        stage.Set(lstg.var.stage_name, "save")  
+    else  
+        stage.Set(lstg.var.stage_name, "none")  
+    end  
 end

@@ -333,24 +333,27 @@ lib.point3DT = point3DT
 ---@param x number @X坐标
 ---@param y number @Y坐标
 ---@param z number @Z坐标
----@param a number @Z轴旋转角度(1)
----@param b number @X轴旋转角度
----@param c number @Z轴旋转角度(2)
----@param dx number @X偏移
----@param dy number @Y偏移
----@param dz number @Z偏移
+---@param a number @X轴旋转角度
+---@param b number @Y轴旋转角度
+---@param c number @Z轴旋转角度
+---@param dx number |nil@X偏移
+---@param dy number |nil@Y偏移
+---@param dz number |nil@Z偏移
 ---@return table
 local function Axis3D(x, y, z, a, b, c, dx, dy, dz)
+    a, b, c = a or 0, b or 0, c or 0
+    dx, dy, dz = dx or 0, dy or 0, dz or 0
     local p = { { x }, { y }, { z } }
+
     local C1 = {
-        { cos(a), sin(a), 0 },
-        { -sin(a), cos(a), 0 },
-        { 0, 0, 1 }
+        { 1, 0, 0 },
+        { 0, cos(a), sin(a) },
+        { 0, -sin(a), cos(a) }
     }
     local C2 = {
-        { 1, 0, 0 },
-        { 0, cos(b), sin(b) },
-        { 0, -sin(b), cos(b) }
+        { cos(b), 0, sin(b) },
+        { 0, 1, 0 },
+        { -sin(b),0, cos(b) }
     }
     local C3 = {
         { cos(c), sin(c), 0 },

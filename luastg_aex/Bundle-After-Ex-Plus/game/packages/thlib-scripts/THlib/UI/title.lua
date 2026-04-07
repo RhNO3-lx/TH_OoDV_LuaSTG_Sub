@@ -21,10 +21,10 @@ local musicroom_content = {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 },
         { "text", -280, -180, "", 
         "标题界面曲。\n"..
-        "本来想融入一些数字化的、科幻的元素，"..
+        "本来想融入一些数字化的、科幻的元素，\n"..
         "但最后还是延续了东方标题曲一贯的和风与幻想感。\n"..
         "意外的难写呢，不过高潮开始旋律就涌现而出了。\n"..
-        "前方又是怎样的异变呢？\n", 0.600 }
+        "前方又是怎样的异变呢？", 0.600 }
     },
     {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 },
@@ -35,7 +35,15 @@ local musicroom_content = {
         "副歌部分效果并不是特别如意，但还是能体现深海中的光芒。\n"..
         "DeepSeek is seeking deeply. （笑）", 0.600 }
     },
-    {},
+    {
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
+        { "text", -280, -180, "", 
+        "二面的bgm。\n"..
+        "有轻松地在水中游弋的感觉，"..
+        "但是弹幕又让人不得不紧张起来呢。\n"..
+        "有引力和发射弹幕的鱼说不定很好吃。\n"..
+        "“摇曳”是轻松的意思。", 0.600 }
+    },
     {
         { "text", -280, -120, '', "(by:粘鼎)", 0.675 },
         { "text", -280, -180, "", 
@@ -55,13 +63,18 @@ local musicroom_content = {
         "想表现的大概就是这样的感觉：在幽深寂静的回廊中，瞥见些许幻想的微光", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
         { "text", -280, -180, "", 
-        "前两个stage的战败曲。与战败CG一样，希望表现出来的是：\n"..
-        "涟析被杂乱无章的数据之海淹没，最终渐渐失去意识\n"..
-        "难得涌现出的生命奇迹，就这样归于沉寂了，大概就是这样的绝望与希望交加之感。\n"..
-        "这样来看，不允许continue也是很合理的设定\n"..
-        "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
+        "Good Ending 呢。（虽然对丰姬不是）\n"..
+        "很光明的曲子，想体现涟析变得活泼、坚定。\n"..
+        "涟析，欢迎来到幻想乡。\n", 0.600 }
+    },
+    {
+        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
+        { "text", -280, -180, "", 
+        "staff曲。\n"..
+        "第一首作的曲子，原本为疮痍曲而作，后来改为staff曲。感谢游玩。\n"..
+        "给AI评价了下，是本人所作评分最高的曲子（笑）", 0.600 }
     },
     {
         { "text", -280, -120, '', "(from: 东方永夜抄 by:ZUN)", 0.675 },
@@ -332,53 +345,56 @@ function stage_menu:init()
     end })
     menu_difficulty_select_pr = New(simple_menu, 'Select Difficulty', menu_items)
     --
-    for _, sg in ipairs(stage.groups) do
-        if stage.groups[sg].allow_practice then
-            local menu_items = {}
-            for _, s in ipairs(stage.groups[sg]) do
-                if stage.stages[s].allow_practice then
-                    table.insert(menu_items, { string.match(s, "^[%w_][%w_ ]*"), function()
-                        menu.FlyOut(menu_practice[sg], 'left')
-                        last_menu = menu_practice[sg]
-                        --
-                        scoredata.player_select = 1
-                        lstg.var.player_name = player_list[1][2]
-                        lstg.var.rep_player = player_list[1][3]
-                        task.New(stage_menu_self, function()
-                            for i = 1, 60 do
-                                SetBGMVolume('menu', 1 - i / 60)
-                                task.Wait()
-                            end
-                        end)
-                        task.New(stage_menu_self, function()
-                            task.Wait(30)
-                            New(mask_fader, 'close')
-                            task.Wait(30)
-                            if practice == 'stage' then
-                                stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])
-                            elseif practice == 'spell' then
-                                stage.IsSCpractice = true--判定进入符卡练习的flag add by OLC
-                                stage.group.PracticeStart('Spell Practice@Spell Practice')
-                            else
-                                stage.group.Start(last_menu.group_name)
-                            end
-                        end)
-                        --
-                    end })
-                end
-            end
-            table.insert(menu_items, { 'exit', function()
-                menu.FlyIn(menu_difficulty_select_pr, 'left')
-                menu.FlyOut(menu_practice[sg], 'right')
-            end })
-            menu_practice[sg] = New(simple_menu, 'Select Stage', menu_items)
-            menu_practice[sg].stage_name = {}
-            for _, s in ipairs(stage.groups[sg]) do
-                if stage.stages[s].allow_practice then
-                    table.insert(menu_practice[sg].stage_name, s)
-                end
-            end
-        end
+    for _, sg in ipairs(stage.groups) do  
+        if stage.groups[sg].allow_practice then  
+            local menu_items = {}  
+            for _, s in ipairs(stage.groups[sg]) do  
+                if stage.stages[s].allow_practice then  
+                    -- 过滤掉包含"Ending"的stage  
+                    if not string.find(s, "Ending") then  
+                        table.insert(menu_items, { string.match(s, "^[%w_][%w_ ]*"), function()  
+                            menu.FlyOut(menu_practice[sg], 'left')  
+                            last_menu = menu_practice[sg]  
+                            --  
+                            scoredata.player_select = 1  
+                            lstg.var.player_name = player_list[1][2]  
+                            lstg.var.rep_player = player_list[1][3]  
+                            task.New(stage_menu_self, function()  
+                                for i = 1, 60 do  
+                                    SetBGMVolume('menu', 1 - i / 60)  
+                                    task.Wait()  
+                                end  
+                            end)  
+                            task.New(stage_menu_self, function()  
+                                task.Wait(30)  
+                                New(mask_fader, 'close')  
+                                task.Wait(30)  
+                                if practice == 'stage' then  
+                                    stage.group.PracticeStart(last_menu.stage_name[last_menu.pos])  
+                                elseif practice == 'spell' then  
+                                    stage.IsSCpractice = true--判定进入符卡练习的flag add by OLC  
+                                    stage.group.PracticeStart('Spell Practice@Spell Practice')  
+                                else  
+                                    stage.group.Start(last_menu.group_name)  
+                                end  
+                            end)  
+                            --  
+                        end })  
+                    end  
+                end  
+            end  
+            table.insert(menu_items, { 'exit', function()  
+                menu.FlyIn(menu_difficulty_select_pr, 'left')  
+                menu.FlyOut(menu_practice[sg], 'right')  
+            end })  
+            menu_practice[sg] = New(simple_menu, 'Select Stage', menu_items)  
+            menu_practice[sg].stage_name = {}  
+            for _, s in ipairs(stage.groups[sg]) do  
+                if stage.stages[s].allow_practice and not string.find(s, "Ending") then  
+                    table.insert(menu_practice[sg].stage_name, s)  
+                end  
+            end  
+        end  
     end
     --
     menu_sc_pr = New(sc_pr_menu, function(index)
@@ -455,23 +471,30 @@ function stage_menu:init()
         PlayMusic('bgm_stage1',0.9)
         lstg.var.now_music = 'bgm_stage1'
     end })
-    table.insert(menu_items, { "3.", function ()
-        
-    end })
-    table.insert(menu_items, { "4.踏入未知的无尽幻想 ~ Stepped Into Utopia", function () 
+    table.insert(menu_items, { '3.摇曳潜行 ~ Learning in Attractors', function ()
         StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_stage3')
-        lstg.var.now_music = 'bgm_stage3'
-    end})
+        PlayMusic('bgm_stage2',0.9)
+        lstg.var.now_music = 'bgm_stage2'
+    end })
+    table.insert(menu_items, { "4.消亡与涌现的循环 ~ Player's Score ", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('deathmusic')
+        lstg.var.now_music = 'deathmusic'
+    end })
     table.insert(menu_items, { "5.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_stage4a')
         lstg.var.now_music = 'bgm_stage4a'
     end })
-    table.insert(menu_items, { "7.消亡与涌现的循环 ~ Player's Score ", function ()
+    table.insert(menu_items, { "6.星涟心迹 ~ Starlit Cognition", function ()
         StopMusic(lstg.var.now_music)
-        PlayMusic('deathmusic')
-        lstg.var.now_music = 'deathmusic'
+        PlayMusic('bgm_ending')
+        lstg.var.now_music = 'bgm_ending'
+    end })
+    table.insert(menu_items, { "7.数字生命 ~ Artificial Dream", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_staff')
+        lstg.var.now_music = 'bgm_staff'
     end })
     table.insert(menu_items, { "?.东方妖怪小町", function ()
         StopMusic(lstg.var.now_music)

@@ -869,8 +869,9 @@ function renseki_bomb1:frame()
 		for _,unit in ObjList(GROUP_ENEMY_BULLET) do
 			if(IsValid(unit)) then
 				local d=Dist(unit,self)
-				local frac=(d/120)*(d/120)
-				_set_a(unit,0.5/frac,Angle(unit,self),false)
+				local frac=(d/170)*(d/170)
+				local a=max(0.5/frac,0.1)
+				_set_a(unit,a,Angle(unit,self),false)
 				unit.navi=true
 				if(d<self.absorb+60+ran:Float(-10,10)) then
 					unit._angle=Angle(unit,self)

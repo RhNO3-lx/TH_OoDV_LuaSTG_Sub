@@ -212,6 +212,7 @@ end
 
 LoadFX('boss_distortion', 'shader/boss_distortion.hlsl')
 CreateRenderTarget("_boss_distortion_render_buffer")
+CreateRenderTarget("boss2distortion")
 
 local RENDER_BUFFER_NAME = "_boss_distortion_render_buffer"
 local WARP_EFFECT_NAME = "boss_distortion"
@@ -219,22 +220,31 @@ local WARP_EFFECT_NAME = "boss_distortion"
 ---开始捕获用于执行扭曲特效的画面
 function background.WarpEffectCapture()
     if IsValid(_boss) then
+        local tar=_boss.boss2
+        if(IsValid(tar)) then 
+            PushRenderTarget("boss2distortion") 
+            RenderClear(Color(0, 0, 0, 0))
+        end
         PushRenderTarget(RENDER_BUFFER_NAME)
         RenderClear(Color(0, 0, 0, 0))
+        -- local tar=_boss.boss2
+        -- if(IsValid(tar)) then PushRenderTarget("boss2distortion") end
     end
 end
 
 ---停止捕获用于执行扭曲特效的画面并应用扭曲特效、绘制出来
 function background.WarpEffectApply()
     if IsValid(_boss) then
+        local tar=_boss.boss2
+
         PopRenderTarget(RENDER_BUFFER_NAME)
 
         local x, y = WorldToScreen(_boss.x, _boss.y)
         local x1 = x * screen.scale
         local y1 = (screen.height - y) * screen.scale
-        local fxr = _boss.fxr or 163
-        local fxg = _boss.fxg or 73
-        local fxb = _boss.fxb or 164
+        local fxr = _boss.fxr or 203
+        local fxg = _boss.fxg or 163
+        local fxb = _boss.fxb or 224
         PostEffect(WARP_EFFECT_NAME, RENDER_BUFFER_NAME, 6, "",
             {
                 { x1, y1, 0.0, 0.0 }, -- centerX, centerY, 后面两个 0 只是用于填充成 float4
@@ -248,6 +258,32 @@ function background.WarpEffectApply()
             },
             {}
         )
+        local ani=_boss.ani
+        local alpha=_boss.aura_alpha
+        if(IsValid(tar)) then
+            PopRenderTarget("boss2distortion")
+            local _boss=tar
+
+            local x, y = WorldToScreen(_boss.x, _boss.y)
+            local x1 = x * screen.scale
+            local y1 = (screen.height - y) * screen.scale
+            local fxr = _boss.fxr or 183
+            local fxg = _boss.fxg or 93
+            local fxb = _boss.fxb or 224
+            PostEffect(WARP_EFFECT_NAME, "boss2distortion", 6, "",
+                {
+                    { x1, y1, 0.0, 0.0 }, -- centerX, centerY, 后面两个 0 只是用于填充成 float4
+                    { fxr / 255.0, fxg / 255.0, fxb / 255.0, 125.0 / 255.0 }, -- color
+                    {
+                        alpha * 200 * lstg.scale_3d, -- size
+                        1500 * alpha / 128 * lstg.scale_3d, -- arg
+                        alpha * 200 * lstg.scale_3d, -- colorsize
+                        ani, -- timer
+                    },
+                },
+                {}
+            )
+        end
     end
 end
 

@@ -1,11 +1,11 @@
-
-LoadMusic("bgm_stage1","THlib/music/星罗深海 ~ Drowning in Data.ogg",151.384615,73.846154)
---SetBGMVolume("bgm_stage1",0.7)
-
-LoadMusic("menu", 'THlib/music/title.ogg', 126.171, 126.171)
+LoadMusic("menu", 'THlib/music/信息之渊 ~ Data Abyss.ogg', 91.095, 91.095)
 --SetBGMVolume("menu",0.7)
-
+LoadMusic("bgm_stage1","THlib/music/星罗深海 ~ Drowning in Data.ogg",82.154,73.846)
+--SetBGMVolume("bgm_stage1",0.7)
+LoadMusic("bgm_stage2", "THlib/music/摇曳潜行 ~ Learning in Attractors.ogg",145.654,132.414)
 LoadMusic("bgm_stage4a","THlib/music/碎梦的回廊 ~ Undefined and Missing Ideas.ogg",282.4615,141.2308)
+LoadMusic("bgm_ending", "THlib/music/星涟心迹 ~ Starlit Cognition.ogg",103.385,103.385)
+LoadMusic("bgm_staff", "THlib/music/数字生命 ~ Artificial Dream.ogg",113.778,113.778)LoadMusic("bgm_stage3","THlib/music/踏入未知的无尽幻想 ~ Stepped Into Utopia.ogg",174.0000,163.3333)
 LoadMusic("bgm_stage3","THlib/music/踏入未知的无尽幻想 ~ Stepped Into Utopia.ogg",174.0000,163.3333)
 
 LoadMusic('bgm_lastword','THlib\\music\\spellcard.ogg',75,0xc36e80/44100/4)
