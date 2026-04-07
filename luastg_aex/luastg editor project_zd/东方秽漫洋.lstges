@@ -954,6 +954,6 @@
 7,{"$type":".Enemy.CreateEnemy, ","Attributes":[{"attrCap":"Name","attrInput":"\"yosei2_1\"","EditWindow":"enemyDef"},{"attrCap":"Position","attrInput":"-350,350","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"1","EditWindow":"enemyParam"}],"AttributeCount":3}
 7,{"$type":".Enemy.CreateEnemy, ","Attributes":[{"attrCap":"Name","attrInput":"\"yosei2_1\"","EditWindow":"enemyDef"},{"attrCap":"Position","attrInput":"350,350","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"-1","EditWindow":"enemyParam"}],"AttributeCount":3,"IsExpanded":false}
 7,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"320","EditWindow":"yield"}],"AttributeCount":1}
-5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"boss","EditWindow":""}],"AttributeCount":1,"IsSelected":true}
-6,{"$type":".Boss.CreateBoss, ","Attributes":[{"attrCap":"Name","attrInput":"\"nina\"","EditWindow":"bossDef"},{"attrCap":"Wait","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
+5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"boss","EditWindow":""}],"AttributeCount":1}
+6,{"$type":".Boss.CreateBoss, ","Attributes":[{"attrCap":"Name","attrInput":"\"nina\"","EditWindow":"bossDef"},{"attrCap":"Wait","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2,"IsSelected":true}
 5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"_infinite","EditWindow":"yield"}],"AttributeCount":1}

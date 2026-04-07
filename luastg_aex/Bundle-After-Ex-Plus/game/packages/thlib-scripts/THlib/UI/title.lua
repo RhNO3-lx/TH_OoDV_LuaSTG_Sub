@@ -45,6 +45,15 @@ local musicroom_content = {
         "“摇曳”是轻松的意思。", 0.600 }
     },
     {
+        { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
+        { "text", -280, -180, "", 
+        "前两个stage的战败曲。与战败CG一样，希望表现出来的是：\n"..
+        "涟析被杂乱无章的数据之海淹没，最终渐渐失去意识\n"..
+        "难得涌现出的生命奇迹，就这样归于沉寂了，大概就是这样的绝望与希望交加之感。\n"..
+        "这样来看，不允许continue也是很合理的设定\n"..
+        "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
+    },
+    {
         { "text", -280, -120, '', "(by:粘鼎)", 0.675 },
         { "text", -280, -180, "", 
         "stage3道中的bgm：\n"..
@@ -481,17 +490,22 @@ function stage_menu:init()
         PlayMusic('deathmusic')
         lstg.var.now_music = 'deathmusic'
     end })
-    table.insert(menu_items, { "5.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
+    table.insert(menu_items, { "5.踏入未知的无尽幻想 ~ Stepped Into Utopia ", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_stage3')
+        lstg.var.now_music = 'bgm_stage3'
+    end })
+    table.insert(menu_items, { "6.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_stage4a')
         lstg.var.now_music = 'bgm_stage4a'
     end })
-    table.insert(menu_items, { "6.星涟心迹 ~ Starlit Cognition", function ()
+    table.insert(menu_items, { "7.星涟心迹 ~ Starlit Cognition", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_ending')
         lstg.var.now_music = 'bgm_ending'
     end })
-    table.insert(menu_items, { "7.数字生命 ~ Artificial Dream", function ()
+    table.insert(menu_items, { "8.数字生命 ~ Artificial Dream", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_staff')
         lstg.var.now_music = 'bgm_staff'
