@@ -232,9 +232,9 @@ function background.WarpEffectApply()
         local x, y = WorldToScreen(_boss.x, _boss.y)
         local x1 = x * screen.scale
         local y1 = (screen.height - y) * screen.scale
-        local fxr = _boss.fxr or 163
-        local fxg = _boss.fxg or 73
-        local fxb = _boss.fxb or 164
+        local fxr = _boss.fxr or 203
+        local fxg = _boss.fxg or 163
+        local fxb = _boss.fxb or 224
         PostEffect(WARP_EFFECT_NAME, RENDER_BUFFER_NAME, 6, "",
             {
                 { x1, y1, 0.0, 0.0 }, -- centerX, centerY, 后面两个 0 只是用于填充成 float4
@@ -248,6 +248,32 @@ function background.WarpEffectApply()
             },
             {}
         )
+        local ani=_boss.ani
+        local alpha=_boss.aura_alpha
+        local tar=_boss.boss2
+        if(IsValid(tar)) then
+            local _boss=tar
+
+            local x, y = WorldToScreen(_boss.x, _boss.y)
+            local x1 = x * screen.scale
+            local y1 = (screen.height - y) * screen.scale
+            local fxr = _boss.fxr or 183
+            local fxg = _boss.fxg or 93
+            local fxb = _boss.fxb or 224
+            PostEffect(WARP_EFFECT_NAME, RENDER_BUFFER_NAME, 6, "",
+                {
+                    { x1, y1, 0.0, 0.0 }, -- centerX, centerY, 后面两个 0 只是用于填充成 float4
+                    { fxr / 255.0, fxg / 255.0, fxb / 255.0, 125.0 / 255.0 }, -- color
+                    {
+                        alpha * 200 * lstg.scale_3d, -- size
+                        1500 * alpha / 128 * lstg.scale_3d, -- arg
+                        alpha * 200 * lstg.scale_3d, -- colorsize
+                        ani, -- timer
+                    },
+                },
+                {}
+            )
+        end
     end
 end
 

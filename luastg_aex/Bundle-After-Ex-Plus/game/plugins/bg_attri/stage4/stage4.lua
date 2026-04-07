@@ -868,8 +868,8 @@ function stage4b_bg:init()
     att.eye_to_phi=90 --与y的夹角
 
     att.cols={Color(255,20,0,40),
-    Color(240,180,150,245),
-    Color(70,220,150,220)}
+    Color(240,160,140,245),
+    Color(70,200,120,220)}
     att.col_back=Color(255,165,150,235)
     att.at={0,0,1}
     att.top={0,1,0}
