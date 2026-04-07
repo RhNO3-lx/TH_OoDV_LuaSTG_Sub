@@ -141,7 +141,7 @@ end
 function img_class:kill()
     img_class.del(self)
     New(BulletBreak, self.x, self.y, self._index)
-    New(item_faith_minor, self.x, self.y)
+    --New(item_faith_minor, self.x, self.y)
 end
 
 ---@diagnostic disable-next-line: duplicate-set-field
