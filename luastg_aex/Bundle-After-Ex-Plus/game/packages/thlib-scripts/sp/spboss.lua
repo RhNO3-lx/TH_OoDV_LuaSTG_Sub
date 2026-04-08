@@ -726,6 +726,7 @@ function lib.SetStagePoint(boss, temp_hp, temp_t)
     end
     lib.StagePointList[boss] = { boss, hp, t }
     _log(string.format('[spboss] Boss(%s) Stage Point changed', boss))
+    boss.stage=1
 end
 function lib.StagePointCheck()
     local tmp = {}
@@ -742,6 +743,7 @@ function lib.StagePointCheck()
                     table.remove(hplist, i)
                     table.remove(tlist, i)
                     _log(string.format("[spboss] Boss(%s) Stage Point has been changed", boss))
+                    boss.stage = boss.stage + 1
                 end
             end
             for i = #tlist, 1, -1 do
@@ -750,6 +752,7 @@ function lib.StagePointCheck()
                     table.remove(hplist, i)
                     table.remove(tlist, i)
                     _log(string.format("[spboss] Boss(%s) Stage Point has been changed", boss))
+                    boss.stage = boss.stage + 1
                 end
             end
             boss.sp_point = plist
