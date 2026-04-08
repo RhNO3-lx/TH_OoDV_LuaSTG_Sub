@@ -158,8 +158,11 @@ function DialogSentence:init(text,color,CanSkip,size,font,align,alignv,lifetime)
         align=align or "left",
         alignv=alignv or "top",
         font=font or "dialog",---ttfname
-        CanSkip=CanSkip or true
+        CanSkip=CanSkip 
     }
+    if CanSkip==nil then
+        self.TextAttri.CanSkip=true
+    end
     self.lifetime=lifetime or 300
     self.IsActive=true
     self.group=GROUP_GHOST
@@ -236,6 +239,7 @@ end
 CharacterDisplayer=Class(object)
 
 function CharacterDisplayer:init(img,x,y,scale)
+    self.bound=false
     self.img=img
     self.x=x
     self.y=y
@@ -268,8 +272,11 @@ function CharacterDisplayer:frame()
     end
 end
 function CharacterDisplayer:render()
-    SetViewMode'ui'
-    Render(self.img,self.x,self.y,0,self.scale)
+    SetViewMode'world'
+    local world=lstg.world
+    local w,h=world.scrr-world.scrl,world.scrt-world.scrb
+    local x,y=self.x-w/2,self.y-h/2
+    Render(self.img,x,y,0,self.scale)
     SetViewMode'world'
 end
 function CharacterDisplayer.FadeOut(obj)
