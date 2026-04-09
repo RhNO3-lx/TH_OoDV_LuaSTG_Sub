@@ -272,11 +272,11 @@ function CharacterDisplayer:frame()
     end
 end
 function CharacterDisplayer:render()
-    SetViewMode'world'
-    local world=lstg.world
-    local w,h=world.scrr-world.scrl,world.scrt-world.scrb
-    local x,y=self.x-w/2,self.y-h/2
-    Render(self.img,x,y,0,self.scale)
+    SetViewMode'ui'
+    -- local world=lstg.world
+    -- local w,h=world.scrr-world.scrl,world.scrt-world.scrb
+    -- local x,y=self.x-w/2,self.y-h/2
+    Render(self.img,self.x,self.y,0,self.scale)
     SetViewMode'world'
 end
 function CharacterDisplayer.FadeOut(obj)
