@@ -639,7 +639,8 @@ function renseki_heal_effect:init(x,y,p)
 end
 
 function renseki_heal_effect:frame()
-	if not IsValid(self.pl) then Del(self) end
+	task.Do(self)
+	if not IsValid(self.pl) then ParticleStop(self) return end
 	if self.pl.HealEffectTime<=0 then ParticleStop(self) 
 	else ParticleFire(self)
 	end
