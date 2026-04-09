@@ -5,7 +5,7 @@ LoadMusic("bgm_stage1","THlib/music/星罗深海 ~ Drowning in Data.ogg",82.154,
 LoadMusic("bgm_stage2", "THlib/music/摇曳潜行 ~ Learning in Attractors.ogg",145.654,132.414)
 LoadMusic("bgm_stage4a","THlib/music/碎梦的回廊 ~ Undefined and Missing Ideas.ogg",282.4615,141.2308)
 LoadMusic("bgm_ending", "THlib/music/星涟心迹 ~ Starlit Cognition.ogg",103.385,103.385)
-LoadMusic("bgm_staff", "THlib/music/数字生命 ~ Artificial Dream.ogg",113.778,113.778)LoadMusic("bgm_stage3","THlib/music/踏入未知的无尽幻想 ~ Stepped Into Utopia.ogg",174.0000,163.3333)
+LoadMusic("bgm_staff", "THlib/music/数字生命 ~ Artificial Dream.ogg",113.778,113.778)
 LoadMusic("bgm_stage3","THlib/music/踏入未知的无尽幻想 ~ Stepped Into Utopia.ogg",174.0000,163.3333)
 LoadMusic("bgm_stage4b","THlib/music/上海アリス幻樂団 - 綿月のスペルカード ~ 神海戦.ogg",297.820,148.574)
 
