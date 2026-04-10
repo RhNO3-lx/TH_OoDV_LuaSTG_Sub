@@ -7,7 +7,7 @@ local dur_sta2 = 800
 local t_sta3 = t_sta2 + dur_sta2
 local dur_sta3 = 3840+2000
 local t_sta4 = t_sta3 + dur_sta3
-local dur_sta4 = 5000
+local dur_sta4 = 20000
 local t_sta5 = t_sta4 + dur_sta4
 --statu1:forest
 --statu2:rush out forest
