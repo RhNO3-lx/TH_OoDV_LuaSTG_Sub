@@ -223,22 +223,20 @@ function stage4a_bg:ChangeColor(mode,duration)
     end
     local cols={}
     if mode=="purple" then 
-        cols={
-            Color(255,20,0,40),
-            Color(240,180,150,245),
-            Color(70,220,150,220)
-        }
+        cols={Color(255,20,0,40),
+        Color(240,150,120,225),
+        Color(70,200,120,190)}
     elseif mode=="red" then
         cols={
             Color(255,50,0,30),
-            Color(240,245,150,210),
-            Color(70,250,150,190)
+            Color(240,225,120,180),
+            Color(70,220,110,160)
         }
     elseif mode=="blue" then
         cols={
             Color(255,20,10,60),
-            Color(240,140,170,250),
-            Color(70,150,190,245)
+            Color(240,110,140,230),
+            Color(70,110,170,215)
         }
     end
 
@@ -456,18 +454,21 @@ end
 function stage4a_bg:Finish()
     task.New(self,function()
         self.mode=Stage4Mode.Finish
+        local att=self.attri
         for i=1,360 do
             task.Wait(1)
             local lambda=i/360
             -- local t=1-lambda
             -- local r=Stage4Mode.radius
             -- local l=Stage4Mode.length
-            local att=self.attri
+            -- local att=self.attri
             att.bglight=lambda
             -- local li=att.bglight*255
 
             -- Set3D("fog",att.fogmin*t,att.fogmax,Color(255,li,li,li))
         end
+        self.transition_col=Color(0,0,0,0)
+
         task.Wait(300)
         Del(self)
     end)
@@ -502,8 +503,9 @@ function stage4a_bg:init()
     att.top_phi=0
 
     att.cols={Color(255,20,0,40),
-    Color(240,180,150,245),
-    Color(70,220,150,220)}
+    Color(240,150,120,225),
+    Color(70,200,120,190)}
+    self.transition_col=Color(255,0,0,0)
 
     local r=Stage4Mode.radius
     local l=Stage4Mode.length
@@ -667,7 +669,14 @@ function stage4a_bg:render()
         local z=att.fogmax*(1-ratio)*0.8+0.001*ratio
         -- print("enter")
         Render4V("stage4a_light",-r,r,z,r,r,z,r,-r,z,-r,-r,z)
+
+        if self.transition_col.a<255 then
+            self.transition_col.a=min(255,self.transition_col.a+2)
+            SetImageState("white","mul+alpha",self.transition_col)
+            Render4V("white",-1,1,0.1,1,1,0.1,1,-1,0.1,-1,-1,0.1)
+        end
     end
+
     SetViewMode("world")
     ---! todo:可以再加一些粒子？
 end
@@ -743,9 +752,9 @@ function stage4b_bg:RenderFloor(at,aside,c0,l,width)
     local c1={c0[1]+at_aside[1]*dl,c0[2]+at_aside[2]*dl,c0[3]+at_aside[3]*dl}
     local c2={c0[1]-at_aside[1]*dl,c0[2]-at_aside[2]*dl,c0[3]-at_aside[3]*dl}
 
-    RenderLayer("stage4a_star_dark","add+alpha",c1,dir_at,dir_aside,width,l,att.cols[1],(self.tim/1200)%1)
+    RenderLayer("stage4a_star_dark","add+alpha",c1,dir_at,dir_aside,width,l,att.cols[1],(self.tim/1500)%1)
     RenderLayer("stage4a_star_light","mul+add",c0,dir_at,dir_aside,width,l,att.cols[2],(self.tim/1000)%1)
-    RenderLayer("stage4a_sora","mul+alpha",c2,dir_at,dir_aside,width,l,att.cols[3],(self.tim/900)%1)
+    RenderLayer("stage4a_sora","mul+alpha",c2,dir_at,dir_aside,width,l,att.cols[3],(self.tim/700)%1)
 end
 
 function stage4b_bg:RenderBack(at,aside,c0,l,width)
@@ -764,9 +773,9 @@ function stage4b_bg:RenderLine(v1,v2,color,width,blend)
     local dir_ortho={0,0,-1}
     --#region
     --test
-    for i=1,3 do
-        print(v1[i]..","..v2[i])
-    end
+    -- for i=1,3 do
+    --     print(v1[i]..","..v2[i])
+    -- end
     --#endregion
     local dir_norm=cross(dir_ortho,substract(v2,v1))
     local delta=multiply(width/2,dir_norm)
@@ -821,7 +830,7 @@ function stage4b_bg:RenderTetra(inverse)
                 midpoint[j]=multiply(0.5,add(vt[j],vt[j%3+1]))
             end
             local blend="mul+alpha"
-            local w=0.005
+            local w=0.01
 
             for j=1,3 do
                 stage4b_bg:RenderLine(midpoint[j],midpoint[j%3+1],att.color,w,blend)
@@ -844,11 +853,41 @@ function stage4b_bg:RenderTetra(inverse)
     end
 
 end
+
+function stage4b_bg:ChangeTetraColor(color)
+    local att=self.TetraAttri
+    local co={att.color.a,att.color.r,att.color.g,att.color.b}
+    local target
+    if color=="red" then
+        target={70,170,50,120}
+    elseif color=="purple" then
+        target={70,130,50,160}
+    elseif color=="blue" then
+        target={70,10,120,160}
+    else
+        return
+    end
+
+    task.New(self,function()
+        local att=self.TetraAttri
+        local t=0
+        while t<1 do
+            task.Wait(1)
+            t=t+0.01
+            local current={}
+            for i=1,4 do
+                current[i]=co[i]*(1-t)+target[i]*t
+            end
+            att.color=Color(current[1],current[2],current[3],current[4])
+        end
+    end)
+end
 ---预留接口：变色、停转（停用着色器）
 ---需实现的组件：渲染相贯正四面体、着色器处理
 function stage4b_bg:init()
     --print("stage1_bg:init-1")
     background.init(self,false)
+    self.layer=self.layer+1
     LoadTexture("white_texture",dir.."white_texture.png")
 
     --#region
@@ -893,7 +932,8 @@ function stage4b_bg:init()
     Set3D("fog",att.fogmin,att.fogmax,Color(255,0,0,0))
 
     self.tim=0
-    self.dt=1.6
+    self.dt=0.6 ---只影响底边和背景
+    self.mode="normal"
 
     self.TetraAttri={}
     local ta=self.TetraAttri
@@ -925,6 +965,7 @@ function stage4b_bg:init()
     ---绕每个轴变化的角速度
     ta.w={0.27,0.7,0.17}
 
+    self.transition_col=Color(255,0,0,0)
     --调整背景中星星的颜色
     task.New(self,function()
         local t1=240
@@ -971,6 +1012,7 @@ function stage4b_bg:frame()
 end
 
 function stage4b_bg:render()
+
     SetViewMode("3d")
     background.WarpEffectCapture()
 
@@ -979,5 +1021,20 @@ function stage4b_bg:render()
     stage4b_bg.RenderTetra(self)
     stage4b_bg.RenderTetra(self,true)
     background.WarpEffectApply()
+
+    if self.mode=="normal" then
+        if self.transition_col.a>0 then
+            self.transition_col.a=max(0,self.transition_col.a-2)
+            SetImageState("white","mul+alpha",self.transition_col)
+            Render4V("white",-1,1,0.1,1,1,0.1,1,-1,0.1,-1,-1,0.1)
+        end
+    elseif self.mode=="fadeout" then
+        if self.transition_col.a<255 then
+            self.transition_col.a=min(255,self.transition_col.a+2)
+            SetImageState("white","mul+alpha",self.transition_col)
+            Render4V("white",-1,1,0.1,1,1,0.1,1,-1,0.1,-1,-1,0.1)
+        end
+    end
+
     SetViewMode("world")
 end

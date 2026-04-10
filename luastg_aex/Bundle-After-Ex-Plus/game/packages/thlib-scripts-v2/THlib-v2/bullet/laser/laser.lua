@@ -309,7 +309,7 @@ end
 function class:defaultOnKillCollider(collider, args)
     local w = lstg.world
     if lstg.BoxCheck(collider, w.boundl, w.boundr, w.boundb, w.boundt) then
-        lstg.New(item_faith_minor, collider.x, collider.y)
+        --lstg.New(item_faith_minor, collider.x, collider.y)
         if self.style_index then
             lstg.New(BulletBreak, collider.x, collider.y, self.style_index)
         end
