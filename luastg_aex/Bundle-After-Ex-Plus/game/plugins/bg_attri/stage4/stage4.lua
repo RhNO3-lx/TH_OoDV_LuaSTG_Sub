@@ -223,22 +223,20 @@ function stage4a_bg:ChangeColor(mode,duration)
     end
     local cols={}
     if mode=="purple" then 
-        cols={
-            Color(255,20,0,40),
-            Color(240,180,150,245),
-            Color(70,220,150,220)
-        }
+        cols={Color(255,20,0,40),
+        Color(240,150,120,225),
+        Color(70,200,120,190)}
     elseif mode=="red" then
         cols={
             Color(255,50,0,30),
-            Color(240,245,150,210),
-            Color(70,250,150,190)
+            Color(240,225,120,180),
+            Color(70,220,110,160)
         }
     elseif mode=="blue" then
         cols={
             Color(255,20,10,60),
-            Color(240,140,170,250),
-            Color(70,150,190,245)
+            Color(240,110,140,230),
+            Color(70,110,170,215)
         }
     end
 
@@ -505,8 +503,8 @@ function stage4a_bg:init()
     att.top_phi=0
 
     att.cols={Color(255,20,0,40),
-    Color(240,180,150,245),
-    Color(70,220,150,220)}
+    Color(240,150,120,225),
+    Color(70,200,120,190)}
     self.transition_col=Color(255,0,0,0)
 
     local r=Stage4Mode.radius
