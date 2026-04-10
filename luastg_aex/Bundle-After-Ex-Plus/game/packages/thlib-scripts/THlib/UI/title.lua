@@ -72,6 +72,13 @@ local musicroom_content = {
         "想表现的大概就是这样的感觉：在幽深寂静的回廊中，瞥见些许幻想的微光", 0.600 }
     },
     {
+        { "text", -280, -120, '', "(from: 东方锦上京 by:ZUN)", 0.675 },
+        { "text", -280, -180, "", 
+        "stage4关底的bgm：\n"..
+        "曲子写着写着发现还是很难超越zun哥写的丰姬原曲，总感觉压迫感不够\n"..
+        "遂万般无奈用了原声大碟", 0.600 }
+    },
+    {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 },
         { "text", -280, -180, "", 
         "Good Ending 呢。（虽然对丰姬不是）\n"..
@@ -500,17 +507,22 @@ function stage_menu:init()
         PlayMusic('bgm_stage4a')
         lstg.var.now_music = 'bgm_stage4a'
     end })
-    table.insert(menu_items, { "7.星涟心迹 ~ Starlit Cognition", function ()
+    table.insert(menu_items, { "7.绵月的符卡 ~ 神海战", function ()
+        StopMusic(lstg.var.now_music)
+        PlayMusic('bgm_stage4b')
+        lstg.var.now_music = 'bgm_stage4b'
+    end })
+    table.insert(menu_items, { "8.星涟心迹 ~ Starlit Cognition", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_ending')
         lstg.var.now_music = 'bgm_ending'
     end })
-    table.insert(menu_items, { "8.数字生命 ~ Artificial Dream", function ()
+    table.insert(menu_items, { "9.数字生命 ~ Artificial Dream", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_staff')
         lstg.var.now_music = 'bgm_staff'
     end })
-    table.insert(menu_items, { "?.东方妖怪小町", function ()
+    table.insert(menu_items, { "10.东方妖怪小町", function ()
         StopMusic(lstg.var.now_music)
         PlayMusic('bgm_lastword')
         lstg.var.now_music = 'bgm_lastword'
