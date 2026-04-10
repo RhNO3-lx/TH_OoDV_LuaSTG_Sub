@@ -56,6 +56,12 @@ LoadImage("rank_Hard", "ui_rank", 0, 64, 144, 32)
 LoadImage("rank_Lunatic", "ui_rank", 0, 96, 144, 32)
 LoadImage("rank_Extra", "ui_rank", 0, 128, 144, 32)
 
+LoadTexture("dif_normal", "THlib/UI/difficulty-normal.png")
+LoadImage("dif_normal", "dif_normal", 0, 0, 400, 200)
+
+LoadTexture("dif_lunatic", "THlib/UI/difficulty-lunatic.png")
+LoadImage("dif_lunatic", "dif_lunatic", 0, 0, 400, 200)
+
 ui.menu = {
     font_size = 0.675,
     line_height = 28,
@@ -80,7 +86,9 @@ ui.menu = {
     op_right_off = 200,
     chbox_off = 50,
     manual_item_off = -300,
-    music_item_off = -280
+    music_item_off = -280,
+    img_posy = {230, 130},
+    img_posy_pr = {230, 130}
 }
 
 ui.menu_bulr = 0
@@ -182,6 +190,67 @@ function ui.DrawMenuTTFBlack(ttfname, title, text, pos, x, y, alpha, timer, shak
             RenderTTF2(ttfname, text[i], x, x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(0xFF000000), align, "vcenter", "noclip")
         end
     end
+end
+
+function ui.DrawDifSelect(ttfname, title, text, po, x, y, alpha, timer, shake, is_pr, text_offx, align)
+    -- print(ui.menu.img_posy)
+    local img_posy
+    if not is_pr then
+        img_posy = ui.menu.img_posy
+    else
+        img_posy = ui.menu.img_posy_pr
+    end
+    local pos = po
+    if pos == 3 then
+        pos = 1
+    end
+    --print(pos)
+    local dif_img = {"dif_normal","dif_lunatic"}
+    for i in ipairs(img_posy) do
+        if i==pos then
+            SetImageState(dif_img[i], '', Color(255,255,255,255))
+        else
+            SetImageState(dif_img[i], '', Color(255,100,100,100))
+        end
+    end
+    local _text_offx = text_offx or {}
+    align = align or "center"
+    local yos
+    if title == "" then
+        yos = (#text + 1) * ui.menu.sc_pr_line_height * 0.5
+    else
+        yos = (#text - 1) * ui.menu.sc_pr_line_height * 0.5
+        RenderTTF2(ttfname, title, x, x, 430, 430, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
+    end
+    if img_posy[pos] >= 232 or img_posy[pos] <= 228 then
+        local p = (img_posy[pos]-230)
+        local dir = p/math.abs(p)
+        local vel = p/25+dir
+        for i in ipairs(img_posy) do
+            img_posy[i] = img_posy[i] - vel
+        end
+        --print(img_posy[pos])
+    end
+    for i in ipairs(img_posy) do
+        Render(dif_img[i],x,img_posy[i],0,0.5,0.5)
+    end
+    -- for i = 1, #text do
+    --     local _x = x
+    --     if _text_offx[i] ~= nil then
+    --         _x = x + _text_offx[i]
+    --     end
+    --     if i == pos then
+    --         local color = {}
+    --         local k = cos(timer * ui.menu.blink_speed) ^ 2
+    --         for j = 1, 3 do
+    --             color[j] = ui.menu.focused_color1[j] * k + ui.menu.focused_color2[j] * (1 - k)
+    --         end
+    --         local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
+    --         RenderTTF2(ttfname, text[i], _x + xos, _x + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
+    --     else
+    --         RenderTTF2(ttfname, text[i], _x, _x, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
+    --     end
+    -- end
 end
 
 function ui.DrawRepText(ttfname, title, text, pos, x, y, alpha, timer, shake)
