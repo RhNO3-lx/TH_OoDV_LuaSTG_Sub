@@ -1,10 +1,11 @@
 stage3_bg=Class(object)
-
-local dur_sta1 = 10000
+--start:400
+--measure:200
+local dur_sta1 = 7280
 local t_sta2 = 0 + dur_sta1
-local dur_sta2 = 100--500
+local dur_sta2 = 800
 local t_sta3 = t_sta2 + dur_sta2
-local dur_sta3 = 100--1000
+local dur_sta3 = 3840+2000
 local t_sta4 = t_sta3 + dur_sta3
 local dur_sta4 = 5000
 local t_sta5 = t_sta4 + dur_sta4
@@ -56,8 +57,8 @@ function stage3_bg:init()
     self.tree1num = 14
     self.tree1dx = {}
 
-    self.holex = -2
-    self.holey = -2
+    self.holex = -1.72
+    self.holey = -1.72
     self.resetpos = false
 
     self.rot = 0
@@ -120,16 +121,31 @@ function stage3_bg:frame()
         self.speedz = 0
         self.speedy = -0.001
         self.speedx = -0.001
-        if t > 900 then
-            self.speedx = -((1000-t)/100)*0.001
-            self.speedy = -((1000-t)/100)*0.001
+        if t > 3440 then
+            self.speedx = min(0,-((800-t)/100)*0.001)
+            self.speedy = min(0,-((800-t)/100)*0.001)
+            self.speedz = 0.01
+            Set3D('at',0,-0.5+(t-3440)/1600,1)
+            Set3D('up',0,-1600/(t-4240),1)
+        end
+        if t > 4240 then
+            Set3D('at',0,0,1)
+            Set3D('up',0,1,0)
+            self.speedz = 0.008
+        end
+        if t > 5000 then
+            Set3D("fog",0,0,Color(255,0,0,0))
         end
         self.holex = self.holex-self.speedx
         self.holey = self.holey-self.speedy
+        print(self.x..' '..self.y)
+        --print("holex:"..self.holex.."holey"..self.holey)
     elseif self.timer >= t_sta4 and self.timer <= t_sta5 then
+        Set3D('eye',0,0,-1)
+        local t = self.timer - t_sta4
         Set3D('at',0,0,1) 
         Set3D('up',0,1,0)
-        Set3D("fog",0,6,Color(200,0,0,0))
+        Set3D("fog",0,t/500,Color(200,0,0,0))
         self.statu = 4
         local t = self.timer - t_sta3
         self.speedz = 0
@@ -172,28 +188,37 @@ local function draw_pyramid(vertex,h,w,rot)
     local p4 = {(vertex[1]+radiu*math.sin(rot)),(vertex[2]-(h/2)),(vertex[3]-radiu*math.cos(rot))}
     local P4 = {(vertex[1]+2*radiu*math.sin(rot)),(vertex[2]-h),(vertex[3]-2*radiu*math.cos(rot))}
     local p = {p1,p2,p3,p4}
+    local P = {P1,P2,P3,P4}
     local v_ = {}
     local v = {}
-    RenderTexture("pyramid",'',{vertex[1],vertex[2],vertex[3],256,0,Color(255,255,255,255)},
-                               {vertex[1],vertex[2],vertex[3],256,0,Color(255,255,255,255)},
-                               {p[1][1],p[1][2],p[1][3],0,512,Color(255,255,255,255)},--p[1]
-                               {p2[1],p2[2],p2[3],512,512,Color(255,255,255,255)})--p2
-    --右减左
-    v_ = {p2[1]-p[1][1],p2[3]-p[1][3]}
-    v = {v_[2]/(v_[2]^2+v_[1]^2),-v_[1]/(v_[2]^2+v_[1]^2)}
-                               
-    RenderTexture("pyramid",'',{p[1][1],p[1][2],p[1][3],0,0,Color(255,255,255,255)},
-                               {p2[1],p2[2],p2[3],512,0,Color(255,255,255,255)},
-                               {p2[1]+v[1]*w/2,(vertex[2]-h),p2[3]+v[2]*w/2,512,512,Color(255,255,255,255)},
-                               {p[1][1]+v[1]*w/2,(vertex[2]-h),p[1][3]+v[2]*w/2,0,512,Color(255,255,255,255)})
-    RenderTexture("pyramid",'',{p[1][1],p[1][2],p[1][3],512,0,Color(255,255,255,255)},
-                               {p[1][1],p[1][2],p[1][3],512,0,Color(255,255,255,255)},
-                               {p[1][1]+v[1]*w/2,(vertex[2]-h),p[1][3]+v[2]*w/2,512,512,Color(255,255,255,255)},
-                               {P1[1],(vertex[2]-h),P1[3],256,512,Color(255,255,255,255)})
-    RenderTexture("pyramid",'',{p2[1],p2[2],p2[3],0,0,Color(255,255,255,255)},
-                               {p2[1],p2[2],p2[3],0,0,Color(255,255,255,255)},
-                               {p2[1]+v[1]*w/2,(vertex[2]-h),p2[3]+v[2]*w/2,0,512,Color(255,255,255,255)},
-                               {P2[1],(vertex[2]-h),P2[3],256,512,Color(255,255,255,255)})
+    local itable = {1,2,4,3}
+    for _,i in ipairs(itable) do
+        
+        local other_p_i = i%4+1
+        -- print(i)
+        -- print(other_p_i)
+        RenderTexture("pyramid",'',{vertex[1],vertex[2],vertex[3],256,0,Color(255,255,255,255)},
+                                {vertex[1],vertex[2],vertex[3],256,0,Color(255,255,255,255)},
+                                {p[i][1],p[i][2],p[i][3],0,512,Color(255,255,255,255)},--p[1]
+                                {p[other_p_i][1],p[other_p_i][2],p[other_p_i][3],512,512,Color(255,255,255,255)})--p2
+        --右减左
+        v_ = {p[other_p_i][1]-p[i][1],p[other_p_i][3]-p[i][3]}
+        v = {v_[2]/(v_[2]^2+v_[1]^2),-v_[1]/(v_[2]^2+v_[1]^2)}
+                                
+        RenderTexture("pyramid",'',{p[i][1],p[i][2],p[i][3],0,0,Color(255,255,255,255)},
+                                {p[other_p_i][1],p[other_p_i][2],p[other_p_i][3],512,0,Color(255,255,255,255)},
+                                {p[other_p_i][1]+v[1]*w/2,(vertex[2]-h),p[other_p_i][3]+v[2]*w/2,512,512,Color(255,255,255,255)},
+                                {p[i][1]+v[1]*w/2,(vertex[2]-h),p[i][3]+v[2]*w/2,0,512,Color(255,255,255,255)})
+        RenderTexture("pyramid",'',{p[i][1],p[i][2],p[i][3],512,0,Color(255,255,255,255)},
+                                {p[i][1],p[i][2],p[i][3],512,0,Color(255,255,255,255)},
+                                {p[i][1]+v[1]*w/2,(vertex[2]-h),p[i][3]+v[2]*w/2,512,512,Color(255,255,255,255)},
+                                {P[i][1],(vertex[2]-h),P[i][3],256,512,Color(255,255,255,255)})
+        RenderTexture("pyramid",'',{p[other_p_i][1],p[other_p_i][2],p[other_p_i][3],0,0,Color(255,255,255,255)},
+                                {p[other_p_i][1],p[other_p_i][2],p[other_p_i][3],0,0,Color(255,255,255,255)},
+                                {p[other_p_i][1]+v[1]*w/2,(vertex[2]-h),p[other_p_i][3]+v[2]*w/2,0,512,Color(255,255,255,255)},
+                                {P[other_p_i][1],(vertex[2]-h),P[other_p_i][3],256,512,Color(255,255,255,255)})
+    end
+    --print("_______________________________________")
 
 
 
@@ -331,8 +356,8 @@ function stage3_bg:render()
         draw_tree1(self.tree1dx,dy,dz,self.tree1num-1,self.tree1itv)
     end
     if statu == 3 then
-        local dx=-math.mod(self.x,1)
-        local dy=-math.mod(self.y,1)
+        local dx=-math.mod(self.x,1)+0.28
+        local dy=-math.mod(self.y,1)+0.28
         local dz=-self.z
         local x_off = -5
         for i = 0,10  do

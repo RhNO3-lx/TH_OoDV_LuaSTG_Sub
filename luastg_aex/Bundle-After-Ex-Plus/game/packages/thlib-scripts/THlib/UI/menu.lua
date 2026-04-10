@@ -399,6 +399,76 @@ do
     end
 end
 
+dif_select = Class(object)
+
+function dif_select:init(title, content, is_pr, keyslot, offx)
+    self.layer = LAYER_TOP
+    self.group = GROUP_GHOST
+    self.alpha = 1
+    self.offx = offx or 0
+    self.x = screen.width * 0.5 - screen.width
+    self.y = screen.height * 0.5
+    self.bound = false
+    self.locked = true
+    self.title = title
+    self.content = content
+    self.text = {}
+    self.func = {}
+    for i = 1, #content do
+        self.text[i] = content[i][1]
+        self.func[i] = content[i][2]
+    end
+    self.is_pr = is_pr
+    self.pos = 1
+    self.pos_pre = 1
+    self.pos_changed = 0
+    self.no_pos_change = false
+    self.keyslot = keyslot
+    if content[#content][1] == 'exit' then
+        self.exit_func = content[#content][2]
+        self.text[#content] = nil
+        self.func[#content] = nil
+    end
+end
+
+function dif_select:frame()
+    task.Do(self)
+    if self.locked then
+        return
+    end
+    if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
+        self.pos = self.pos - 1
+        PlaySound('select00', 0.3)
+    end
+    if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
+        self.pos = self.pos + 1
+        PlaySound('select00', 0.3)
+    end
+    self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
+    --print("after framepos:"..self.pos)
+    if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
+        self.func[self.pos]()
+        PlaySound('ok00', 0.3)
+    elseif KeyIsPressed('spell', self.keyslot) and self.exit_func then
+        self.exit_func()
+        PlaySound('cancel00', 0.3)
+    end
+    if self.pos_changed > 0 then
+        self.pos_changed = self.pos_changed - 1
+    end
+    if self.pos_pre ~= self.pos then
+        self.pos_changed = ui.menu.shake_time
+    end
+    self.pos_pre = self.pos
+end
+
+function dif_select:render()
+    SetViewMode('ui')
+    -- print("text index:"..#(self.text))
+    --print("render pos:"..self.pos)
+    ui.DrawDifSelect("menuttf", self.title, self.text, self.pos, self.x + self.offx, self.y, self.alpha, self.timer, self.pos_changed, self.is_pr)
+end
+
 replay_saver = Class(object)
 
 function replay_saver:init(stages, finish, exitCallback)

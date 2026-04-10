@@ -297,7 +297,7 @@ function stage_menu:init()
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_difficulty_select, 'right')
     end })
-    menu_difficulty_select = New(simple_menu, 'Select Difficulty', menu_items)
+    menu_difficulty_select = New(dif_select, 'Select Difficulty', menu_items, true)
     menu_difficulty_select.pos = scoredata.difficulty_select or 1
     --
     menu_items = {}
@@ -352,14 +352,14 @@ function stage_menu:init()
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_difficulty_select_pr, 'right')
     end })
-    menu_difficulty_select_pr = New(simple_menu, 'Select Difficulty', menu_items)
+    menu_difficulty_select_pr = New(dif_select, 'Select Difficulty', menu_items, false)
     --
     for _, sg in ipairs(stage.groups) do  
         if stage.groups[sg].allow_practice then  
             local menu_items = {}  
             for _, s in ipairs(stage.groups[sg]) do  
                 if stage.stages[s].allow_practice then  
-                    -- 过滤掉包含"Ending"的stage  
+                    -- 过滤掉包含"Ending"的stage
                     if not string.find(s, "Ending") then  
                         table.insert(menu_items, { string.match(s, "^[%w_][%w_ ]*"), function()  
                             menu.FlyOut(menu_practice[sg], 'left')  
