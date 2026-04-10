@@ -2779,10 +2779,10 @@
 6,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
 7,{"$type":".Object.Del, ","Attributes":[{"attrCap":"Target","attrInput":"self","EditWindow":"target"},{"attrCap":"Trigger event","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
 5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local rot = 5*sin(self.timer*2)-3\r\nlocal dpos = 3*cos(self.timer*2)\r\nself.rot = rot\r\nself.y = self.y + dpos\r\nprint(self.rot,self.y)","EditWindow":"code"}],"AttributeCount":1}
-3,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"nina-sc1","EditWindow":""}],"AttributeCount":1,"IsExpanded":false}
+3,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"nina-sc1","EditWindow":""}],"AttributeCount":1}
 4,{"$type":".Bullet.BulletDefine, ","Attributes":[{"attrCap":"Name","attrInput":"ninasc-bubble","EditWindow":""},{"attrCap":"Difficulty","attrInput":"All","EditWindow":"objDifficulty"}],"AttributeCount":2}
 5,{"$type":".Bullet.BulletInit, ","Attributes":[{"attrCap":"Parameter List","attrInput":"co,t1x,t1y,parent,a0","EditWindow":""},{"attrCap":"Style","attrInput":"ball_huge","EditWindow":"bulletStyle"},{"attrCap":"Color","attrInput":"co","EditWindow":"color"},{"attrCap":"Stay on create","attrInput":"false","EditWindow":"bool"},{"attrCap":"Destroyable","attrInput":"false","EditWindow":"bool"}],"AttributeCount":5}
-6,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"self.hscale,self.vscale=0.50,0.50\r\nself.p=parent\r\nself.bound=false\r\nself.colli=false\r\nbullet.skip_fade_in(self)","EditWindow":"code"}],"AttributeCount":1}
+6,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"self.sc=0.5\r\nself.hscale,self.vscale=self.sc,self.sc\r\nself.oria,self.orib=self.a,self.b\r\nself.a,self.b=self.oria*self.sc,self.orib*self.sc\r\nself.p=parent\r\nself.bound=false\r\nself.colli=false\r\nbullet.skip_fade_in(self)","EditWindow":"code"}],"AttributeCount":1}
 6,{"$type":".Object.SetBlend, ","Attributes":[{"attrCap":"Target","attrInput":"self","EditWindow":"target"},{"attrCap":"Blend Mode","attrInput":"\"\"","EditWindow":"blend"},{"attrCap":"ARGB","attrInput":"0,255,255,255","EditWindow":"ARGB"}],"AttributeCount":3}
 6,{"$type":".Task.TaskNode, ","Attributes":[]}
 7,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"--local t_total=120\r\nlocal t1=70\r\n--local t2=t_total-t1","EditWindow":"code"}],"AttributeCount":1}
@@ -2809,7 +2809,7 @@
 9,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
 8,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local r=dest_r\r\nlocal a=aa\r\nself.x,self.y=self.p.x+r*cos(a),self.p.y+r*sin(a)","EditWindow":"code"}],"AttributeCount":1}
 7,{"$type":".Task.TaskNode, ","Attributes":[]}
-8,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local ch,cv=self.hscale,self.vscale\r\nlocal th,tv=0.27,0.27\r\nlocal ta=170","EditWindow":"code"}],"AttributeCount":1}
+8,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local ch,cv=self.hscale,self.vscale\r\nlocal th,tv=0.27,0.27\r\nlocal ta=170","EditWindow":"code"}],"AttributeCount":1,"IsSelected":true}
 8,{"$type":".General.Repeat, LuaSTGEditorSharp","Attributes":[{"attrCap":"Times","attrInput":"300","EditWindow":"yield"},{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"lambda","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 increment","attrInput":"-1/300","EditWindow":""}],"AttributeCount":5}
 9,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"1","EditWindow":"yield"}],"AttributeCount":1}
 9,{"$type":".Object.SetBlend, ","Attributes":[{"attrCap":"Target","attrInput":"self","EditWindow":"target"},{"attrCap":"Blend Mode","attrInput":"\"mul+add\"","EditWindow":"blend"},{"attrCap":"ARGB","attrInput":"200*lambda+ta*(1-lambda),255,255,255","EditWindow":"ARGB"}],"AttributeCount":3}
@@ -2913,6 +2913,7 @@
 11,{"$type":".General.Break, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"","EditWindow":""}],"AttributeCount":1}
 10,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
 7,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.lock=false\r\nlstg.var.block_shoot=false","EditWindow":"code"}],"AttributeCount":1}
+7,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.collect_line=110","EditWindow":"code"}],"AttributeCount":1}
 4,{"$type":".Boss.BossSpellCard, ","Attributes":[{"attrCap":"Name","attrInput":"","EditWindow":"SCName"},{"attrCap":"Protect time (sec)","attrInput":"54","EditWindow":""},{"attrCap":"DMG redu. time (sec)","attrInput":"54","EditWindow":""},{"attrCap":"Total time (sec)","attrInput":"54","EditWindow":""},{"attrCap":"Hit point","attrInput":"600","EditWindow":""},{"attrCap":"Drop power","attrInput":"0","EditWindow":""},{"attrCap":"Drop faith","attrInput":"0","EditWindow":""},{"attrCap":"Drop point","attrInput":"0","EditWindow":""},{"attrCap":"Immune to bomb","attrInput":"false","EditWindow":"bool"},{"attrCap":"Performing action","attrInput":"false","EditWindow":"bool"},{"attrCap":"Optional ID","attrInput":"","EditWindow":""}],"AttributeCount":11,"IsExpanded":false}
 5,{"$type":".Boss.BossSCBeforeStart, ","Attributes":[]}
 5,{"$type":".Boss.BossSCStart, ","Attributes":[]}
@@ -3914,7 +3915,7 @@
 5,{"$type":".Stage.StageGoto, ","Attributes":[{"attrCap":"StageIndex","attrInput":"2","EditWindow":""}],"AttributeCount":1}
 3,{"$type":".Stage.Stage, ","Attributes":[{"attrCap":"Name","attrInput":"Stage2","EditWindow":""},{"attrCap":"Start life (practice)","attrInput":"2","EditWindow":""},{"attrCap":"Start power (practice)","attrInput":"200","EditWindow":""},{"attrCap":"Start faith (practice)","attrInput":"50000","EditWindow":""},{"attrCap":"Start bomb (practice)","attrInput":"2","EditWindow":""},{"attrCap":"Allow practice","attrInput":"true","EditWindow":"bool"}],"AttributeCount":6}
 4,{"$type":".Task.TaskNode, ","Attributes":[]}
-5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"Initialize","EditWindow":""}],"AttributeCount":1}
+5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"Initialize","EditWindow":""}],"AttributeCount":1,"IsExpanded":false}
 6,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"---!here to load music and stage background","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
 6,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"---!this is a comment with child","EditWindow":""},{"attrCap":"Comment on child","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2,"IsExpanded":false}
 6,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local bg=New(stage1_bg)","EditWindow":"code"}],"AttributeCount":1}
@@ -3962,9 +3963,9 @@
 8,{"$type":".General.IfThen, LuaSTGEditorSharp","Attributes":[]}
 9,{"$type":".General.Break, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"","EditWindow":""}],"AttributeCount":1}
 8,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
-5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.lock=false","EditWindow":"code"}],"AttributeCount":1,"IsSelected":true}
+5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.lock=false","EditWindow":"code"}],"AttributeCount":1}
 5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"60","EditWindow":"yield"}],"AttributeCount":1}
-5,{"$type":".Task.TaskNode, ","Attributes":[]}
+5,{"$type":".Task.TaskNode, ","Attributes":[],"IsExpanded":false}
 6,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"hint\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"\"现在可以发射弹幕了，按z键射击\\n也许可以借助射击清除一些棘手的敌人\"","EditWindow":"objectParam"}],"AttributeCount":3}
 6,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"240","EditWindow":"yield"}],"AttributeCount":1}
 6,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"hint\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"\"但把敌人打爆之后有可能会出现不太好的事\\n请适当决策\"","EditWindow":"objectParam"}],"AttributeCount":3}
@@ -3972,7 +3973,7 @@
 6,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"hint\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"\"尝试收集power，让子机的数量达到4个吧\"","EditWindow":"objectParam"}],"AttributeCount":3}
 6,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"240","EditWindow":"yield"}],"AttributeCount":1}
 6,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"hint\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"self.x,self.y","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"\"（目前stage2还没做完，但可以展示一下完整版的角色立绘，以及背景渲染效果）\", 180, {240,130,210}","EditWindow":"objectParam"}],"AttributeCount":3,"IsBanned":true}
-5,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"phase1","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
+5,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"phase1","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2,"IsExpanded":false}
 6,{"$type":".General.Repeat, LuaSTGEditorSharp","Attributes":[{"attrCap":"Times","attrInput":"_infinite","EditWindow":"yield"},{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"i","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"0","EditWindow":""},{"attrCap":"Var 1 increment","attrInput":"1","EditWindow":""}],"AttributeCount":5}
 7,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"45","EditWindow":"yield"}],"AttributeCount":1}
 7,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local s=ran:Int(1,3)\r\n\r\nlocal s2=ran:Int(2,4)\r\nlocal s3=ran:Int(2,4)\r\nlocal s4=ran:Int(2,3)\r\n\r\nlocal cx,cy=misc_ex.RandomCoor(1)\r\nlocal cx2,cy2=misc_ex.RandomCoor(2)\r\nlocal cx3,cy3=misc_ex.RandomCoor(3)\r\nlocal cx4,cy4=misc_ex.RandomCoor(4)\r\n\r\nlocal xtable={cx,cx2,cx3,cx4}\r\nlocal ytable={cy,cy2,cy3,cy4}\r\nlocal t=ran:Int(1,4)\r\nlocal t2=ran:Int(1,4)\r\nlocal t3=ran:Int(1,4)","EditWindow":"code"}],"AttributeCount":1}
@@ -3997,7 +3998,7 @@
 9,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"60","EditWindow":"yield"}],"AttributeCount":1}
 9,{"$type":".General.Break, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"","EditWindow":""}],"AttributeCount":1}
 8,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
-5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"transition","EditWindow":""}],"AttributeCount":1}
+5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"transition","EditWindow":""}],"AttributeCount":1,"IsExpanded":false}
 6,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.slow=0\r\nplayer.lock=true\r\nlstg.var.block_shoot=true","EditWindow":"code"}],"AttributeCount":1}
 6,{"$type":".Object.GroupForEach, ","Attributes":[{"attrCap":"Group","attrInput":"GROUP_FOOD","EditWindow":"group"}],"AttributeCount":1}
 7,{"$type":".Object.Del, ","Attributes":[{"attrCap":"Target","attrInput":"unit","EditWindow":"target"},{"attrCap":"Trigger event","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
@@ -4086,7 +4087,7 @@
 9,{"$type":".General.Break, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"","EditWindow":""}],"AttributeCount":1}
 8,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
 5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.lock=false\r\nlstg.var.block_shoot=false","EditWindow":"code"}],"AttributeCount":1}
-5,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"phase3","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
+5,{"$type":".General.Comment, LuaSTGEditorSharp","Attributes":[{"attrCap":"Comment","attrInput":"phase3","EditWindow":""},{"attrCap":"Comment on child","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2,"IsExpanded":false}
 6,{"$type":".General.Repeat, LuaSTGEditorSharp","Attributes":[{"attrCap":"Times","attrInput":"_infinite","EditWindow":"yield"},{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"i","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"0","EditWindow":""},{"attrCap":"Var 1 increment","attrInput":"1","EditWindow":""}],"AttributeCount":5}
 7,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"45","EditWindow":"yield"}],"AttributeCount":1}
 7,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"local s=ran:Int(1,3)\r\n\r\nlocal s2=ran:Int(2,5)\r\nlocal s3=ran:Int(2,5)\r\nlocal s4=ran:Int(2,4)\r\n\r\nlocal cx,cy=misc_ex.RandomCoor(1)\r\nlocal cx2,cy2=misc_ex.RandomCoor(2)\r\nlocal cx3,cy3=misc_ex.RandomCoor(3)\r\nlocal cx4,cy4=misc_ex.RandomCoor(4)\r\n\r\nlocal xtable={cx,cx2,cx3,cx4}\r\nlocal ytable={cy,cy2,cy3,cy4}\r\nlocal t=ran:Int(1,4)\r\nlocal t2=ran:Int(1,4)\r\nlocal t3=ran:Int(1,4)","EditWindow":"code"}],"AttributeCount":1}
@@ -4126,6 +4127,7 @@
 8,{"$type":".General.IfElse, LuaSTGEditorSharp","Attributes":[]}
 5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"270","EditWindow":"yield"}],"AttributeCount":1}
 5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"renseki_player.ChangeColor(player,255,210,210,210)\r\nplayer.MinLightRange=340\r\nplayer.MaxLightRange=460\r\nlstg.var.block_spell=true\r\nm.al=160\r\nlstg.var.MinPower=300","EditWindow":"code"}],"AttributeCount":1}
+5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.collect_line=-400","EditWindow":"code"}],"AttributeCount":1}
 5,{"$type":".Boss.CreateBoss, ","Attributes":[{"attrCap":"Name","attrInput":"\"pyramid\"","EditWindow":"bossDef"},{"attrCap":"Wait","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
 5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"transition2","EditWindow":""}],"AttributeCount":1}
 6,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.slow=0\r\nplayer.lock=true\r\nlstg.var.block_shoot=true","EditWindow":"code"}],"AttributeCount":1}
