@@ -35,7 +35,7 @@ float2 Distortion(float2 xy, float2 delta, float delta_len)
 	float k = delta_len / effect_size;
 	float p = pow(1.0f - k, 0.75f);//pow((k - 1.0f), 0.75f);
 	float arg = effect_arg * p;
-	float2 delta1 = float2(sin(1.75f * 2.0f * PI * delta.x + 0.05f * delta_len + timer / 20.0f), sin(1.75f * 2.0f * PI * delta.y + 0.05f * delta_len + timer / 24.0f)); // 1.75f 此项越高，波纹越“破碎”
+	float2 delta1 = float2(sin(1.75f * 2.0f * PI * delta.x + 0.05f * delta_len + timer / 20.0f), sin(1.75f * 2.0f * PI * delta.y + 0.05f * delta_len + timer / 20.0f)); // 1.75f 此项越高，波纹越“破碎”
 	float delta2 = arg * sin(0.005f * 2.0f * PI * delta_len+ timer / 40.0f); // 0.005f 此项越高，波纹越密
 	return delta1 * delta2; // delta1：方向向量，delta2：向量长度，即返回像素移动的方向和距离
 }
