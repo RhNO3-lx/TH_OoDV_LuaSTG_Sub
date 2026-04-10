@@ -11,7 +11,7 @@ local manual_content = {
         { "text", -150, 50, "", "这是注意躲避比自己打的敌人，\n吃掉比自己小的敌人积攒power的游戏。\n每一关都有通关所需的power量，\n积攒足够的power后就过关了。", 0.675 },
     },
     {
-        { "text", 0, 0, "", "this is the second option", 1 }
+        --{ "text", 0, 0, "", "this is the second option", 1 }
     }
 }
 ---musicroom介绍文本定义

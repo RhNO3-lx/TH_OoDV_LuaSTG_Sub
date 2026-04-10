@@ -138,7 +138,7 @@ function stage3_bg:frame()
         end
         self.holex = self.holex-self.speedx
         self.holey = self.holey-self.speedy
-        print(self.x..' '..self.y)
+        --print(self.x..' '..self.y)
         --print("holex:"..self.holex.."holey"..self.holey)
     elseif self.timer >= t_sta4 and self.timer <= t_sta5 then
         Set3D('eye',0,0,-1)
