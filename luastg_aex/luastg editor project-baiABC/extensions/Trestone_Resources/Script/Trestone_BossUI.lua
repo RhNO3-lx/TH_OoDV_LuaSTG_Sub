@@ -151,6 +151,7 @@ function Trestone_Boss_Magic:init(target, tm)
     self.swing = 0
     self._aph = 128
     self.current_aph = self._aph
+    self.hide=false
 end
 
 function Trestone_Boss_Magic:frame()
@@ -185,6 +186,8 @@ function Trestone_Boss_Magic:frame()
 end
 
 function Trestone_Boss_Magic:render()
+    if self.hide then return end
+
     local boss = self.target
     if not IsValid(boss) then
         return
@@ -916,7 +919,7 @@ function RhNO3_lx_hp_bar:render()
         ---! 衬底用的血条
         SetImageState("hpbar2", "", Color(0, 255, 255, 255))
         SetImageState("life_node", "", Color(alpha1 * 255, 255, 255, 255))
-        print("rendering hp bar")
+        -- print("rendering hp bar")
 
         local mode = b.__hpbartype
         if mode == -1 then
@@ -928,7 +931,9 @@ function RhNO3_lx_hp_bar:render()
             if b.sp_point and #b.sp_point ~= 0 then
                 for i = 1, #b.sp_point do
                     Render("life_node", self.x + 61 * cos(b.sp_point[i]), self.y + 61 * sin(b.sp_point[i]), b.sp_point[i] - 90, 0.5)
+                    
                 end
+                -- print("rendering sp point ")
             end
             if b._sp_point_auto and #b._sp_point_auto ~= 0 then
                 local p, a
