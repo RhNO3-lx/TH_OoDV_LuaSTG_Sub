@@ -60,13 +60,14 @@ function EatCollider:colli(other)
 			lstg.New(renseki_hit_effect,self.x,self.y,self)
 		elseif other.a < self.a then
 			---触发咬了别人的效果
-			if other.kill_flag~=true then 
+			-- if other.kill_flag~=true then 
 				GetPower(other.EatPowerBonus)
 				self.p.TargetLightRange=self.p.TargetLightRange+other.EatLightBonus
 				PlaySound("lgodsget",0.4)
 				other.eaten=true
-				other.kill_flag=true
-			end
+				Kill(other)
+			-- 	other.kill_flag=true
+			-- end
 			---todo: 对于food，同样注册他的colli函数，以便我们额外定义被咬死之后的效果
 			---至于food的判定大小显示，考虑：
 			---1.加入鱼的属性字段，随后通过在外面创建一个task，组遍历，挨个按属性绘制碰撞范围
@@ -124,6 +125,7 @@ function renseki_player:init(slot)
 	
 	---self.testvar=1
 	player_class.init(self)
+	misc_ex.InitializeSystem()
 
 	---todo: regist extra frame event here
 	--self._playersys:addFrameBeforeEvent("test",1,function()

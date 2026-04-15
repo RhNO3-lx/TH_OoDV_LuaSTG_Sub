@@ -68,4 +68,5 @@ function misc_ex.InitializeSystem()
     lstg.var.ShowBomb=true
     lstg.var.ShowPower=true
     lstg.var.ShowBackground=true
+    lstg.var.allow_continue=true
 end
