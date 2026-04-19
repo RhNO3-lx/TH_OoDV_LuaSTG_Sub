@@ -245,7 +245,7 @@ function background.WarpEffectApply()
         local fxr = _boss.fxr or 203
         local fxg = _boss.fxg or 163
         local fxb = _boss.fxb or 224
-        PostEffect(WARP_EFFECT_NAME, RENDER_BUFFER_NAME, 6, "",
+        PostEffect(WARP_EFFECT_NAME, RENDER_BUFFER_NAME, 6, "mul+alpha",
             {
                 { x1, y1, 0.0, 0.0 }, -- centerX, centerY, 后面两个 0 只是用于填充成 float4
                 { fxr / 255.0, fxg / 255.0, fxb / 255.0, 125.0 / 255.0 }, -- color

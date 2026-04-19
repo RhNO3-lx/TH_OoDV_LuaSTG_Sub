@@ -53,7 +53,7 @@ function spell_card_ef:init()
             task.Wait()
             self.alpha = self.alpha + 0.02
         end
-        task.Wait(60)
+        task.Wait(20)
         for i = 1, 50 do
             task.Wait()
             self.alpha = self.alpha - 0.02

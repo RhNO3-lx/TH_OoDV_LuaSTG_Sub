@@ -868,17 +868,24 @@ function renseki_bomb1:frame()
 	player.WeakEffectTime=0
 	--New(bomb_bullet_killer,self.x,self.y,self.r*1.6,self.r*1.6,false)
 	--self.timer=self.timer+1
+
+	local SetAttraction=function(unit)
+		local d=Dist(unit,self)
+		local frac=(d/200)*(d/200)
+		local a=max(0.7/frac+0.1,0.15)
+		local maxv=10
+		SetA(unit,a,Angle(unit,self),maxv,0,maxv,true)
+	end
 	if self.timer>30 then
 		for _,unit in ObjList(GROUP_ENEMY_BULLET) do
 			if(IsValid(unit)) then
+				task.Clear(unit)
+				SetAttraction(unit)
 				local d=Dist(unit,self)
-				local frac=(d/170)*(d/170)
-				local a=max(0.5/frac,0.1)
-				_set_a(unit,a,Angle(unit,self),false)
 				unit.navi=true
-				if(d<self.absorb+60+ran:Float(-10,10)) then
-					unit._angle=Angle(unit,self)
-				end
+				-- if(d<self.absorb+60+ran:Float(-10,10)) then
+				-- 	unit._angle=Angle(unit,self)
+				-- end
 				if(d<self.absorb+ran:Float(-40,40)) then
 					if(ran:Float(0,1)<0.3) then
 						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit)+ran:Float(-4,4),self.target,900,2,false)
@@ -891,11 +898,13 @@ function renseki_bomb1:frame()
 
 		for _,unit in ObjList(GROUP_FOOD) do
 			if(IsValid(unit)) then
-				_set_a(unit,0.3,Angle(unit,self),false)
-				unit.navi=true
-				if(Dist(unit,self)<self.absorb+60+ran:Float(-10,10)) then
-					unit._angle=Angle(unit,self)
-				end
+				task.Clear(unit)
+				SetAttraction(unit)
+				-- _set_a(unit,0.3,Angle(unit,self),false)
+				-- unit.navi=true
+				-- if(Dist(unit,self)<self.absorb+60+ran:Float(-10,10)) then
+				-- 	unit._angle=Angle(unit,self)
+				-- end
 			end
 		end
 		---闪烁粒子

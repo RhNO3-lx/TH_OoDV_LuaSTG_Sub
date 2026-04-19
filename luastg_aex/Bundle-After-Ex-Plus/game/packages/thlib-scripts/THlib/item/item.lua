@@ -118,6 +118,7 @@ end
 
 function item:frame()
     local player = self.target
+    if self.timer>=24 then self.rot=0 end
     if self.timer < 24 then
         self.rot = self.rot + 45
         self.hscale = (self.timer + 25) / 48

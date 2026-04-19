@@ -332,6 +332,7 @@ function bg:AddLayer(img, tile, x, y, rot, vx, vy, omiga, blend, hscale, vscale,
 end
 
 function bg:frame()
+    task.Do(self)
     for _, l in ipairs(self.layers) do
         l.x = l.x + l.vx
         l.y = l.y + l.vy
@@ -350,7 +351,8 @@ function bg:render()
     prepareRenderTexture(self, self.layers)
     SetViewMode("world")
     if self.alpha > 0 then
-        local showboss = lstg.IsValid(lstg.tmpvar.bg) and not lstg.tmpvar.bg.hide
+        --local showboss = lstg.IsValid(lstg.tmpvar.bg) and not lstg.tmpvar.bg.hide
+        local showboss = true
         if showboss then
             background.WarpEffectCapture()
         end
