@@ -23,7 +23,13 @@ DialogAttri={
 -- end
 ---@param sentences table{{text,color,size,font,func},...}
 ---func 函数里可以定义与角色立绘有关的事件
-function DialogDisplayer:init(sentences)
+function DialogDisplayer:init(sentences,EnableShoot,ClearScreen)
+    self.ClearScreen=ClearScreen or true
+    self.EnableShoot=EnableShoot or false
+
+    if(not self.EnableShoot) then lstg.var.block_shoot=true end
+    if(ClearScreen) then misc_ex.ClearScreen() end
+
     self.img="dialog_box_ext"
     self.ShowBackground=true
     self.CharacterList={}---约定：表内字段格式："charactername","character_image"
@@ -135,6 +141,7 @@ function DialogDisplayer:RemoveChara(self,name)
 end
 
 function DialogDisplayer:del()
+    if(not self.EnableShoot) then lstg.var.block_shoot=false end
     for k,v in pairs(self.CharacterList) do
         if IsValid(v) then
             CharacterDisplayer.FadeOut(v)

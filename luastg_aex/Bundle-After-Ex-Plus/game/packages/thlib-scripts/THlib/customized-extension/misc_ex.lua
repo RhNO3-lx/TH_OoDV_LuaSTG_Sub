@@ -70,3 +70,18 @@ function misc_ex.InitializeSystem()
     lstg.var.ShowBackground=true
     lstg.var.allow_continue=true
 end
+
+function misc_ex.ClearScreen()
+    for _,unit in ObjList(GROUP_FOOD) do
+        _del(unit,true)
+    end
+    for _,unit in ObjList(GROUP_INDES) do
+        _del(unit,true)
+    end
+    local origin_collectline=player.collect_line
+    player.collect_line=-400
+    task.New(player, function()
+        task.Wait(2)
+        player.collect_line=origin_collectline
+        end)
+end
