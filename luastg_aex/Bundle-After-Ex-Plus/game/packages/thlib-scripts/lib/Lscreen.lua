@@ -225,12 +225,12 @@ function SetWorld(l, b, w, h, bound, m)
             m
     )
     SetBound(lstg.world.boundl, lstg.world.boundr, lstg.world.boundb, lstg.world.boundt)
-    print("in setworld:")
-    local tmp=""
-    for k,v in pairs(lstg.world) do
-        tmp=tmp..k..":"..v..","
-    end
-    print(tmp)
+    -- print("in setworld:")
+    -- local tmp=""
+    -- for k,v in pairs(lstg.world) do
+    --     tmp=tmp..k..":"..v..","
+    -- end
+    -- print(tmp)
 end
 
 ----------------------------------------

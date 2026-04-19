@@ -55,7 +55,7 @@ function hinter:frame()
 end
 function hinter:render()
     SetViewMode("ui")
-    print("enter render")
+    -- print("enter render")
     if self.fade then
         SetImageState(self.img, '', Color(self.t * 255, 255, 255, 255))
         self.vscale = self.size

@@ -723,7 +723,7 @@ end
 local time_rate = 1000 / (1000 / 60)
 ---符卡结算
 function system:popSpellResult()
-    print("enter popSpellResult")
+    -- print("enter popSpellResult")
     local b = self.boss
     if b.chip_bonus and b.bombchip_bonus and b.sc_bonus then
         if b.hp <= 0 then
@@ -743,7 +743,7 @@ function system:popSpellResult()
         b._timer = b.timer
         b._timeout = b.timeout
     end
-    print(b.is_sc)
+    -- print(b.is_sc)
     local t = self.clock:GetElapsed() * time_rate
     b._real_timer = t
     b.timeout = nil
@@ -918,15 +918,15 @@ function system:resultSpell(info)
     if self.boss.__resultType == "th15" then
         yoffset = th15yoffset
     end
-    print(info.is_sc)
-    print(info.getcard)
+    -- print(info.is_sc)
+    -- print(info.getcard)
     if info.is_sc then
         if info.getcard then
             local score = info.score - info.score % 10
             lstg.var.score = lstg.var.score + score
             PlaySound('cardget', 1.0, 0)
             --New(hinter_bonus, 'hint.getbonus', 0.6, 0, yoffset[1], 15, 120, true, score)
-            print("enter resultspell")
+            -- print("enter resultspell")
             New(hinter, 'hint.getbonus', 0.6, 0, yoffset[1], 15, 120)
             --New(kill_timer, 0, yoffset[2], info.current_timer)
             --New(kill_timer2, 0, yoffset[3], info.real_timer)

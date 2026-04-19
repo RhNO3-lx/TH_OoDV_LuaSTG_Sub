@@ -4,8 +4,10 @@
 
 local function getBossClass()
 	if lstg.var.sc_index and lstg.var.sc_index > 0 then
+        -- print("enter boss: load boss class: " .. _sc_table[lstg.var.sc_index][1])
 		return _editor_class[_sc_table[lstg.var.sc_index][1]]
 	elseif lstg.var.sc_pr_data then
+        -- print("enter boss: load boss class: sc_pr data" .. lstg.var.sc_pr_data.class_name)
 		return _editor_class[lstg.var.sc_pr_data.class_name]
 	else
 		error("unknown error")
@@ -55,9 +57,11 @@ stage.group.DefStageFunc('Spell Practice@Spell Practice', 'init', function(self)
     New(_G[lstg.var.player_name])
     task.New(self, function()
         local boss_class = getBossClass()
+        print(boss_class.bgm)
 		local boss_scene = getBossScene()
         do
             if boss_class.bgm ~= "" then
+                -- print("enter boss: load music record: " .. boss_class.bgm)
                 LoadMusicRecord(boss_class.bgm)
             else
                 LoadMusicRecord('spellcard')
@@ -70,17 +74,34 @@ stage.group.DefStageFunc('Spell Practice@Spell Practice', 'init', function(self)
         end
         task._Wait(30)
         local _, bgm = EnumRes('bgm')
-        for _, v in pairs(bgm) do
-            if GetMusicState(v) ~= 'stopped' then
-                ResumeMusic(v)
+        --#region 修复bgm加载问题
+        -- print("bgm in res: " .. table.concat(bgm, ", "))
+        -- print("sizeof bgm in res: " .. #bgm)
+        -- 什么b玩意，不遵守约定，导致loadmusic加载进去的东西不会被挂上bgm签名
+        -- ————RhNO3-lx
+        -- for _, v in pairs(bgm) do
+        --     if GetMusicState(v) ~= 'stopped' then
+        --         ResumeMusic(v)
+        --     else
+        --         if boss_class.bgm ~= "" then
+        --             _play_music(boss_class.bgm)
+        --         else
+        --             _play_music("spellcard")
+        --         end
+        --     end
+        -- end
+        -- 改成这样就好了
+        if boss_class.bgm ~= "" then
+            if(GetMusicState(boss_class.bgm) ~= 'stopped') then
+                ResumeMusic(boss_class.bgm)
             else
-                if boss_class.bgm ~= "" then
-                    _play_music(boss_class.bgm)
-                else
-                    _play_music("spellcard")
-                end
+                _play_music(boss_class.bgm)
             end
+            --_play_music(boss_class.bgm)
+        else
+            _play_music("spellcard")
         end
+        --#endregion
         local _boss_wait = true
         local _ref
         if isBossSceneIncludePrevious() then

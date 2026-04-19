@@ -24,7 +24,7 @@ function ParticleEx:init( x, y,v,angle,omega,acc,acc_angle,life_time, img,  size
 end
 function ParticleEx:render()
     local t = (self.life_time - self.timer) / self.life_time
-    print("in particleex,timer is:"..self.timer)
+    -- print("in particleex,timer is:"..self.timer)
     local size = self.size * (1-cos(t*360)/2)
     local c = self.color1 * (1-cos(t*360)/2)
     SetImageState(self.img, self.blend, c)

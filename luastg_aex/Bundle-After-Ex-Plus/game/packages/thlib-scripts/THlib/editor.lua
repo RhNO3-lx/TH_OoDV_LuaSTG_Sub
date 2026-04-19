@@ -613,6 +613,7 @@ function _play_music(name, ptime)
     for _, v in pairs(bgm) do
         StopMusic(v)
     end
+    -- print("enter playmusic of boss")
     PlayMusic(name, 1.0, ptime)
 end
 function _pause_music()
@@ -752,10 +753,13 @@ function LoadMusicRecord(name)
     --    end
     --end
     -- 上面的方法有缺陷，符卡练习时一旦重开 tmpvar 就清空了
+    -- print("load music record: " .. name)
     if type(musicrecording[name]) == "table" then
-        if not CheckRes("bgm", name) then
+        --if not CheckRes("bgm", name) then
+
             LoadMusic(name, musicrecording[name][1], musicrecording[name][2], musicrecording[name][3])
-        end
+        --end
+    else print("music record not found: " .. name)
     end
 end
 
