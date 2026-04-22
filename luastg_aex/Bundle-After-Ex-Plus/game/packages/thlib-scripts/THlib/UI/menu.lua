@@ -950,6 +950,8 @@ function options.mode_BGM_and_SE_()
 end
 
 
+
+
 local function applySetting(screenChange)
     if screenChange then
         if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
@@ -1000,8 +1002,6 @@ function options:copyDataToLastSetting()
     last_setting.windowed = not self.control.data["Fullscreen"]
     last_setting.bgmvolume = self.control.content["SetBGMVolume"][self.control.index["SetBGMVolume"]]
     last_setting.sevolume = self.control.content["SetSEVolume"][self.control.index["SetSEVolume"]]
-    last_setting.auto_shoot = self.control.data["AutoShoot"]
-    last_setting.auto_bomb = self.control.data["AutoBomb"]
 end
 
 function options:setDefault()
@@ -1012,8 +1012,6 @@ function options:setDefault()
     self.control.index["SetBGMVolume"] = 21
     self.control.data["SetSEVolume"] = 80
     self.control.index["SetSEVolume"] = 17
-    self.control.data["AutoShoot"] = false
-    self.control.data["AutoBomb"] = false
     options.copyDataToLastSetting(self)
     options.copyDataToSetting()
 end
@@ -1054,8 +1052,6 @@ function options:updateData()
     self.control.data["Fullscreen"] = self.control.data["Fullscreen"]
     self.control.data["SetBGMVolume"] = self.control.content["SetBGMVolume"][self.control.index["SetBGMVolume"]] .. "%"
     self.control.data["SetSEVolume"] = self.control.content["SetSEVolume"][self.control.index["SetSEVolume"]] .. "%"
-    self.control.data["AutoShoot"] = self.control.data["AutoShoot"]
-    self.control.data["AutoBomb"] = self.control.data["AutoBomb"]
 end
 
 function options:updateLastSetting()
@@ -1192,6 +1188,10 @@ function options:createControl()
             self.control.text[i] = self.content[i][1]
             self.control.func[self.control.text[i]] = self.content[i][2]
             self.control.type[self.control.text[i]] = self.content[i][3]
+        elseif self.content[i][3] == "menu" then
+            self.control.text[i] = self.content[i][1]
+            self.control.func[self.control.text[i]] = self.content[i][2]
+            self.control.type[self.control.text[i]] = self.content[i][3]
         else
             --啥都不干
         end
@@ -1216,8 +1216,6 @@ function options:initControl()
             self.control.index["SetSEVolume"] = i
         end
     end
-    self.control.data["AutoShoot"] = cfg.auto_shoot or false
-    self.control.data["AutoBomb"] = cfg.auto_bomb or false
     
 end
 
