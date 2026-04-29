@@ -914,7 +914,7 @@ function renseki_bomb1:frame()
 			local r=ran:Float(self.r*0.45,self.r*0.65)
 			local s=ran:Float(0.65,1.35)
 			local weight=(self.r-r)/self.r
-			pp.DynamicScatter(self,Color((110+ran:Int(-70,50))*weight,10+ran:Int(10,50),180,180+ran:Int(10,50)),r,0,"parimg6",45,s*weight,0,true,0.3,-0.1)
+			pp.DynamicScatter(self.x,self.y,Color((110+ran:Int(-70,50))*weight,10+ran:Int(10,50),180,180+ran:Int(10,50)),r,0,"parimg6",45,s*weight,0,true,self,0.3,-0.1)
 		end
 	end
 	self.x,self.y=player.x,player.y
@@ -946,39 +946,39 @@ function renseki_bomb1:render()
 	SetViewMode("world")
 end
 
-renseki_bomb1_particle=Class(object)
+-- renseki_bomb1_particle=Class(object)
 
-function renseki_bomb1_particle:init(target)
-	self.tar=target
-	self.img="renseki_bomb1_particle"
-	self.hscale=1
-	self.vscale=1
-	self.vy=0
-	self.vx=0
-	self.x=target.x
-	self.y=target.y
-	self.layer=LAYER_PLAYER_BULLET+50 
-	self.group=GROUP_GHOST
-end
+-- function renseki_bomb1_particle:init(target)
+-- 	self.tar=target
+-- 	self.img="renseki_bomb1_particle"
+-- 	self.hscale=1
+-- 	self.vscale=1
+-- 	self.vy=0
+-- 	self.vx=0
+-- 	self.x=target.x
+-- 	self.y=target.y
+-- 	self.layer=LAYER_PLAYER_BULLET+50 
+-- 	self.group=GROUP_GHOST
+-- end
 
-function renseki_bomb1_particle:frame()
-	local t=self.tar
-	if(not IsValid(t)) then Del(self) 
-	else if(t.timer<t.maxlife+20 and t.timer>30) then
-			self.x=t.x
-			self.y=t.y
-			ParticleFire(self)
-		else
-			ParticleStop(self)
-		end
-	end
-end
+-- function renseki_bomb1_particle:frame()
+-- 	local t=self.tar
+-- 	if(not IsValid(t)) then Del(self) 
+-- 	else if(t.timer<t.maxlife+20 and t.timer>30) then
+-- 			self.x=t.x
+-- 			self.y=t.y
+-- 			ParticleFire(self)
+-- 		else
+-- 			ParticleStop(self)
+-- 		end
+-- 	end
+-- end
 
-function renseki_bomb1_particle:render()
-	SetViewMode("world")
-	object.render(self)
-	SetViewMode("world")
-end
+-- function renseki_bomb1_particle:render()
+-- 	SetViewMode("world")
+-- 	object.render(self)
+-- 	SetViewMode("world")
+-- end
 
 ---
 ---! 这个倒是挺有保留的价值

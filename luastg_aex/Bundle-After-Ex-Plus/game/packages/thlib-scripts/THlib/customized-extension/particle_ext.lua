@@ -65,10 +65,10 @@ function ParticlePresets.StaticScatter(obj,co,r,dr,tex,lifetime,size,dsize,Fixed
 
 end
 
-function ParticlePresets.DynamicScatter(obj,co,r,dr,tex,lifetime,size,dsize,FixedAtObj,acc,v0)
+function ParticlePresets.DynamicScatter(x,y,co,r,dr,tex,lifetime,size,dsize,FixedAtObj,obj,acc,v0)
     assert(IsValid(obj), "obj is not valid when parsed to ParticlePresets.StaticScatter")
     task.New(obj, function()
-        local x, y = obj.x, obj.y
+        local x, y = x,y
 
         local nr=r+ran:Float(-dr,dr)
         local a=ran:Float(0,360)
@@ -97,3 +97,4 @@ function ParticlePresets.DynamicScatter(obj,co,r,dr,tex,lifetime,size,dsize,Fixe
     end)
 
 end
+

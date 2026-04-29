@@ -9,6 +9,7 @@ function GameExit()
 end
 
 function FrameFunc()
+    --在发行版中，把这里与debug有关的东西全部注释掉即可
     debugger.update()
     SceneManager.update()
     debugger.layout()
