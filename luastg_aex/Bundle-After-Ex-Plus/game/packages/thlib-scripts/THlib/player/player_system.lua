@@ -312,8 +312,8 @@ local defaultFrameEvent = {
         if abs(self.support - int(lstg.var.power / 100)) < 0.0625 then
             self.support = int(lstg.var.power / 100)
         end
-        self.supportx = self.x + (self.supportx - self.x) * 0.6875
-        self.supporty = self.y + (self.supporty - self.y) * 0.6875
+        self.supportx = self.x + (self.supportx - self.x) * 0.87
+        self.supporty = self.y + (self.supporty - self.y) * 0.87
         if self.protect > 0 then
             self.protect = self.protect - 1
         end

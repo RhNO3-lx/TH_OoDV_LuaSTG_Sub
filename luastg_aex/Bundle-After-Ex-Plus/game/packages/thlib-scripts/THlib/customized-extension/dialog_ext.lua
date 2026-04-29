@@ -294,7 +294,8 @@ function CharacterDisplayer.FadeOut(obj)
             local Current=obj.alp
             assert(IsValid(obj),"wtf?")
             task.Wait(1)
-            obj.alp=obj.alp-Current/15
+            obj.alp=obj.alp-Current/obj.fadeout_time
+            -- obj.alp=obj.alp-Current/15
             ---会在frame中自动设置图片状态
         end
         Del(obj)
