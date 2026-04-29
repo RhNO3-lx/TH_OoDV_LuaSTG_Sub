@@ -853,6 +853,19 @@ function renseki_bomb1:init(x,y,dmg)
 			self.al=255*lambda
 		end
 		New(bomb_bullet_killer,self.x,self.y,500,500,false)
+		for _,unit in ObjList(GROUP_FOOD) do
+			if(IsValid(unit)) then
+				if unit.RemoveFlag==true then
+					Del(unit)
+				end
+				-- _set_a(unit,0.3,Angle(unit,self),false)
+				-- unit.navi=true
+				-- if(Dist(unit,self)<self.absorb+60+ran:Float(-10,10)) then
+				-- 	unit._angle=Angle(unit,self)
+				-- end
+			end
+		end
+
 		PlaySound('slash',0.8)
 		Del(self)
 	end)
@@ -900,6 +913,7 @@ function renseki_bomb1:frame()
 			if(IsValid(unit)) then
 				task.Clear(unit)
 				SetAttraction(unit)
+				unit.RemoveFlag=true
 				-- _set_a(unit,0.3,Angle(unit,self),false)
 				-- unit.navi=true
 				-- if(Dist(unit,self)<self.absorb+60+ran:Float(-10,10)) then
