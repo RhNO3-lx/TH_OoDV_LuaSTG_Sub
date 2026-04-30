@@ -181,7 +181,7 @@ function DialogSentence:init(text,color,CanSkip,size,font,align,alignv,lifetime)
         local attri=self.TextAttri
         for i=1,15 do
             task.Wait(1)
-            attri.color.a=attri.color.a+self.TargetAlpha/30
+            attri.color.a=attri.color.a+self.TargetAlpha/15
         end
         attri.color.a=self.TargetAlpha
     end)
@@ -245,7 +245,9 @@ end
 ---CharaDisplayer
 CharacterDisplayer=Class(object)
 
-function CharacterDisplayer:init(img,x,y,scale)
+function CharacterDisplayer:init(img,x,y,scale,fadein_time,fadeout_time)
+    fadein_time=fadein_time or 0
+    self.fadeout_time=fadeout_time or 0
     self.bound=false
     self.img=img
     self.x=x
@@ -258,10 +260,10 @@ function CharacterDisplayer:init(img,x,y,scale)
     self.IsActive=true---这个变量暂时只用来指示仿官作的效果：角色在说话的时候，则所在图层增高，亮度正常，否则下降
     ---淡入
     task.New(self,function()
-        for i=1,30 do
+        for i=1,fadein_time do
             task.Wait(1)
-            self.alp=self.alp+self.TargetAlpha/30
-            --SetImgState(self,"mul+alpha",self.alpha,255,255,255)
+            self.alp=self.alp+self.TargetAlpha/fadein_time
+             --SetImgState(self,"mul+alpha",self.alpha,255,255,255)
         end
         self.alp=self.TargetAlpha
         --SetImgState(self,"mul+alpha",self.alpha,255,255,255)
@@ -288,11 +290,12 @@ function CharacterDisplayer:render()
 end
 function CharacterDisplayer.FadeOut(obj)
     task.New(obj,function()
-        for i=1,30 do
+        for i=1,obj.fadeout_time do
             local Current=obj.alp
             assert(IsValid(obj),"wtf?")
             task.Wait(1)
-            obj.alp=obj.alp-Current/30
+            obj.alp=obj.alp-Current/obj.fadeout_time
+            -- obj.alp=obj.alp-Current/15
             ---会在frame中自动设置图片状态
         end
         Del(obj)
