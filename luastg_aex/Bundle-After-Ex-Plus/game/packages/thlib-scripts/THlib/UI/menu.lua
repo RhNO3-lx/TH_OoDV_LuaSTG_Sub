@@ -949,7 +949,20 @@ function options.mode_BGM_and_SE_()
     return mode
 end
 
-
+options.keys = {
+        { "launcher.action.left", "keys", "left" },
+        { "launcher.action.right", "keys", "right" },
+        { "launcher.action.up", "keys", "up" },
+        { "launcher.action.down", "keys", "down" },
+        { "launcher.action.slow", "keys", "slow" },
+        { "launcher.action.shoot", "keys", "shoot" },
+        { "launcher.action.spell", "keys", "spell" },
+        { "launcher.action.special", "keys", "special" },
+        { "launcher.action.menu", "keysys", "menu" },
+        { "launcher.action.snapshot", "keysys", "snapshot" },
+        { "launcher.action.repfast", "keysys", "repfast" },
+        { "launcher.action.repslow", "keysys", "repslow" },
+    }
 
 
 local function applySetting(screenChange)
@@ -1091,6 +1104,13 @@ function options:Refresh()
 end
 
 function options:frame()
+    for i,v in pairs(setting.keys) do
+        print("keys:"..setting.keys[i])
+    end
+    for i,v in pairs(setting.keysys) do
+        print("keysys:"..setting.keysys[i])
+    end
+    print("\n")
     task.Do(self)
     if self.locked then
         return
@@ -1217,6 +1237,32 @@ function options:initControl()
         end
     end
     
+end
+
+key_config = Class(object)
+
+function key_config:init(title, content, keyslot, offx)
+    self.layer = LAYER_TOP
+    self.group = GROUP_GHOST
+    self.alpha = 1
+    self.offx = offx or 0
+    self.x = screen.width * 0.5 - screen.width
+    self.y = screen.height * 0.5
+    self.bound = false
+    self.locked = true
+    self.title = title
+    self.content = content
+    self.control = {}
+    options.createControl(self)
+    options.initControl(self)
+    self.pos = 1
+    self.pos_pre = 1
+    self.pos_changed = 0
+    self.no_pos_change = false
+    self.keyslot = keyslot
+    if content[#content][1] == 'exit' then
+        self.exit_func = content[#content][2]
+    end
 end
 
 
