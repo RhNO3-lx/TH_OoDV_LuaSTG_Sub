@@ -1,5 +1,7 @@
 ---! 定义各种有用的小工具
 misc_ex = {}
+local cl=require("THlib.customized-extension.player_death_effect")
+-- local hs=require("laboratory.shader.HSLShift")
 
 ---! 用途：辅助各类丝滑的变化
 ---@param cur number 当前值
@@ -16,18 +18,18 @@ function misc_ex.approach(cur,tar,speed)
     end
 end
 
-function misc_ex.PlayerMiss()
-    local p=player
-    if p.death == 0 and not p.dialog then
-        if p.protect == 0 then
-            PlaySound("pldead00", 0.5)
-            p.death = 100
-        end
-        if other.group == GROUP_ENEMY_BULLET then
-            Del(other)
-        end
-    end
-end
+-- function misc_ex.PlayerMiss()
+--     local p=player
+--     if p.death == 0 and not p.dialog then
+--         if p.protect == 0 then
+--             PlaySound("pldead00", 0.5)
+--             p.death = 100
+--         end
+--         if other.group == GROUP_ENEMY_BULLET then
+--             Del(other)
+--         end
+--     end
+-- end
 
 ---! 用于在player的视野外随机生成对象
 ---@param mode number 1,2,3,4--上下左右
@@ -69,6 +71,8 @@ function misc_ex.InitializeSystem()
     lstg.var.ShowPower=true
     lstg.var.ShowBackground=true
     lstg.var.allow_continue=true
+    PlayerSys.FrozenWhenDead = true
+    cl.colorless_init()
 end
 
 function misc_ex.ClearScreen()

@@ -2,7 +2,7 @@
 ---! therefore, if we want to change player behaviour, like forbid to shoot, change key c behavior
 ---! we only need to edit player scripts in plugins folder
 PlayerSys={}
-PlayerSys.FrozenWhenDead = false
+PlayerSys.FrozenWhenDead = true
 
 lstg.var.block_shoot = false
 --lstg.var.block_spell = false
@@ -89,7 +89,7 @@ local defaultFrameEvent = {
             if lstg.var.SpecialDeathFlag then
                 self.__death_state = 33
             else
-                self.__death_state = 3
+                self.__death_state = 3 --原本是从板下钻上来，现在取消这一环节，遂在此解除硬直
             end
         elseif self.death < 50 and not (self.lock) and not (self.time_stop) then
             if not lstg.var.SpecialDeathFlag then
@@ -111,7 +111,7 @@ local defaultFrameEvent = {
         -- end
     end },
     ["frame.control"] = { 98, function(self, system)
-        if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
+        if self.__death_state >= 3 or self.__death_state == 0 then
             if not self.dialog then
                 if (self.__shoot_flag or player_lib.debug_data.keep_shooting) and self.nextshoot <= 0 and not lstg.var.block_shoot then
                     system:shoot()
@@ -131,7 +131,7 @@ local defaultFrameEvent = {
     ["frame.move"] = { 97, function(self)
         local dx, dy, v = 0, 0, self.hspeed
         --if self.__death_state == 0 then
-        if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
+        if self.death <= 60  then
             if --self.death == 0 and
                 not self.lock then
                 if self.slowlock then
@@ -167,7 +167,7 @@ local defaultFrameEvent = {
         self.__move_dy = dy
     end },
     ["frame.fire"] = { 96, function(self)
-        if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
+        if self.__death_state >= 3 or self.__death_state == 0 then
             if self.__shoot_flag and not self.dialog then
                 self.fire = self.fire + 0.16
             else
@@ -182,7 +182,7 @@ local defaultFrameEvent = {
         end
     end },
     ["frame.itemCollect"] = { 95, function(self)
-        if self.__death_state == 0 or not PlayerSys.FrozenWhenDead then
+        if self.__death_state == 0 then
             if self.y > self.collect_line then
                 for _, o in ObjList(GROUP_ITEM) do
                     local flag = false
@@ -457,7 +457,9 @@ function system:colli(other)
         if p.death == 0 and not p.dialog then
             if p.protect == 0 then
                 PlaySound("pldead00", 0.5)
-                p.death = 100
+                local death_bomb_time=10
+                p.death = 90+death_bomb_time
+                -- SetSuperPause(death_bomb_time)
             end
             if other.group == GROUP_ENEMY_BULLET then
                 Del(other)

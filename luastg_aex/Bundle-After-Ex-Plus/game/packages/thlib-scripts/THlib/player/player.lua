@@ -46,6 +46,8 @@ function player_class:init(slot)
     self.gravity_circle_size = 200
     self.gx = 0
     self.gy = 0
+    self.nopause = true
+    self._pause=0
     lstg.player = self
     player = self
     if not lstg.var.init_player_data then
@@ -150,7 +152,8 @@ end
 function grazer:frame()
     local p = self.player
     local alive = (p.death == 0 or p.death > 90)
-    if alive or not PlayerSys.FrozenWhenDead then
+    if --alive or not PlayerSys.FrozenWhenDead then
+        true then
         self.x = p.x
         self.y = p.y
         self.hide = p.hide

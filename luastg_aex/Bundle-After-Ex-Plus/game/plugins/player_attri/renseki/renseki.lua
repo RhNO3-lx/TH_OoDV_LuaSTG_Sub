@@ -327,6 +327,8 @@ function renseki_player:spell()
 		--New(player_spell_mask,64,64,255,30,210,30)
 		--New(reimu_kekkai,self.x,self.y,1.25,12,20,12)
 		New(renseki_bomb1,self.x,self.y,1.1)
+		self.death=0
+		-- SetSuperPause(0)
 		self.nextspell=240
 		self.protect=360
 	-- else
@@ -690,6 +692,7 @@ function renseki_bomb1:init(x,y,dmg)
 	self.b=280
 
 	self.maxlife=240
+
 	task.New(self,function()
 		for i=1,60 do
 			task.Wait(1)
