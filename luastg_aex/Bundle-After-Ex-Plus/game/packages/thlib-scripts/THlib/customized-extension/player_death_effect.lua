@@ -10,11 +10,14 @@ function colorless_bottom:init()
 end
 
 function colorless_bottom:render()
+    SetViewMode("world")
     if(IsValid(player)) then
         if player.death>=90 then
             PushRenderTarget("whole_scene")
+            RenderClear(Color(0,0,0,0))
         end
     end
+    SetViewMode("world")
 end
 function colorless_bottom:frame()
     if(IsValid(player)) then
@@ -34,13 +37,15 @@ function colorless_top:init()
 end
 
 function colorless_top:render()
+    SetViewMode("world")
     if(IsValid(player)) then
         if player.death>=90 then
             PopRenderTarget()
             print("draw hsl")
-            post_effect.drawHSLShiftEffect("whole_scene", 0, -0.5, -0.2)
+            post_effect.drawHSLShiftEffect("whole_scene", 0, -1, 0)
         end
     end
+    SetViewMode("world")
 end
 
 local M={}

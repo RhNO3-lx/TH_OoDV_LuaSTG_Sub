@@ -687,11 +687,12 @@ function renseki_bomb1:init(x,y,dmg)
 	self.al=0
 
 	self.rmax=300
-	self.absorb=130
+	self.absorb=70
 	self.a=280
 	self.b=280
 
 	self.maxlife=240
+	self.count=0
 
 	task.New(self,function()
 		for i=1,60 do
@@ -743,9 +744,10 @@ function renseki_bomb1:frame()
 				local d=Dist(unit,self)
 				unit.navi=true
 				if(d<self.absorb+ran:Float(-40,40)) then
-					if(ran:Float(0,1)<0.3) then
-						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit)+ran:Float(-4,4),self.target,900,2,false)
+					self.count=self.count+1
+					if self.count%5==0 then
 						PlaySound("enep00",0.5)
+						New(renseki_bullet_fast,'renseki_bullet3_ani',self.x,self.y,7.3,Angle(self,unit)+ran:Float(-4,4),self.target,900,2,true)
 					end
 					Del(unit)
 				end
