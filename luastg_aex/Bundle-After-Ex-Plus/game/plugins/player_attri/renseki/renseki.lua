@@ -267,7 +267,6 @@ end
 function renseki_player:shoot()
 	PlaySound('plst00',0.3,self.x/1024)
 	local Powerup=self.PowerupEffectTime>0
-	local sgn=0
 	local num=int(lstg.var.power/100)+1
 	local da=sin(self.timer/0.8)*(num+1)/6
 
@@ -280,23 +279,25 @@ function renseki_player:shoot()
 		if self.slow==1 then
 			local dtheta_max=7
 			for i=1,4 do
-					if i>num/2 then sgn=1 
-						elseif i<num/2 then sgn=-1 
+					local sgn=0
+					if i>num/2 then sgn=-1 
+						elseif i<num/2 then sgn=1 
 					end
 					local sy=-1
 					if i<=num/4 or i>=num/4*3 then sy=1 end
 				if self.sp[i] and self.sp[i][3]>0.5 then
 					local dtheta=dtheta_max*(abs(i-num/2)/num+0.2*sin(self.timer/4))*num/3.5
-					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp_dx*sgn+self.sp[i][1]-3,self.supporty+self.sp_dy*sy+self.sp[i][2],15,self.anglelistSlow[num][i]+dtheta+da*sgn,1.7,Powerup)
-					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp_dx*sgn+self.sp[i][1]+3,self.supporty+self.sp_dy*sy+self.sp[i][2],15,self.anglelistSlow[num][i]-dtheta+da*sgn,1.7,Powerup)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp_dx*sgn+self.sp[i][1]-3,self.supporty+self.sp_dy*sy+self.sp[i][2],15,self.anglelistSlow[num][i]+dtheta+da,1.7,Powerup)
+					New(renseki_bullet_slow,'renseki_bullet2_ani',self.supportx+self.sp_dx*sgn+self.sp[i][1]+3,self.supporty+self.sp_dy*sy+self.sp[i][2],15,self.anglelistSlow[num][i]-dtheta-da,1.7,Powerup)
 				end
 			end
 		else
 --			local num=60/(self.support+1)
 		--if self.timer%8<4 then
 			for i=1,4 do
-				if i>num/2 then sgn=1 
-					elseif i<num/2 then sgn=-1 
+				local sgn=0
+				if i>num/2 then sgn=-1 
+					elseif i<num/2 then sgn=1 
 				end
 				local sy=-1
 				if i<=num/4 or i>=num/4*3 then sy=1 end
@@ -348,8 +349,8 @@ function renseki_player:render()
 			local sgn=0
 			local sy=-1
 			if i<=num/4 or i>=num/4*3 then sy=1 end
-			if i>num/2 then sgn=1 
-			elseif i<num/2 then sgn=-1 
+			if i>num/2 then sgn=-1 
+			elseif i<num/2 then sgn=1 
 			end
 			Render('renseki_support_img',self.supportx+self.sp_dx*sgn+self.sp[i][1],self.supporty+self.sp_dy*sy+self.sp[i][2],self.timer*5)
 		end
@@ -372,7 +373,7 @@ function renseki_bullet_main:init(img,x,y,v,angle,dmg,Powerup)
 		_object.set_color(self,"mul+add",255,255,40,160)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",255,255,160,220)
+		_object.set_color(self,"mul+add",255,170,180,220)
 		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
 	--assert(self._a~=nil,"?")
@@ -407,6 +408,7 @@ renseki_bullet_slow=Class(player_bullet_straight)
 function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
 	player_bullet_straight.init(self,img,x,y,v,angle,dmg)
 	self.a,self.b=14,14
+	self.vscale=0.85
 
 	self.powerup=Powerup or false
 	if Powerup then
@@ -414,7 +416,7 @@ function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
 		_object.set_color(self,"mul+add",255,255,140,215)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",255,255,255,255)
+		_object.set_color(self,"mul+add",255,170,180,220)
 		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
 end
@@ -468,7 +470,7 @@ function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg,Powerup)
 	self.img=img
 	self.x=x
 	self.y=y
-	self.vscale=0.7
+	self.vscale=0.55
 	self.rot=angle
 	self.v=v
 	self.target=target
@@ -481,7 +483,7 @@ function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg,Powerup)
 		_object.set_color(self,"mul+add",255,255,140,215)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",255,255,255,255)
+		_object.set_color(self,"mul+add",255,170,180,220)
 		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
 end
