@@ -712,7 +712,7 @@ function system:checkBonus()
             nsp = p.nextspell
         end
     end
-    if death == 90 then
+    if death >= 90 then
         self:clearBonus("hit")
     end
     if b.sc_pro <= 0 and nsp > 0 then
