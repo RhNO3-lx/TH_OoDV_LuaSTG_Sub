@@ -63,7 +63,7 @@ LoadTexture("dif_lunatic", "THlib/UI/difficulty-lunatic.png")
 LoadImage("dif_lunatic", "dif_lunatic", 0, 0, 400, 200)
 
 ui.menu = {
-    font_size = 0.675,
+    font_size = 0.75,
     line_height = 28,
     char_width = 20,
     num_width = 12.5,
@@ -77,7 +77,7 @@ ui.menu = {
     shake_speed = 40,
     shake_range = 3,
     sc_pr_line_per_page = 12,
-    sc_pr_line_height = 22,
+    sc_pr_line_height = 27,
     sc_pr_width = 320,
     sc_pr_margin = 8,
     rep_font_size = 0.6,

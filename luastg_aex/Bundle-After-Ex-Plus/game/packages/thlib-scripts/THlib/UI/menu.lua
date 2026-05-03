@@ -67,7 +67,21 @@ end
 
 sc_pr_menu = Class(object)
 
+sc_pr_menu.difs = {"Normal","Lunatic"}
+
 function sc_pr_menu:init(exit_func)
+    self.sc = {}
+    for i,v in pairs(_sc_table) do
+        for di,dv in pairs(sc_pr_menu.difs) do
+            if _editor_class[v[1]].difficulty == dv then
+                if self.sc[dv] == nil then
+                    self.sc[dv] = {}
+                end
+                table.insert(self.sc[dv],{v[1],v[2]})
+            end
+        end
+    end
+    self.dif = 1
     self.layer = LAYER_TOP
     self.group = GROUP_GHOST
     self.alpha = 1
@@ -111,6 +125,10 @@ function sc_pr_menu:frame()
         self.pos_changed = ui.menu.shake_time
         PlaySound('select00', 0.3)
     end
+    if GetLastKey() == setting.keys.special then
+        PlaySound('select00', 0.3)
+        self.dif = self.dif % 2 + 1
+    end
     self.page = (self.page + self.npage) % self.npage
     if KeyIsPressed 'shoot' then
         local index = self.pos + self.page * ui.menu.sc_pr_line_per_page
@@ -146,9 +164,10 @@ function sc_pr_menu:render()
     local text2 = {}
     local offset = self.page * ui.menu.sc_pr_line_per_page
     for i = 1, ui.menu.sc_pr_line_per_page do
-        if _sc_table[i + offset] then
-            text1[i] = _editor_class[_sc_table[i + offset][1]].name
-            text2[i] = _sc_table[i + offset][2]
+        local dif = sc_pr_menu.difs[self.dif]
+        if self.sc[dif][i + offset] then
+            text1[i] = _editor_class[self.sc[dif][i + offset][1]].name
+            text2[i] = self.sc[dif][i + offset][2]
         else
             text1[i] = '---'
             text2[i] = '---'
@@ -156,7 +175,8 @@ function sc_pr_menu:render()
     end
     ui.DrawMenuTTF('sc_pr', '', text1, self.pos, self.x - ui.menu.sc_pr_width * 0.5, self.y, self.alpha, self.timer, self.pos_changed, 'left')
     ui.DrawMenuTTF('sc_pr', '', text2, self.pos, self.x + ui.menu.sc_pr_width * 0.5, self.y, self.alpha, self.timer, self.pos_changed, 'right')
-    RenderTTF('sc_pr', 'Spell Practice', self.x, self.x, self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
+    RenderTTF('sc_pr', 'Spell Practice', self.x, self.x, 30 + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 30 + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
+    RenderTTF('sc_pr', sc_pr_menu.difs[self.dif], self.x, self.x, self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
     RenderTTF('sc_pr', string.format('<-  page %d/%d  ->', self.page + 1, self.npage), self.x, self.x, self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
 end
 ------------------------------------------------------------
@@ -1104,13 +1124,13 @@ function options:Refresh()
 end
 
 function options:frame()
-    for i,v in pairs(setting.keys) do
-        print("keys:"..setting.keys[i])
-    end
-    for i,v in pairs(setting.keysys) do
-        print("keysys:"..setting.keysys[i])
-    end
-    print("\n")
+    -- for i,v in pairs(setting.keys) do
+    --     print("keys:"..setting.keys[i])
+    -- end
+    -- for i,v in pairs(setting.keysys) do
+    --     print("keysys:"..setting.keysys[i])
+    -- end
+    -- print("\n")
     task.Do(self)
     if self.locked then
         return

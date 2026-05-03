@@ -252,7 +252,7 @@ function stage_menu:init()
         menu.FadeIn(menu_manual)
         menu.FadeOut(menu_title)
     end})
-    table.insert(menu_items, { 'Exit Game', ExitGame })
+    table.insert(menu_items, { 'Exit', ExitGame })
     table.insert(menu_items, { 'exit', function()
         if menu_title.pos == #menu_title.text then
             ExitGame()
@@ -260,8 +260,8 @@ function stage_menu:init()
             menu_title.pos = #menu_title.text
         end
     end })
-    menu_offset = { 0, 30, 10, 40, 20, 50, 30, 60 }
-    menu_title = New(title_menu, '', menu_items, '', -(screen.width * 0.45), -120, menu_offset)
+    menu_offset = { 0, -20, 25, 10, 35, 50, 45, 60 }
+    menu_title = New(title_menu, '', menu_items, '', -(screen.width * 0.45)+50, -90, menu_offset)
     menu_items = {}
     local difficulty_pos = 1
     for _, name in ipairs(stage.groups) do
