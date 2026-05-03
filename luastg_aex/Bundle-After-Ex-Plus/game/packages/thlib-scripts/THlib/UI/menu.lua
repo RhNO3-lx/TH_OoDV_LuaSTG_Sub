@@ -67,9 +67,10 @@ end
 
 sc_pr_menu = Class(object)
 
-sc_pr_menu.difs = {"Normal","Lunatic"}
+sc_pr_menu.difs = {"Lunatic", "Normal",}
 
 function sc_pr_menu:init(exit_func)
+    self.sc_num = {}
     self.sc = {}
     for i,v in pairs(_sc_table) do
         for di,dv in pairs(sc_pr_menu.difs) do
@@ -77,6 +78,10 @@ function sc_pr_menu:init(exit_func)
                 if self.sc[dv] == nil then
                     self.sc[dv] = {}
                 end
+                if self.sc_num[dv] == nil then
+                    self.sc_num[dv] = 0
+                end
+                self.sc_num[dv] = self.sc_num[dv] + 1
                 table.insert(self.sc[dv],{v[1],v[2]})
             end
         end
@@ -132,7 +137,14 @@ function sc_pr_menu:frame()
     self.page = (self.page + self.npage) % self.npage
     if KeyIsPressed 'shoot' then
         local index = self.pos + self.page * ui.menu.sc_pr_line_per_page
-        if _sc_table[index] then
+        for i=2,self.dif do
+            index = index + self.sc_num[sc_pr_menu.difs[i-1]]
+        end
+        local n = 0
+        for i=1,self.dif do
+            n=n+self.sc_num[sc_pr_menu.difs[i]]
+        end
+        if _sc_table[index] and index <= n then
             if self.exit_func then
                 self.exit_func(index)
             end
@@ -173,11 +185,13 @@ function sc_pr_menu:render()
             text2[i] = '---'
         end
     end
-    ui.DrawMenuTTF('sc_pr', '', text1, self.pos, self.x - ui.menu.sc_pr_width * 0.5, self.y, self.alpha, self.timer, self.pos_changed, 'left')
-    ui.DrawMenuTTF('sc_pr', '', text2, self.pos, self.x + ui.menu.sc_pr_width * 0.5, self.y, self.alpha, self.timer, self.pos_changed, 'right')
-    RenderTTF('sc_pr', 'Spell Practice', self.x, self.x, 30 + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 30 + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
-    RenderTTF('sc_pr', sc_pr_menu.difs[self.dif], self.x, self.x, self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
-    RenderTTF('sc_pr', string.format('<-  page %d/%d  ->', self.page + 1, self.npage), self.x, self.x, self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
+    local offy = -20
+    ui.DrawMenuTTF('sc_pr', '', text1, self.pos, self.x - ui.menu.sc_pr_width * 0.5, offy + self.y - 10, self.alpha, self.timer, self.pos_changed, 'left')
+    ui.DrawMenuTTF('sc_pr', '', text2, self.pos, self.x + ui.menu.sc_pr_width * 0.5, offy + self.y - 10, self.alpha, self.timer, self.pos_changed, 'right')
+    RenderTTF2('sc_pr', 'Spell Practice', self.x, self.x, offy + 23 + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, offy + 23 + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 1.2, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
+    RenderTTF2('sc_pr', sc_pr_menu.difs[self.dif], self.x, self.x, offy + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, offy + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 1, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
+    RenderTTF('sc_pr', string.format('<-  page %d/%d  ->', self.page + 1, self.npage), self.x, self.x, offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
+    RenderTTF2('sc_pr', 'press c to change difficulty', self.x-200, self.x-200, -30 + offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, -30 + offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 0.6, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
 end
 ------------------------------------------------------------
 
