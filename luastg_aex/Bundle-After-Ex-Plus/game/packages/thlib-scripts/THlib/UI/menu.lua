@@ -813,7 +813,7 @@ function replay_loader:render()
                 self.state1Text,
                 self.state1Selected,
                 self.x,
-                self.y,
+                self.y-20,
                 1,
                 self.timer,
                 self.shakeValue
