@@ -652,13 +652,13 @@ function replay_saver:render()
                 self.state1Text,
                 self.state1Selected,
                 self.x,
-                self.y,
+                self.y - 20,
                 1,
                 self.timer,
                 self.shakeValue
         )
     elseif self.state == 1 then
-        Render("save_rep_title", self.x, self.y + ui.menu.sc_pr_line_height + 15 * ui.menu.sc_pr_line_height * 0.5)
+        --Render("save_rep_title", self.x, self.y + ui.menu.sc_pr_line_height + 15 * ui.menu.sc_pr_line_height * 0.5)
         ---- 绘制键盘
         -- 未选中按键
         SetFontState("replay", "", Color(255, unpack(ui.menu.unfocused_color)))
@@ -695,14 +695,14 @@ function replay_saver:render()
                 "replay",
                 string.char(_keyboard[self.state2CursorY * 13 + self.state2CursorX + 1]),
                 self.x + (self.state2CursorX - 5.5) * ui.menu.char_width + ui.menu.shake_range * sin(ui.menu.shake_speed * self.shakeValue),
-                self.y - (self.state2CursorY - 3.5) * ui.menu.line_height,
+                self.y - (self.state2CursorY - 3.5) * ui.menu.line_height - 20,
                 ui.menu.font_size,
                 "centerpoint"
         )
 
         -- 标题
         SetFontState("replay", "", Color(255, unpack(ui.menu.title_color)))
-        RenderText("replay", self.state2UserName, self.x, self.y - 5.5 * ui.menu.line_height, ui.menu.font_size, "centerpoint")
+        RenderText("replay", self.state2UserName, self.x, self.y - 5.5 * ui.menu.line_height - 20, ui.menu.font_size, "centerpoint")
     end
 end
 ----------------------------------------------------------------------------
@@ -825,7 +825,7 @@ function replay_loader:render()
                 self.state2Text,
                 self.state2Selected,
                 self.x,
-                self.y + 120,
+                self.y-20,
                 1,
                 self.timer,
                 self.shakeValue,
