@@ -695,7 +695,7 @@ function replay_saver:render()
                 "replay",
                 string.char(_keyboard[self.state2CursorY * 13 + self.state2CursorX + 1]),
                 self.x + (self.state2CursorX - 5.5) * ui.menu.char_width + ui.menu.shake_range * sin(ui.menu.shake_speed * self.shakeValue),
-                self.y - (self.state2CursorY - 3.5) * ui.menu.line_height - 20,
+                self.y - (self.state2CursorY - 3.5) * ui.menu.line_height,
                 ui.menu.font_size,
                 "centerpoint"
         )
