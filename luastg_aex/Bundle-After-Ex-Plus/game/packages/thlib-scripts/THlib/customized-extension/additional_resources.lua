@@ -24,7 +24,8 @@ local MusicList={
     {name="bgm_staff",path='THlib/music/数字生命 ~ Artificial Dream.ogg',loopend=113.778,looplength=113.778},
     {name="bgm_stage3",path='THlib/music/踏入未知的无尽幻想 ~ Stepped Into Utopia.ogg',loopend=174.0000,looplength=163.3333},
     {name="bgm_stage4b",path='THlib/music/上海アリス幻樂団 - 綿月のスペルカード ~ 神海戦.ogg',loopend=297.820,looplength=148.574},
-    {name="bgm_lastword",path='THlib\\music\\spellcard.ogg',loopend=75,looplength=0xc36e80/44100/4}
+    {name="bgm_lastword",path='THlib\\music\\spellcard.ogg',loopend=75,looplength=0xc36e80/44100/4},
+    {name="bgm_staff_full",path='THlib/music/翔鹤-full.ogg',loopend=206,looplength=206}
 }
 
 for i,v in ipairs(MusicList) do

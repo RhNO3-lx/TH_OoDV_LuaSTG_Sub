@@ -88,15 +88,16 @@ local musicroom_content = {
     {
         { "text", -280, -120, '', "(by:baiABC)", 0.675 },
         { "text", -280, -180, "", 
-        "staff曲。\n"..
+        "被弃用的staff曲。\n"..
         "第一首作的曲子，原本为疮痍曲而作，后来改为staff曲。感谢游玩。\n"..
         "给AI评价了下，是本人所作评分最高的曲子（笑）", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(from: 东方永夜抄 by:ZUN)", 0.675 },
+        { "text", -280, -120, '', "(from:B站 BV1pK411V7N5 by:琴键LILY)", 0.675 },
         { "text", -280, -180, "", 
-        "用于符卡练习模式的经典曲目\n"..
-        "估计是刻意做成了便于循环的形式，似乎在一个非常难的符卡上死磕好久也不会觉得疲倦\n", 0.600 }
+        "这位up主扒了猴哥的谱子，感觉改编的比原版更好听了\n"..
+        "很有这样的意境：在万里无云的晴空驰骋，亲手书写着自己的命运与幻想\n"..
+        "很适合描绘涟析在幻想乡里开启的崭新旅程", 0.600 }
     }
 }
 
@@ -522,10 +523,10 @@ function stage_menu:init()
         PlayMusic('bgm_staff')
         lstg.var.now_music = 'bgm_staff'
     end })
-    table.insert(menu_items, { "10.东方妖怪小町", function ()
+    table.insert(menu_items, { "10.翔鹤", function ()
         StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_lastword')
-        lstg.var.now_music = 'bgm_lastword'
+        PlayMusic('bgm_staff_full')
+        lstg.var.now_music = 'bgm_staff_full'
     end })
     table.insert(menu_items, { 'exit', function()
         StopMusic(lstg.var.now_music)

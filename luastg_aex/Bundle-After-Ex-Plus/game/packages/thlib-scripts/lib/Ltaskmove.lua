@@ -7,6 +7,7 @@ MOVE_NORMAL = 0
 MOVE_ACCEL = 1
 MOVE_DECEL = 2
 MOVE_ACC_DEC = 3
+MOVE_DEC_ACC=4
 
 MOVE_TOWARDS_PLAYER = 0
 MOVE_X_TOWARDS_PLAYER = 1
@@ -48,8 +49,15 @@ function task.MoveTo(x, y, t, mode)
             self.y = ys + s * dy
             coroutine.yield()
         end
-    else
+    elseif mode==4 then
         for s = 1 / t, 1 + 0.5 / t, 1 / t do
+            local ct=s*2-1
+            local coef=0.5-0.5*ct*ct*ct
+            self.x = xs + coef * dx
+            self.y = ys + coef * dy
+            coroutine.yield()
+        end
+    else for s = 1 / t, 1 + 0.5 / t, 1 / t do
             self.x = xs + s * dx
             self.y = ys + s * dy
             coroutine.yield()
@@ -151,10 +159,23 @@ function task.BezierMoveTo(t, mode, ...)
     local y = {}
     x[1] = self.x
     y[1] = self.y
-    for i = 1, count do
-        x[i + 1] = arg[i * 2 - 1]
-        y[i + 1] = arg[i * 2]
+    if type(arg[1]) == "table" then
+        arg = arg[1]
+        count = (#arg) / 2
     end
+    if type(arg[1]) == "number" then
+        for i = 1, count do
+            x[i + 1] = arg[i * 2 - 1]
+            y[i + 1] = arg[i * 2]
+        end
+    else
+        count=#arg
+        for i = 1, count do
+            x[i + 1] = arg[i][1]
+            y[i + 1] = arg[i][2]
+        end
+    end
+
     local com_num = {}
     for i = 0, count do
         com_num[i + 1] = combinNum(i, count)
@@ -199,8 +220,20 @@ function task.BezierMoveTo(t, mode, ...)
             self.y = _y
             coroutine.yield()
         end
-    else
+    elseif mode == 4 then
         for s = 1 / t, 1 + 0.5 / t, 1 / t do
+            local s=tan((2*s-1)*45)*0.5+0.5
+
+            local _x, _y = 0, 0
+            for j = 0, count do
+                _x = _x + x[j + 1] * com_num[j + 1] * (1 - s) ^ (count - j) * s ^ (j)
+                _y = _y + y[j + 1] * com_num[j + 1] * (1 - s) ^ (count - j) * s ^ (j)
+            end
+            self.x = _x
+            self.y = _y
+            coroutine.yield()
+        end
+    else for s = 1 / t, 1 + 0.5 / t, 1 / t do
             local _x, _y = 0, 0
             for j = 0, count do
                 _x = _x + x[j + 1] * com_num[j + 1] * (1 - s) ^ (count - j) * s ^ (j)
@@ -305,9 +338,21 @@ function task.CRMoveTo(t, mode, ...)
     local y = {}
     x[1] = self.x
     y[1] = self.y
-    for i = 1, count do
-        x[i + 1] = arg[i * 2 - 1]
-        y[i + 1] = arg[i * 2]
+    if type(arg[1]) == "table" then
+        arg = arg[1]
+        count = (#arg) / 2
+    end
+    if type(arg[1]) == "number" then
+        for i = 1, count do
+            x[i + 1] = arg[i * 2 - 1]
+            y[i + 1] = arg[i * 2]
+        end
+    else
+        count=#arg
+        for i = 1, count do
+            x[i + 1] = arg[i][1]
+            y[i + 1] = arg[i][2]
+        end
     end
 
     table.insert(x, 2 * x[#x] - x[#x - 1])
@@ -437,6 +482,7 @@ function task.Basis2MoveTo(t, mode, ...)
     --获得基本参数
     local self = task.GetSelf()
     local arg = { ... }
+    if type(...)=="table" then arg = arg[1] end
     t = math.max(1, math.floor(t))
     --构造采样点列表
     local count = (#arg) / 2
@@ -444,9 +490,17 @@ function task.Basis2MoveTo(t, mode, ...)
     local y = {}
     x[1] = self.x
     y[1] = self.y
-    for i = 1, count do
-        x[i + 1] = arg[i * 2 - 1]
-        y[i + 1] = arg[i * 2]
+    if type(arg[1])=="table" then
+        count=#arg
+        for i = 1, #arg do
+            x[i + 1] = arg[i][1]
+            y[i + 1] = arg[i][2]
+        end
+    else
+        for i = 1, count do
+            x[i + 1] = arg[i * 2 - 1]
+            y[i + 1] = arg[i * 2]
+        end
     end
     --检查采样点数量，如果不足3个，则插值到3个
     if count < 2 then
