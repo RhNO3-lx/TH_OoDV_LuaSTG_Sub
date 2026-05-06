@@ -904,7 +904,7 @@ local offTimer = 0
 local alpha = 0
 function musicroom:render()
     SetViewMode('ui')
-    ui.DrawMusicTTF('menuttf', self.title, self.text, self.content[self.pos], self.pos, self.x + self.offx, self.y, self.alpha, self.timer, 0, "left")
+    ui.DrawMusicTTF('menuttf', self.title, self.text, self.content[self.pos], self.pos, self.x + self.offx, self.y - 30, self.alpha, self.timer, 0, "left")
 end
 
 function musicroom.createContent(content)
@@ -1145,6 +1145,9 @@ function options:frame()
     --     print("keysys:"..setting.keysys[i])
     -- end
     -- print("\n")
+    if GetLastKey() ~= 0 then
+        print(GetLastKey())
+    end
     task.Do(self)
     if self.locked then
         return
@@ -1304,10 +1307,12 @@ end
 ------------------------------------manual----------------------------------
 manual = Class(object)
 
+LoadImageFromFile("manual", "THlib/UI/manual.png")
+
 function manual:init(title, item, content, keyslot, offx, offy)
     self.layer = LAYER_TOP
     self.group = GROUP_GHOST
-    self.alpha = 1
+    self.alpha = 0
     self.offx = offx or 0
     self.x = screen.width * 0.5 - screen.width
     self.y = screen.height * 0.5
