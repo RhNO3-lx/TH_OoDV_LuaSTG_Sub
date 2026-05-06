@@ -5,10 +5,11 @@ local post_effect = require("lib.posteffect")
 ---for text,{type, position_x, position_y, font, content, scale}
 ---for image,{type, position_x, position_y, name, rot, hscale, vscale}
 
+
+
 local manual_content = {
     {
-        { "text", -150, 110, "", "O1.如何进行游戏", 0.675 },
-        { "text", -150, 50, "", "这是注意躲避比自己打的敌人，\n吃掉比自己小的敌人积攒power的游戏。\n每一关都有通关所需的power量，\n积攒足够的power后就过关了。", 0.675 },
+        { "image", 0, 0, "manual", 0, 0.25, 0.25 }
     },
     {
         --{ "text", 0, 0, "", "this is the second option", 1 }
@@ -178,7 +179,8 @@ function stage_menu:init()
     menu_sc_pr,
     menu_options,
     menu_manual,
-    menu_musicroom
+    menu_musicroom,
+    key_config
     local menu_offset = {}
     local menu_list = {}
     local menu_practice = {}
@@ -536,7 +538,7 @@ function stage_menu:init()
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_musicroom, 'right')
     end })
-    menu_musicroom = New(musicroom, "musicroom", menu_items, musicroom_content, '', 0, 0)
+    menu_musicroom = New(musicroom, "music room", menu_items, musicroom_content, '', 0, 0)
     --
     menu_items = {}
     table.insert(menu_items, { 'Resolution', function ()
@@ -571,10 +573,7 @@ function stage_menu:init()
     --
     menu_items = {}
     menu_offset = {}
-    table.insert(menu_items, { '1.游戏进行的方式', function ()
-        
-    end })
-    table.insert(menu_items, { '2.???', function ()
+    table.insert(menu_items, { '', function ()
         
     end })
     table.insert(menu_items, { 'exit', function()

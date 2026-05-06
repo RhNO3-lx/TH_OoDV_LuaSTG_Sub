@@ -432,8 +432,9 @@ function ui.DrawManualContent(x, y, content, alpha, color)
         local sca = con.scale[i] or ui.menu.font_size
         if con.type[i] == "text" then
             RenderTTF2(con.font[i], con.text[i], con.x[i] + x, con.x[i] + x, con.y[i] + y, con.y[i] + y, sca, Color(alpha * 255, unpack(ui.menu.focused_color1)), "", "vcenter", "noclip")
-        elseif con.type == "image" then
-
+        elseif con.type[i] == "image" then
+            SetImageState(con.name[i], "", Color(alpha * 255, 255, 255, 255))
+            Render(con.name[i],con.x[i]+x,con.y[i]+y,0,con.hscale[i],con.vscale[i])
         end
     end
 end
@@ -462,7 +463,7 @@ function ui.DrawMusicTTF(ttfname, title, text, content, pos, x, y, alpha, timer,
             end
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
             RenderTTF2(ttfname, text[i], _x + xos, _x + xos, _y - i * ui.menu.sc_pr_line_height + yos, _y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
-            ui.DrawManualContent(x, y, content, alpha, ui.menu.focused_color1)
+            ui.DrawManualContent(x, y+20, content, alpha, ui.menu.focused_color1)
         else
             RenderTTF2(ttfname, text[i], _x, _x, _y - i * ui.menu.sc_pr_line_height + yos, _y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
         end
