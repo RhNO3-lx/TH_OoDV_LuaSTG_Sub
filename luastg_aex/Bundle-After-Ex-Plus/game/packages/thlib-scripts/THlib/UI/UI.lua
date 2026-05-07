@@ -679,6 +679,10 @@ function lstg_ui:drawScore2()
     SetViewMode "world"
 end
 function lstg_ui:drawDifficulty()
+    local InEnding=string.find(stage.current_stage.name,"Ending")
+    print("current_stage is "..stage.current_stage.name)
+    if InEnding~=nil then return end
+
     SetFontState("score3", "", Color(0xFFADADAD))
     local w = lstg.world
     local diff = string.match(stage.current_stage.name, "[%w_][%w_ ]*$")
