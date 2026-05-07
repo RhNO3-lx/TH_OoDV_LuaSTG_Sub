@@ -899,9 +899,6 @@ function musicroom:frame()
     self.pos_pre = self.pos
 end
 
-local offy = 50
-local offTimer = 0
-local alpha = 0
 function musicroom:render()
     SetViewMode('ui')
     ui.DrawMusicTTF('menuttf', self.title, self.text, self.content[self.pos], self.pos, self.x + self.offx, self.y - 30, self.alpha, self.timer, 0, "left")
@@ -950,6 +947,211 @@ function musicroom.createContent(content)
 end
 ----------------------------------------------------------------------------
 -------------------------options--------------------------------------------
+
+
+local function applySetting(screenChange)
+    if screenChange then
+        if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
+            setting.windowed = true
+            saveConfigure()
+            if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
+                stage.QuitGame()
+                return
+            end
+        end
+        ResetScreen()
+    end
+    --lstg.Input.Keyboard = setting.keys
+    lstg.SetSEVolume(setting.sevolume / 100)
+    lstg.SetBGMVolume(setting.bgmvolume / 100)
+    saveConfigure()
+end
+
+key_config = Class(object)
+
+local key_code_to_name = KeyCodeToName()
+
+local last_key_setting = {
+    up = setting.keys.up,
+    down = setting.keys.down,
+    left = setting.keys.left,
+    right = setting.keys.right,
+    slow = setting.keys.slow,
+    shoot = setting.keys.shoot,
+    spell = setting.keys.spell,
+}
+
+function key_config.copyDataToSetting()
+    setting.keys.up = last_key_setting.up
+    setting.keys.down = last_key_setting.down
+    setting.keys.left = last_key_setting.left
+    setting.keys.right = last_key_setting.right
+    setting.keys.slow = last_key_setting.slow
+    setting.keys.shoot = last_key_setting.shoot
+    setting.keys.spell = last_key_setting.spell
+    applySetting(false)
+end
+
+function key_config:set_key_to_last_setting(pos,keycode)
+    last_key_setting[pos] = keycode
+    self.listening = false
+    key_config.copyDataToSetting()
+end
+
+local setting_key = { 
+        {"up", setting.keys.up},
+        {"down", setting.keys.down},
+        {"left", setting.keys.left},
+        {"right", setting.keys.right},
+        {"slow", setting.keys.slow},
+        {"shoot", setting.keys.shoot},
+        {"spell", setting.keys.spell},
+    }
+
+function key_config:init(content, keyslot, offx)
+    self.listening = false
+    self._listening = false
+    self.layer = LAYER_TOP
+    self.group = GROUP_GHOST
+    self.alpha = 1
+    self.key_alpha = 1
+    self.offx = offx or 0
+    self.x = screen.width * 0.5 - screen.width
+    self.y = screen.height * 0.5
+    self.bound = false
+    self.locked = true
+    self.title = title
+    local keys = setting_key
+    for i,v in ipairs(keys) do
+        v[2] = function (keycode)
+            key_config.set_key_to_last_setting(self,v[1],keycode)
+        end
+    end
+    for i,v in ipairs(content) do
+        table.insert(keys,v)
+    end
+    self.content = keys
+    for i,v in ipairs(self.content) do
+        print(v[1])
+    end
+    self.control = {}
+    key_config.initControl(self)
+    self.pos = 1
+    self.pos_pre = 1
+    self.pos_changed = 0
+    self.no_pos_change = false
+    self.keyslot = keyslot
+    if self.content[#self.content][1] == 'exit' then
+        self.exit_func = content[#content][2]
+        self.content[#self.content] = nil
+    end
+end
+
+function key_config:frame()
+    -- for i,v in pairs(setting.keys) do
+    --     print("keys:"..setting.keys[i])
+    -- end
+    -- for i,v in pairs(setting.keysys) do
+    --     print("keysys:"..setting.keysys[i])
+    -- end
+    -- print("\n")
+    -- if GetLastKey() ~= 0 then
+    --     print(GetLastKey())
+    -- end
+    task.Do(self)
+    if self.locked then
+        return
+    end
+
+    if self.listening then
+        if GetLastKey() ~= 0 then
+            self.content[self.pos][2](GetLastKey())
+        end
+    else
+        if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
+            self.pos = self.pos - 1
+            PlaySound('select00', 0.3)
+        end
+        if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
+            self.pos = self.pos + 1
+            PlaySound('select00', 0.3)
+        end
+        
+        self.pos = (self.pos - 1 + #(self.content)) % (#(self.content)) + 1
+        if KeyIsPressed('shoot', self.keyslot) then
+            if self.pos == #self.content then
+                self.content[self.pos][2]()
+            elseif not self.listening then
+                self.listening = true
+                self._listening = true
+            end
+            -- if self.control.text[self.pos] == "Default" then
+            --     options.setDefault(self)
+            -- else
+            --     self.control.func[self.control.text[self.pos]]()
+            -- end
+            -- PlaySound('ok00', 0.3)
+        elseif KeyIsPressed('spell', self.keyslot) and self.exit_func and not self._listening then
+            self.exit_func()
+            PlaySound('cancel00', 0.3)
+        end
+        if not self.listening then
+            self._listening = false
+        end
+    end
+    
+
+    if self.pos_changed > 0 then
+        self.pos_changed = self.pos_changed - 1
+    end
+    if self.pos_pre ~= self.pos then
+        self.pos_changed = ui.menu.shake_time
+    end
+    self.pos_pre = self.pos
+end
+function key_config:render()
+    if self.key_alpha >= 0 and self.listening then
+        self.key_alpha = self.key_alpha - 0.1
+    elseif self.key_alpha <= 1 and not self.listening then
+        self.key_alpha = self.key_alpha + 0.1
+    end
+    local pos = self.pos
+    local x = self.x
+    local y = self.y
+    local content = self.content
+    local yos = (#content - 1) * ui.menu.sc_pr_line_height * 0.5
+    RenderTTF2('menuttf', "Listening...", self.x , self.x, self.y, self.y, ui.menu.font_size, Color((1-self.key_alpha)*self.alpha * 255, 255,255,255), "center", "vcenter", "noclip")
+    for i = 1, #content do
+        local x_left = x + ui.menu.op_left_off
+        local x_right = x + ui.menu.op_right_off
+        if i == pos then
+            local color = {}
+            local k = cos(self.timer * ui.menu.blink_speed) ^ 2
+            for j = 1, 3 do
+                color[j] = ui.menu.focused_color1[j] * k + ui.menu.focused_color2[j] * (1 - k)
+            end
+            local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * self.pos_changed)
+            --选项渲染
+            RenderTTF2('menuttf', content[pos][1], x_left + xos, x_left + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(self.key_alpha*self.alpha * 255, unpack(color)), "left", "vcenter", "noclip")
+            if i ~= #self.content then
+                RenderTTF2('menuttf', key_code_to_name[last_key_setting[content[pos][1]]], x_right + xos, x_right + xos, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(self.key_alpha*self.alpha * 255, unpack(color)), "right", "vcenter", "noclip")
+            end
+        else
+            local color = ui.menu.focused_color1
+            --选项渲染
+            RenderTTF2('menuttf', content[i][1], x_left, x_left, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(self.key_alpha*self.alpha * 255, unpack(ui.menu.unfocused_color)), "left", "vcenter", "noclip")
+            if i ~= #self.content then
+                RenderTTF2('menuttf', key_code_to_name[last_key_setting[content[i][1]]], x_right, x_right, y - i * ui.menu.sc_pr_line_height + yos, y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(self.key_alpha*self.alpha * 255, unpack(ui.menu.unfocused_color)), "right", "vcenter", "noclip")
+            end
+            --ui.DrawOptionData(ttfname, type[text[i]], data[text[i]], x_right, y - i * ui.menu.sc_pr_line_height + yos, Color(alpha * 255, unpack(color)), alpha)
+        end
+    end
+end
+
+function key_config:initControl()
+    local cfg = setting
+end
+
 options = Class(object)
 
 
@@ -961,7 +1163,8 @@ local last_setting = {
     sevolume = setting.sevolume,
     bgmvolume = setting.bgmvolume,
     auto_shoot = setting.auto_shoot or false,
-    auto_bomb = setting.auto_bomb or false
+    auto_bomb = setting.auto_bomb or false,
+    key = setting.key
 }
 
 options.mode_window = {
@@ -983,38 +1186,10 @@ function options.mode_BGM_and_SE_()
     return mode
 end
 
-options.keys = {
-        { "launcher.action.left", "keys", "left" },
-        { "launcher.action.right", "keys", "right" },
-        { "launcher.action.up", "keys", "up" },
-        { "launcher.action.down", "keys", "down" },
-        { "launcher.action.slow", "keys", "slow" },
-        { "launcher.action.shoot", "keys", "shoot" },
-        { "launcher.action.spell", "keys", "spell" },
-        { "launcher.action.special", "keys", "special" },
-        { "launcher.action.menu", "keysys", "menu" },
-        { "launcher.action.snapshot", "keysys", "snapshot" },
-        { "launcher.action.repfast", "keysys", "repfast" },
-        { "launcher.action.repslow", "keysys", "repslow" },
-    }
 
 
-local function applySetting(screenChange)
-    if screenChange then
-        if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
-            setting.windowed = true
-            saveConfigure()
-            if not lstg.ChangeVideoMode(setting.resx, setting.resy, setting.windowed, setting.vsync) then
-                stage.QuitGame()
-                return
-            end
-        end
-        ResetScreen()
-    end
-    lstg.SetSEVolume(setting.sevolume / 100)
-    lstg.SetBGMVolume(setting.bgmvolume / 100)
-    saveConfigure()
-end
+
+
 
 function options.copyDataToSetting()
     local screenChange = false
@@ -1255,6 +1430,10 @@ function options:createControl()
     end
 end
 
+function options:updateKey()
+
+end
+
 function options:initControl()
     local cfg = setting
     updateDisplayMode()
@@ -1276,31 +1455,7 @@ function options:initControl()
     
 end
 
-key_config = Class(object)
 
-function key_config:init(title, content, keyslot, offx)
-    self.layer = LAYER_TOP
-    self.group = GROUP_GHOST
-    self.alpha = 1
-    self.offx = offx or 0
-    self.x = screen.width * 0.5 - screen.width
-    self.y = screen.height * 0.5
-    self.bound = false
-    self.locked = true
-    self.title = title
-    self.content = content
-    self.control = {}
-    options.createControl(self)
-    options.initControl(self)
-    self.pos = 1
-    self.pos_pre = 1
-    self.pos_changed = 0
-    self.no_pos_change = false
-    self.keyslot = keyslot
-    if content[#content][1] == 'exit' then
-        self.exit_func = content[#content][2]
-    end
-end
 
 
 ----------------------------------------------------------------------------

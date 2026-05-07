@@ -179,7 +179,7 @@ function stage_menu:init()
     menu_options,
     menu_manual,
     menu_musicroom,
-    key_config
+    k_config
     local menu_offset = {}
     local menu_list = {}
     local menu_practice = {}
@@ -551,6 +551,8 @@ function stage_menu:init()
         
     end, "selector", options.mode_BGM_and_SE_() })
     table.insert(menu_items, { 'KeyConfig', function ()
+        menu.FlyIn(k_config, 'left')
+        menu.FlyOut(menu_options, 'right')
     end, "menu" })
     table.insert(menu_items, { 'DeleteSaveData', function ()
     end, "button" })
@@ -569,7 +571,7 @@ function stage_menu:init()
     end, "exit" })
     menu_offset = {}
     menu_options = New(options, 'Option', menu_items)
-    --
+    
     menu_items = {}
     menu_offset = {}
     table.insert(menu_items, { '', function ()
@@ -634,6 +636,17 @@ function stage_menu:init()
         LoadMusicRecord("menu")
         PlayMusic('menu',0.8)
     end)
+    
+    menu_items = {}
+    table.insert(menu_items, { 'Quit', function()
+        menu.FlyIn(menu_options, 'left')
+        menu.FlyOut(k_config, 'right')
+    end })
+    table.insert(menu_items, { 'exit', function()
+        menu.FlyIn(menu_options, 'right')
+        menu.FlyOut(k_config, 'left')
+    end })
+    k_config = New(key_config, menu_items)
 
     menu_list = { menu_title, menu_player_select, menu_difficulty_select, menu_replay_loader, menu_replay_saver, menu_items, menu_sc_pr, menu_network, menu_player_select2, menu_player_select1, menu_playercount }--设置菜单对象表
 end

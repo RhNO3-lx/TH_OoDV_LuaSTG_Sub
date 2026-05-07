@@ -76,6 +76,7 @@ ui.menu = {
     shake_time = 9,
     shake_speed = 40,
     shake_range = 3,
+    standard_line_height = 22,
     sc_pr_line_per_page = 11,
     sc_pr_line_height = 27,
     sc_pr_width = 320,
