@@ -1008,6 +1008,8 @@ local setting_key = {
         {"spell", setting.keys.spell},
     }
 
+local k_config_init = false 
+
 function key_config:init(content, keyslot, offx)
     self.listening = false
     self._listening = false
@@ -1027,13 +1029,16 @@ function key_config:init(content, keyslot, offx)
             key_config.set_key_to_last_setting(self,v[1],keycode)
         end
     end
-    for i,v in ipairs(content) do
-        table.insert(keys,v)
+    if not k_config_init then
+        for i,v in ipairs(content) do
+            table.insert(keys,v)
+        end
+        k_config_init = true
     end
     self.content = keys
-    for i,v in ipairs(self.content) do
-        print(v[1])
-    end
+    -- for i,v in ipairs(self.content) do
+    --     print(v[1])
+    -- end
     self.control = {}
     key_config.initControl(self)
     self.pos = 1
@@ -1320,9 +1325,9 @@ function options:frame()
     --     print("keysys:"..setting.keysys[i])
     -- end
     -- print("\n")
-    if GetLastKey() ~= 0 then
-        print(GetLastKey())
-    end
+    -- if GetLastKey() ~= 0 then
+    --     print(GetLastKey())
+    -- end
     task.Do(self)
     if self.locked then
         return
