@@ -1034,6 +1034,9 @@ function key_config:init(content, keyslot, offx)
             table.insert(keys,v)
         end
         k_config_init = true
+    else
+        keys[#keys-1] = content[1]
+        keys[#keys] = content[2]
     end
     self.content = keys
     -- for i,v in ipairs(self.content) do
@@ -1190,11 +1193,6 @@ function options.mode_BGM_and_SE_()
     end
     return mode
 end
-
-
-
-
-
 
 function options.copyDataToSetting()
     local screenChange = false
