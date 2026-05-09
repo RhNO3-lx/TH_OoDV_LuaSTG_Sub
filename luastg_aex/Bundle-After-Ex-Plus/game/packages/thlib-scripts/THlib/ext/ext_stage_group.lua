@@ -349,14 +349,18 @@ function M.frame(self)
         StopMusic(deathmusic)
         if not Extramode then
             gamecontinueflag = true
-            if lstg.var.block_spell then
+            if false then
+                print("stage<3")
                 if lstg.var.is_practice then
+                    print("is_prac")
                     M.PracticeStart(self.name)
                 else
                     M.Start(self.group.name)
+                    print("not_prac")
                 end
                 lstg.tmpvar.pause_menu_text = nil
             else
+                print("stage>2")
                 --item.PlayerInit()
                 -- START: modified by 二要 打分等代码修改记录
                 local temp = lstg.var.score or 0
@@ -371,8 +375,10 @@ function M.frame(self)
                 ext.pause_menu_order = nil
                 if lstg.var.is_practice then
                     M.PracticeStart(self.name)
+                    print("is_prac")
                 else
                     stage.stages[stage.current_stage.group.title].save_replay = nil
+                    print("not_prac")
                 end
             end
         else
