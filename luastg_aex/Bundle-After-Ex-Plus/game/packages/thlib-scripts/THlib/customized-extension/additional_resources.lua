@@ -62,6 +62,7 @@ LoadSound("se_poison","THlib/se_ext/Poison.ogg")
 LoadSound("se_heal","THlib/se_ext/se_heal.ogg")
 LoadSound("se_broaden","THlib/se_ext/se_broaden_horizon.ogg")
 LoadSound("se_fusion","THlib/se_ext/se_fusion.ogg")
+LoadSound("se_water","THlib/se_ext/Water1.ogg")
 
 ---from dnh
 
