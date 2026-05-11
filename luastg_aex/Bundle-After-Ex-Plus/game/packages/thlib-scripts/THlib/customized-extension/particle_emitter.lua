@@ -31,7 +31,7 @@ function pe:frame()
             self.y=self.target.y
         else
             ParticleStop(self)
-            self.BindedWithTarget=false
+            -- self.BindedWithTarget=false
             self.DeathTimer=self.DeathTimer+1
         end
     end
