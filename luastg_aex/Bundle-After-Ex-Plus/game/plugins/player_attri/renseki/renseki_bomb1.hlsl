@@ -155,7 +155,7 @@ PS_Output main(PS_Input input)
         float base2=fbm3D(float3(cos(ca_bar),sin(ca_bar),cr+4*timer));
         base2=(1-cos(PI*base2*base2))/2;
 
-        float4 mask=float4(0.0,0.6,0.7,1);
+        float4 mask=float4(0.0,0.6,0.9,1);
         float4 mask2=float4(0.4,0.0,0.9,1);
         float weight=1-smoothstep(0,es,sqrt(r*es));
         float weight1=1-smoothstep(0,es,sqrt(r*es));
@@ -163,10 +163,10 @@ PS_Output main(PS_Input input)
         result=result+max(weight,0)*float4(0.05,0.4,0.8,1);
         result=result+base*mask*weight1;
         result=result+base2*mask2*(weight);
-        // //solid part
-        // float la=a;
-        // float base3=fbm3D(float3(cos(la),sin(la),cr*2+4*timer));
-        // result=result+weight*base3*float4(0.4,0,0.8,1);
+        //solid part
+        float la=a;
+        float base3=fbm3D(float3(cos(la),sin(la),cr*2+4*timer));
+        result=result+weight*base3*float4(0.4,0,0.8,1);
 
         //light line
         float base4=fbm3D(float3(cos(13*a),sin(7*a),cr*1.7+timer*5));
