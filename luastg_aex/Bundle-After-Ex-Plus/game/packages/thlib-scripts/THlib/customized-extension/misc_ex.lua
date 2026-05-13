@@ -82,10 +82,30 @@ function misc_ex.ClearScreen()
     for _,unit in ObjList(GROUP_INDES) do
         _del(unit,true)
     end
-    local origin_collectline=player.collect_line
-    player.collect_line=-400
-    task.New(player, function()
-        task.Wait(2)
-        player.collect_line=origin_collectline
-        end)
+    -- local origin_collectline=player.collect_line
+    -- player.collect_line=-1400
+    -- task.New(player, function()
+    --     task.Wait(2)
+    --     player.collect_line=origin_collectline
+    --     end)
+    misc_ex.CollectAll()
+end
+
+function misc_ex.CollectAll()
+    local self = player
+    for _, o in ObjList(GROUP_ITEM) do
+        local flag = false
+        if o.attract < 8 then
+            flag = true
+        elseif o.attract == 8 and o.target ~= self then
+            if (not o.target) or o.target.y < self.y then
+                flag = true
+            end
+        end
+        if flag then
+            o.attract = 8
+            o.num = self.item
+            o.target = self
+        end
+    end
 end
