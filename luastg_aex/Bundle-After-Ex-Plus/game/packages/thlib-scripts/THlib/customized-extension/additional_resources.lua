@@ -30,7 +30,7 @@ local MusicList={
 
 for i,v in ipairs(MusicList) do
     MusicRecord(v.name,v.path,v.loopend,v.looplength)
-    LoadMusicRecord(v.name)
+    -- LoadMusicRecord(v.name)
 end
 --#endregion
 
