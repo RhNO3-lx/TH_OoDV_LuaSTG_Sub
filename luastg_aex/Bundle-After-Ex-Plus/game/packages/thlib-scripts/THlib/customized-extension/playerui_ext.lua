@@ -93,7 +93,11 @@ function PutPlayerUIBar()
     attri.r1=44
     attri.r2=50
     attri.c=Color(255*attri.alpha,0,155,165)
-    local n=max(lstg.var.bomb,lstg.var.lifeleft)
+
+    local n_bomb=lstg.var.bomb
+    local n_life=lstg.var.lifeleft
+    if not lstg.var.ShowBomb then n_bomb=0 end
+    local n=max(n_bomb,n_life)
     --print("n:"..n.."lstg.var.bomb:"..lstg.var.bomb.."lstg.var.lifeleft:"..lstg.var.lifeleft)
 
     local da=1

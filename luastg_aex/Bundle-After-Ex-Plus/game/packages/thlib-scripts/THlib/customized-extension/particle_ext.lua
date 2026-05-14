@@ -68,7 +68,7 @@ function ParticleEx:init( x, y,v,angle,omega,acc,acc_angle,life_time, img,  size
     self.life_time = life_time or 120
     self.size = size or 0.4
     self.color1 = color1 or Color(0,255,255,255)
-    self.layer = layer or LAYER_ENEMY_BULLET_EF-3
+    self.layer = layer or LAYER_PLAYER_BULLET-3
     self.blend = blend or 'mul+add'
     self.AppearMode="fade_out"
     self.actual_size=self.size
@@ -144,7 +144,9 @@ end
 ---@param v0 number 粒子初速度大小
 ---@param v_angle number |nil 粒子速度方向，默认纯随机
 ---@param acc_angle number |nil 粒子加速度方向，默认与v_angle相同
-function ParticlePresets.DynamicScatter(x,y,co,r,dr,tex,lifetime,size,dsize,FixedAtObj,obj,acc,v0,v_angle,acc_angle)
+function ParticlePresets.DynamicScatter(x,y,co,r,dr,tex,lifetime,size,dsize,FixedAtObj,obj,acc,v0,v_angle,acc_angle,blend,layer)
+    blend=blend or "mul+add"
+    layer=layer or LAYER_PLAYER_BULLET-3
     v_angle=v_angle or ran:Float(0,360)
     acc_angle=acc_angle or v_angle
     if FixedAtObj then
@@ -157,7 +159,7 @@ function ParticlePresets.DynamicScatter(x,y,co,r,dr,tex,lifetime,size,dsize,Fixe
 
     x,y=x+nr*cos(a),y+nr*sin(a)
 
-    local p=New(ParticleEx,x,y,v0,v_angle,ran:Float(4,8),acc,acc_angle,lifetime,tex,ran:Float(size-dsize,size+dsize),co)
+    local p=New(ParticleEx,x,y,v0,v_angle,ran:Float(4,8),acc,acc_angle,lifetime,tex,ran:Float(size-dsize,size+dsize),co,blend,layer)
     if FixedAtObj then
         task.New(p, function()
             local deltaa=ran:Float(-10,10)
