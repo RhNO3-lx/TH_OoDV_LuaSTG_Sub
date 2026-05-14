@@ -68,7 +68,7 @@ function ParticleEx:init( x, y,v,angle,omega,acc,acc_angle,life_time, img,  size
     self.life_time = life_time or 120
     self.size = size or 0.4
     self.color1 = color1 or Color(0,255,255,255)
-    self.layer = layer or LAYER_ENEMY_BULLET_EF
+    self.layer = layer or LAYER_ENEMY_BULLET_EF-3
     self.blend = blend or 'mul+add'
     self.AppearMode="fade_out"
     self.actual_size=self.size

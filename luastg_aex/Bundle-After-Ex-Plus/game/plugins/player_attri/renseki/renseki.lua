@@ -303,7 +303,7 @@ function renseki_player:shoot()
 				if i<=num/4 or i>=num/4*3 then sy=1 end
 
 				if self.sp[i] and self.sp[i][3]>0.5 then
-					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp_dx*sgn+self.sp[i][1],self.supporty+self.sp_dy*sy+self.sp[i][2],7.3,self.anglelist[num][i]+ran:Float(-5,5),self.target,900,2.2,Powerup)
+					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp_dx*sgn+self.sp[i][1],self.supporty+self.sp_dy*sy+self.sp[i][2],7.3,self.anglelist[num][i]+ran:Float(-3,3),self.target,900,2.2,Powerup)
 				end
 			end
 		end --end
@@ -331,15 +331,15 @@ local function trail_particle(self,co_list)
 	--local index=ran:Int(2,7)
 	if ran:Float(0,1)<0.10 then
 		local r=0
-		local a=self.rot+180+ran:Float(-10,10)
+		local a=self.rot+180+ran:Float(-20,20)
 		local dx,dy=r*cos(a),r*sin(a)
-		local t=ran:Int(15,25)
+		local t=ran:Int(15,30)
 		local v0=ran:Float(0.4,0.9)
 		v0=0
 		local acc=-v0/t
 		local co_list={Color(105,255,40,160),Color(85,120,190,255)}
 		local co= self.powerup and co_list[1] or co_list[2]
-		pe.ParticlePresets.DynamicScatter(self.x,self.y,co,r,r,"parimg11",t,0.7,0.15,false,self,acc,v0)
+		pe.ParticlePresets.DynamicScatter(self.x,self.y,co,r,r,"parimg11",t,0.5,0.07,false,self,acc,v0)
 	end
 end
 
@@ -403,10 +403,10 @@ function renseki_bullet_main:init(img,x,y,v,angle,dmg,Powerup)
 	self.powerup=Powerup or false
 	if Powerup then
 		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
-		_object.set_color(self,"mul+add",190,255,40,160)
+		_object.set_color(self,"mul+add",210,255,40,160)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",190,170,180,220)
+		_object.set_color(self,"mul+add",210,170,180,220)
 		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
 	--assert(self._a~=nil,"?")
@@ -449,10 +449,10 @@ function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
 	self.powerup=Powerup or false
 	if Powerup then
 		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
-		_object.set_color(self,"mul+add",190,255,140,215)
+		_object.set_color(self,"mul+add",210,255,140,215)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",190,170,180,220)
+		_object.set_color(self,"mul+add",210,170,180,220)
 		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
 end
@@ -519,10 +519,10 @@ function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg,Powerup)
 	self.powerup=Powerup or false
 	if Powerup then
 		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
-		_object.set_color(self,"mul+add",190,255,140,215)
+		_object.set_color(self,"mul+add",210,255,140,215)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",190,170,180,220)
+		_object.set_color(self,"mul+add",210,170,180,220)
 		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
 end
