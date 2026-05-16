@@ -680,7 +680,6 @@ function lstg_ui:drawScore2()
 end
 function lstg_ui:drawDifficulty()
     local InEnding=string.find(stage.current_stage.name,"Ending")
-    print("current_stage is "..stage.current_stage.name)
     if InEnding~=nil then return end
 
     SetFontState("score3", "", Color(0xFFADADAD))
