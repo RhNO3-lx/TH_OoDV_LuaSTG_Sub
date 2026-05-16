@@ -49,7 +49,7 @@ function PutPlayerUI(type)
         attri.alpha=0.75
         attri.r1=44
         attri.r2=50
-        attri.c=Color(255*attri.alpha,165,0,145)
+        attri.c=Color(255*attri.alpha,125,0,105)
         attri.la=lstg.var.lifeleft*360/lstg.var.LifeMax+lstg.var.chip*360/lstg.var.LifeExtendPoint/lstg.var.LifeMax
         --print("life.la"..attri.la)
         
@@ -57,20 +57,20 @@ function PutPlayerUI(type)
         attri.alpha=0.95
         attri.r1=44
         attri.r2=50
-        attri.c=Color(255*attri.alpha,0,110,160)
+        attri.c=Color(255*attri.alpha,0,70,120)
         attri.la=lstg.var.bomb*360/lstg.var.LifeMax+lstg.var.bombchip*360/lstg.var.BombExtendPoint/lstg.var.LifeMax
         --print("bomb.la"..attri.la)
     elseif type==PlayerUI.Power then
         attri.alpha=0.5
         attri.r1=50
         attri.r2=54
-        attri.c=Color(255*attri.alpha,237,68,64)
+        attri.c=Color(255*attri.alpha,177,28,24)
         attri.la=lstg.var.power%lstg.var.PowerExtendPoint*360/lstg.var.PowerExtendPoint
     elseif type==PlayerUI.BackGround then
         attri.alpha=0.15
         attri.r1=43
         attri.r2=51
-        attri.c=Color(255*attri.alpha,76,168,255)
+        attri.c=Color(255*attri.alpha,36,128,215)
         attri.la=360
     end
     ---! 血条边框
@@ -93,7 +93,11 @@ function PutPlayerUIBar()
     attri.r1=44
     attri.r2=50
     attri.c=Color(255*attri.alpha,0,155,165)
-    local n=max(lstg.var.bomb,lstg.var.lifeleft)
+
+    local n_bomb=lstg.var.bomb
+    local n_life=lstg.var.lifeleft
+    if not lstg.var.ShowBomb then n_bomb=0 end
+    local n=max(n_bomb,n_life)
     --print("n:"..n.."lstg.var.bomb:"..lstg.var.bomb.."lstg.var.lifeleft:"..lstg.var.lifeleft)
 
     local da=1

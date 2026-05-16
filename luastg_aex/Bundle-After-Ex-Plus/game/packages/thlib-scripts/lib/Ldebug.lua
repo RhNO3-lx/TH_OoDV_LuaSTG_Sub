@@ -7,6 +7,18 @@
 local M = {}
 
 --------------------------------------------------------------------------------
+DEBUG_MODE=false
+local F1_trigger
+local F3_trigger
+if DEBUG_MODE then
+    F1_trigger = M.KeyDownTrigger(KEY.F1)
+    F3_trigger = M.KeyDownTrigger(KEY.F3)
+else
+    F1_trigger = function () return false end
+    F3_trigger = function () return false end
+end
+
+
 
 ---@class lstg.debug.View
 local W = {}
@@ -65,8 +77,8 @@ function M.KeyDownTrigger(vkey)
     end
 end
 
-local F1_trigger = M.KeyDownTrigger(KEY.F1)
-local F3_trigger = M.KeyDownTrigger(KEY.F3)
+-- local F1_trigger = M.KeyDownTrigger(KEY.F1)
+-- local F3_trigger = M.KeyDownTrigger(KEY.F3)
 
 -- global cheat = false
 

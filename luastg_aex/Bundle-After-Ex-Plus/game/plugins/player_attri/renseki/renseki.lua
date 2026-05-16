@@ -1,7 +1,7 @@
 ---todo: based on the homing bullet template, design our player
 ---! 穹海 涟析 | Kyuukai Renseki
 renseki_player=Class(player_class)
-local pe=require "THlib.customized-extension.particle_emitter"
+local pe=require "THlib.customized-extension.particle_ext"
 local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
@@ -92,16 +92,16 @@ function renseki_player:init(slot)
 	-----------------------------------------
 	LoadTexture("renseki_bullet1",dir.."b1.png")
 	LoadAnimation("renseki_bullet1_ani","renseki_bullet1",0,0,128,64,4,3,3)
-	SetAnimationState("renseki_bullet1_ani","mul+add",Color(160,255,140,230))
+	SetAnimationState("renseki_bullet1_ani","mul+add",Color(140,215,70,190))
 	SetAnimationScale("renseki_bullet1_ani",0.60)
 
 	LoadAnimation("renseki_bullet2_ani","renseki_bullet1",0,0,128,64,4,3,3)
-	SetAnimationState("renseki_bullet2_ani","mul+add",Color(160,210,210,210))
+	SetAnimationState("renseki_bullet2_ani","mul+add",Color(120,150,150,150))
 	SetAnimationScale("renseki_bullet2_ani",0.55)
 
 	LoadTexture("renseki_bullet3",dir.."b2.png")
 	LoadAnimation("renseki_bullet3_ani","renseki_bullet3",0,0,128,128,4,3,3)
-	SetAnimationState("renseki_bullet3_ani","mul+add",Color(150,210,210,210))
+	SetAnimationState("renseki_bullet3_ani","mul+add",Color(120,150,150,150))
 	SetAnimationScale("renseki_bullet3_ani",0.45)
 
 	LoadTexture("renseki_support",dir.."player_sub.png")
@@ -303,7 +303,7 @@ function renseki_player:shoot()
 				if i<=num/4 or i>=num/4*3 then sy=1 end
 
 				if self.sp[i] and self.sp[i][3]>0.5 then
-					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp_dx*sgn+self.sp[i][1],self.supporty+self.sp_dy*sy+self.sp[i][2],7.3,self.anglelist[num][i]+ran:Float(-5,5),self.target,900,2.2,Powerup)
+					New(renseki_bullet_fast,'renseki_bullet3_ani',self.supportx+self.sp_dx*sgn+self.sp[i][1],self.supporty+self.sp_dy*sy+self.sp[i][2],7.3,self.anglelist[num][i]+ran:Float(-3,3),self.target,900,2.2,Powerup)
 				end
 			end
 		end --end
@@ -312,6 +312,37 @@ end
 
 
 -------------------------------------------------------
+local function straight_particle(self,co_list)
+	--local prob=(8+self.timer%8)/15*ran:Float(0,1)
+	if ran:Float(0,1)<0.10 then
+		local r=ran:Float(0,3)
+		local a=self.rot+180+ran:Float(-60,60)
+		local dx,dy=r*cos(a),r*sin(a)
+		local t=ran:Int(25,35)
+		local v0=ran:Float(0.1,0.9)
+		local acc=-v0/t-0.005
+		local co_list={Color(105,255,40,160),Color(85,120,190,255)}
+		local co= self.powerup and co_list[1] or co_list[2]
+		pe.ParticlePresets.DynamicScatter(self.x,self.y,co,r,r,"parimg11",t,0.7,0.15,false,self,acc,v0)
+	end 
+end
+
+local function trail_particle(self,co_list)
+	--local index=ran:Int(2,7)
+	if ran:Float(0,1)<0.10 then
+		local r=0
+		local a=self.rot+180+ran:Float(-20,20)
+		local dx,dy=r*cos(a),r*sin(a)
+		local t=ran:Int(15,30)
+		local v0=ran:Float(0.4,0.9)
+		v0=0
+		local acc=-v0/t
+		local co_list={Color(105,255,40,160),Color(85,120,190,255)}
+		local co= self.powerup and co_list[1] or co_list[2]
+		pe.ParticlePresets.DynamicScatter(self.x,self.y,co,r,r,"parimg11",t,0.5,0.07,false,self,acc,v0)
+	end
+end
+
 function renseki_player:spell()
 	local infi=2000
 	self.collect_line=self.collect_line-infi
@@ -371,15 +402,18 @@ function renseki_bullet_main:init(img,x,y,v,angle,dmg,Powerup)
 
 	self.powerup=Powerup or false
 	if Powerup then
-		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
-		_object.set_color(self,"mul+add",255,255,40,160)
+		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
+		_object.set_color(self,"mul+add",210,255,40,160)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",255,170,180,220)
-		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
+		_object.set_color(self,"mul+add",210,170,180,220)
+		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
 	--assert(self._a~=nil,"?")
 	
+end
+function renseki_bullet_main:frame()
+	straight_particle(self,{Color(190,255,40,160),Color(190,170,180,220)})
 end
 function renseki_bullet_main:render()
 	SetImgState(self,'mul+add',self._a,self._r,self._g,self._b)
@@ -414,13 +448,16 @@ function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
 
 	self.powerup=Powerup or false
 	if Powerup then
-		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
-		_object.set_color(self,"mul+add",255,255,140,215)
+		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
+		_object.set_color(self,"mul+add",210,255,140,215)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",255,170,180,220)
-		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
+		_object.set_color(self,"mul+add",210,170,180,220)
+		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
+end
+function renseki_bullet_slow:frame()
+	straight_particle(self,{Color(190,255,140,215),Color(190,170,180,220)})
 end
 function renseki_bullet_slow:render()
 	SetImgState(self,'mul+add',self._a,self._r,self._g,self._b)
@@ -481,12 +518,12 @@ function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg,Powerup)
 
 	self.powerup=Powerup or false
 	if Powerup then
-		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
-		_object.set_color(self,"mul+add",255,255,140,215)
+		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
+		_object.set_color(self,"mul+add",210,255,140,215)
 		self.dmg=self.dmg*1.5
 	else
-		_object.set_color(self,"mul+add",255,170,180,220)
-		lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
+		_object.set_color(self,"mul+add",210,170,180,220)
+		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self,"renseki_bullet_track")
 	end
 end
 
@@ -501,6 +538,8 @@ function renseki_bullet_fast:frame()
 	end
 	self.vx=self.v*cos(self.rot)
 	self.vy=self.v*sin(self.rot)
+
+	trail_particle(self)
 end
 
 function renseki_bullet_fast:render()
@@ -618,6 +657,7 @@ function renseki_powerup_bullet_track:init(x,y,target,img)
 	self.vx=0
 	self.tar=target
 	self.DeathTimer=0
+	SetImgState(self,"mul+add",0,0,0,0)
 end
 
 function renseki_powerup_bullet_track:frame()
@@ -762,7 +802,7 @@ function renseki_bomb1:frame()
 			end
 		end
 		---闪烁粒子
-		local pp=ParticlePresets
+		local pp=pe.ParticlePresets
 		if self.timer<self.maxlife+20 then
 			--print("enter timer stamp")
 			local r=ran:Float(self.r*0.55,self.r*0.70)
