@@ -184,21 +184,7 @@ local defaultFrameEvent = {
     ["frame.itemCollect"] = { 95, function(self)
         if self.__death_state == 0 then
             if self.y > self.collect_line then
-                for _, o in ObjList(GROUP_ITEM) do
-                    local flag = false
-                    if o.attract < 8 then
-                        flag = true
-                    elseif o.attract == 8 and o.target ~= self then
-                        if (not o.target) or o.target.y < self.y then
-                            flag = true
-                        end
-                    end
-                    if flag then
-                        o.attract = 8
-                        o.num = self.item
-                        o.target = self
-                    end
-                end
+                misc_ex.CollectAll()
             else
                 if self.__slow_flag then
                     for _, o in ObjList(GROUP_ITEM) do

@@ -480,60 +480,25 @@ function stage_menu:init()
     menu_items = {}
     ---musicroom标题文本定义
     ---
-    table.insert(menu_items, { '1.信息之渊 ~ Data Abyss', function ()
+    local function musicroom_play(name)
         StopMusic(lstg.var.now_music)
-        PlayMusic('menu',0.8)
-        lstg.var.now_music = 'menu'
-    end })
-    table.insert(menu_items, { '2.星罗深海 ~ Drowning in Data', function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_stage1',0.9)
-        lstg.var.now_music = 'bgm_stage1'
-    end })
-    table.insert(menu_items, { '3.摇曳潜行 ~ Learning in Attractors', function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_stage2',0.9)
-        lstg.var.now_music = 'bgm_stage2'
-    end })
-    table.insert(menu_items, { "4.消亡与涌现的循环 ~ Player's Score ", function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('deathmusic')
-        lstg.var.now_music = 'deathmusic'
-    end })
-    table.insert(menu_items, { "5.踏入未知的无尽幻想 ~ Stepped Into Utopia ", function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_stage3')
-        lstg.var.now_music = 'bgm_stage3'
-    end })
-    table.insert(menu_items, { "6.碎梦的回廊 ~ Undefined and Missing Ideas", function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_stage4a')
-        lstg.var.now_music = 'bgm_stage4a'
-    end })
-    table.insert(menu_items, { "7.绵月的符卡 ~ 神海战", function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_stage4b')
-        lstg.var.now_music = 'bgm_stage4b'
-    end })
-    table.insert(menu_items, { "8.星涟心迹 ~ Starlit Cognition", function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_ending')
-        lstg.var.now_music = 'bgm_ending'
-    end })
-    table.insert(menu_items, { "9.数字生命 ~ Artificial Dream", function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_staff')
-        lstg.var.now_music = 'bgm_staff'
-    end })
-    table.insert(menu_items, { "10.翔鹤", function ()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('bgm_staff_full')
-        lstg.var.now_music = 'bgm_staff_full'
-    end })
+        RemoveResource("stage",4,lstg.var.now_music)
+        LoadMusicRecord(name)
+        PlayMusic(name,0.8)
+        lstg.var.now_music = name
+    end 
+    table.insert(menu_items, { '1.信息之渊 ~ Data Abyss', function ()musicroom_play('menu')end })
+    table.insert(menu_items, { '2.星罗深海 ~ Drowning in Data', function ()musicroom_play('bgm_stage1')end })
+    table.insert(menu_items, { '3.摇曳潜行 ~ Learning in Attractors', function ()musicroom_play('bgm_stage2')end })
+    table.insert(menu_items, { "4.消亡与涌现的循环 ~ Player's Score ", function ()musicroom_play('deathmusic')end })
+    table.insert(menu_items, { "5.踏入未知的无尽幻想 ~ Stepped Into Utopia ", function ()musicroom_play('bgm_stage3')end })
+    table.insert(menu_items, { "6.碎梦的回廊 ~ Undefined and Missing Ideas", function ()musicroom_play('bgm_stage4a')end })
+    table.insert(menu_items, { "7.绵月的符卡 ~ 神海战", function ()musicroom_play('bgm_stage4b')end })
+    table.insert(menu_items, { "8.星涟心迹 ~ Starlit Cognition", function ()musicroom_play('bgm_ending')end })
+    table.insert(menu_items, { "9.数字生命 ~ Artificial Dream", function ()musicroom_play('bgm_staff')end })
+    table.insert(menu_items, { "10.翔鹤", function ()musicroom_play('bgm_staff_full')end })
     table.insert(menu_items, { 'exit', function()
-        StopMusic(lstg.var.now_music)
-        PlayMusic('menu')
-        lstg.var.now_music = 'menu'
+        musicroom_play('menu')
         bg_change(self, "out")
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_musicroom, 'right')
