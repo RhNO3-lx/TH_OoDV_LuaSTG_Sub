@@ -1503,20 +1503,20 @@ function manual:frame()
     if self.locked then
         return
     end
-    if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
-        self.last_pos = self.pos
-        self.pos = self.pos - 1
-        PlaySound('select00', 0.3)
-    end
-    if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
-        self.last_pos = self.pos
-        self.pos = self.pos + 1
-        PlaySound('select00', 0.3)
-    end
+    -- if GetLastKey(self.keyslot) == setting.keys.up and (not self.no_pos_change) then
+    --     self.last_pos = self.pos
+    --     self.pos = self.pos - 1
+    --     PlaySound('select00', 0.3)
+    -- end
+    -- if GetLastKey(self.keyslot) == setting.keys.down and (not self.no_pos_change) then
+    --     self.last_pos = self.pos
+    --     self.pos = self.pos + 1
+    --     PlaySound('select00', 0.3)
+    -- end
     self.pos = (self.pos - 1 + #(self.text)) % (#(self.text)) + 1
     if KeyIsPressed('shoot', self.keyslot) and self.func[self.pos] then
         self.func[self.pos]()
-        PlaySound('ok00', 0.3)
+        --PlaySound('ok00', 0.3)
     elseif KeyIsPressed('spell', self.keyslot) and self.exit_func then
         self.exit_func()
         PlaySound('cancel00', 0.3)

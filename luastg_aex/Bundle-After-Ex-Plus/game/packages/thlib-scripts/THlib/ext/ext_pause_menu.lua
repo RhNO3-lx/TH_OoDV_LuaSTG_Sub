@@ -140,8 +140,7 @@ function ext.pausemenu:frame()
                 PlaySound('ok00', 0.3)
                 if self.pos == 1 then
                     ---对第一个选项特化处理
-                    if --lstg.var.allow_continue or not lstg.tmpvar.death or lstg.var.is_practice 
-                    true then
+                    if lstg.var.allow_continue or not lstg.tmpvar.death or lstg.var.is_practice then
                         ext.PushPauseMenuOrder(pause_menu_text[self.pos])
                         self:FlyOut()
                     else
@@ -281,6 +280,7 @@ function ext.pausemenu:render()
                             SetImageState('pause_' .. pause_menu_text[i], '', Color(pm.mask_alph[i] + 15, 100, 100, 100))
                             color = Color(pm.mask_alph[i] + 15, 100, 100, 100)
                         end
+                        SetImageState('cross', '', Color(pm.mask_alph[i] + 15, 255, 255, 255))
                     else
                         if i == self.pos and pm.mask_alph[i] + 15 >= 245 then
                             SetImageState('pause_' .. pause_menu_text[i], '', Color(55, 255, 255, 255))
@@ -289,10 +289,13 @@ function ext.pausemenu:render()
                             SetImageState('pause_' .. pause_menu_text[i], '', Color(55, 100, 100, 100))
                             color = Color(55, 255, 255, 255)
                         end
+                        SetImageState('cross', '', Color(pm.mask_alph[i] + 15, 100, 100, 100))
                     end
                     RenderTTF2('menuttf', pause_menu_text[i], 320 + offx, 320 + offx, -30 - i * 40 + dy, -30 - i * 40 + dy, ui.menu.font_size, color, 'center', "vcenter", "noclip")
                     --Render()
-                    --Render('pause_' .. pause_menu_text[i], pm.mask_x[i] + (1 + i) * 10 + dx, -30 - i * 40 + dy, 0, 0.62, 0.62)
+                    if i == 1 then
+                        Render('cross', 320 + offx*0.5, -30 - 40 + dy, 0, 0.62, 0.62)
+                    end
                 end
             else
                 for i = 1, textnumber do
@@ -537,3 +540,5 @@ SetImageCenter('pause_Replay Again', 0, 28)
 LoadImage('pause_Continue', 'pause', 232, 432, 120, 58)
 SetImageCenter('pause_Continue', 0, 29)
 LoadImage('pause_eff', 'pause', 408, 320, 104, 384)
+LoadTexture('cross_', 'THlib/UI/cross.png')
+LoadImage('cross', 'cross_', 0, 0, 215, 93)
