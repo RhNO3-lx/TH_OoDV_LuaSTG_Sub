@@ -20,7 +20,7 @@ local MusicList={
     {name="bgm_stage1",path='THlib/music/星罗深海 ~ Drowning in Data.ogg',loopend=82.154,looplength=73.846},
     {name="bgm_stage2",path='THlib/music/摇曳潜行 ~ Learning in Attractors.ogg',loopend=145.654,looplength=132.414},
     {name="bgm_stage4a",path='THlib/music/碎梦的回廊 ~ Undefined and Missing Ideas.ogg',loopend=282.4615,looplength=141.2308},
-    {name="bgm_ending",path='THlib/music/星涟心迹 ~ Starlit Cognition.ogg',loopend=103.385,looplength=103.385},
+    {name="bgm_ending",path='THlib/music/星涟心迹 ~ Starlit Cognition.ogg',loopend=106,looplength=106},
     {name="bgm_staff",path='THlib/music/数字生命 ~ Artificial Dream.ogg',loopend=113.778,looplength=113.778},
     {name="bgm_stage3",path='THlib/music/踏入未知的无尽幻想 ~ Stepped Into Utopia.ogg',loopend=174.0000,looplength=163.3333},
     {name="bgm_stage4b",path='THlib/music/上海アリス幻樂団 - 綿月のスペルカード ~ 神海戦.ogg',loopend=297.820,looplength=148.574},

@@ -120,8 +120,8 @@ function renseki_player:init(slot)
 	LoadPS("renseki_heal_particle",dir.."particle_heal.psi","parimg11")
 	LoadPS("renseki_hit_particle",dir.."particle_hit.psi","parimg11")
 	LoadPS("renseki_powerup_state",dir.."particle_powerup.psi","parimg10")
-	LoadPS("renseki_powerup_bullet_track",dir.."bullet_powerup_track_particle.psi","parimg11")
-	LoadPS("renseki_bullet_track",dir.."bullet_track_particle.psi","parimg11")
+	-- LoadPS("renseki_powerup_bullet_track",dir.."bullet_powerup_track_particle.psi","parimg11")
+	-- LoadPS("renseki_bullet_track",dir.."bullet_track_particle.psi","parimg11")
 	LoadPS("renseki_bomb1_particle",dir.."renseki_bomb_particle.psi","parimg11")
 
 	LoadFX("renseki_bomb1",dir.."renseki_bomb1.hlsl")
@@ -644,35 +644,35 @@ function renseki_weaken_effect:render()
 	SetViewMode("world")
 end
 
-renseki_powerup_bullet_track=Class(object)
-function renseki_powerup_bullet_track:init(x,y,target,img)
-	self.x=x
-	self.y=y
-	self.img=img or 'renseki_powerup_bullet_track'
-	self.layer=LAYER_PLAYER_BULLET+50
-	self.group=GROUP_GHOST
-	self.hscale=1.0
-	self.vscale=1.0
-	self.vy=0
-	self.vx=0
-	self.tar=target
-	self.DeathTimer=0
-	SetImgState(self,"mul+add",0,0,0,0)
-end
+-- renseki_powerup_bullet_track=Class(object)
+-- function renseki_powerup_bullet_track:init(x,y,target,img)
+-- 	self.x=x
+-- 	self.y=y
+-- 	self.img=img or 'renseki_powerup_bullet_track'
+-- 	self.layer=LAYER_PLAYER_BULLET+50
+-- 	self.group=GROUP_GHOST
+-- 	self.hscale=1.0
+-- 	self.vscale=1.0
+-- 	self.vy=0
+-- 	self.vx=0
+-- 	self.tar=target
+-- 	self.DeathTimer=0
+-- 	SetImgState(self,"mul+add",0,0,0,0)
+-- end
 
-function renseki_powerup_bullet_track:frame()
-	task.Do(self)
-	if IsValid(self.tar) then
-		self.x=self.tar.x
-		self.y=self.tar.y
-	else
-		ParticleStop(self)
-		task.New(self,function()
-			task.Wait(50)
-			Del(self)
-		end)
-	end
-end
+-- function renseki_powerup_bullet_track:frame()
+-- 	task.Do(self)
+-- 	if IsValid(self.tar) then
+-- 		self.x=self.tar.x
+-- 		self.y=self.tar.y
+-- 	else
+-- 		ParticleStop(self)
+-- 		task.New(self,function()
+-- 			task.Wait(50)
+-- 			Del(self)
+-- 		end)
+-- 	end
+-- end
 --#region
 renseki_powerup_effect=Class(object)
 function renseki_powerup_effect:init(x,y,p)
