@@ -99,7 +99,7 @@ float noise3D(float3 p) {
 float fbm3D(float3 p) {
     float f = 0.0;
     float w = 0.5;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 2; i++) {
         f += w * noise3D(p);
         p = p * 2.0 + 100.0;
         w *= 0.5;
@@ -117,6 +117,8 @@ struct PS_Output
 {
     float4 col : SV_Target;
 };
+
+
 
 PS_Output main(PS_Input input)
 {
@@ -165,8 +167,8 @@ PS_Output main(PS_Input input)
         result=result+base2*mask2*(weight);
         //solid part
         float la=a;
-        float base3=fbm3D(float3(cos(la),sin(la),cr*2+4*timer));
-        result=result+weight*base3*float4(0.4,0,0.8,1);
+        // float base3=fbm3D(float3(cos(la),sin(la),cr*2+4*timer));
+        result=result+weight*float4(0.2,0,0.4,0.5);
 
         //light line
         float base4=fbm3D(float3(cos(13*a),sin(7*a),cr*1.7+timer*5));
