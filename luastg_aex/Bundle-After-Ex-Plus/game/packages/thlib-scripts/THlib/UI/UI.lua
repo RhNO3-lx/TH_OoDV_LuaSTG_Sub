@@ -90,8 +90,8 @@ ui.menu = {
     chbox_off = 50,
     manual_item_off = -300,
     music_item_off = -280,
-    img_posy = {230, 130},
-    img_posy_pr = {230, 130}
+    img_posy = {240, 120},
+    img_posy_pr = {240, 120}
 }
 
 ui.menu_bulr = 0
@@ -228,7 +228,7 @@ function ui.DrawDifSelect(ttfname, title, text, po, x, y, alpha, timer, shake, i
     if img_posy[pos] >= 232 or img_posy[pos] <= 228 then
         local p = (img_posy[pos]-230)
         local dir = p/math.abs(p)
-        local vel = p/25+dir
+        local vel = p/10+dir
         for i in ipairs(img_posy) do
             img_posy[i] = img_posy[i] - vel
         end

@@ -1081,7 +1081,7 @@ function LauncherScene:onCreate()
         end)
     end
     setMod("东方秽漫洋")]]--
-    setting.mod = "东方秽漫洋"
+    setting.mod = "东方秽漫洋 ~ Ocean of Defiled Visions"
     saveConfigure()
     --pushMenuStack(nil)
     --self.color_value_d = -1 / 30

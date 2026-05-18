@@ -174,7 +174,9 @@ local function DrawAllSC(ttfname, title, text, pos, x, y, alpha, timer, shake, t
     for i = 1, #text do
         local co=ui.menu.unfocused_color
         if string.find(text[i], "Nonspell") then
-            co={co[1]-30,co[2]-10,co[3]}
+            co={co[1]-20,co[2]-10,co[3]}
+        elseif string.find(text[i], "」") then
+            co={co[1]-18,co[2]-15,co[3]+3}
         end
         local _x = x
         if _text_offx[i] ~= nil then
