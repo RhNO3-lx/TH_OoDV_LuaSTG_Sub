@@ -78,7 +78,9 @@ ui.menu = {
     shake_range = 3,
     standard_line_height = 22,
     sc_pr_line_per_page = 11,
-    sc_pr_line_height = 27,
+    sc_pr_line_height = 27,---注意：疑似被主菜单同时使用
+    ---另起一个
+    sc_pr_item_delta_y=23,
     sc_pr_width = 320,
     sc_pr_margin = 8,
     rep_font_size = 0.6,

@@ -159,6 +159,40 @@ function sc_pr_menu:frame()
         end
     end
 end
+---额外添加的专为符卡练习模式设计的辅助菜单渲染
+local function DrawAllSC(ttfname, title, text, pos, x, y, alpha, timer, shake, text_offx, align)
+    local _text_offx = text_offx or {}
+    align = align or "center"
+    local dy=ui.menu.sc_pr_item_delta_y
+    local yos
+    if title == "" then
+        yos = (#text + 1) * dy * 0.5
+    else
+        yos = (#text - 1) * dy * 0.5
+        RenderTTF2(ttfname, title, x, x, y + yos + dy, y + yos + dy, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.title_color)), align, "vcenter", "noclip")
+    end
+    for i = 1, #text do
+        local co=ui.menu.unfocused_color
+        if string.find(text[i], "Nonspell") then
+            co={co[1]-30,co[2]-10,co[3]}
+        end
+        local _x = x
+        if _text_offx[i] ~= nil then
+            _x = x + _text_offx[i]
+        end
+        if i == pos then
+            local color = {}
+            local k = cos(timer * ui.menu.blink_speed) ^ 2
+            for j = 1, 3 do
+                color[j] = ui.menu.focused_color1[j] * k + ui.menu.focused_color2[j] * (1 - k)
+            end
+            local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
+            RenderTTF2(ttfname, text[i], _x + xos, _x + xos, y - i * dy + yos, y - i * dy + yos, ui.menu.font_size, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
+        else
+            RenderTTF2(ttfname, text[i], _x, _x, y - i * dy + yos, y - i * dy + yos, ui.menu.font_size, Color(alpha * 255, unpack(co)), align, "vcenter", "noclip")
+        end
+    end
+end
 
 function sc_pr_menu:render()
     --[[
@@ -186,13 +220,22 @@ function sc_pr_menu:render()
         end
     end
     local offy = -20
-    ui.DrawMenuTTF('sc_pr', '', text1, self.pos, self.x - ui.menu.sc_pr_width * 0.5, offy + self.y - 10, self.alpha, self.timer, self.pos_changed, 'left')
-    ui.DrawMenuTTF('sc_pr', '', text2, self.pos, self.x + ui.menu.sc_pr_width * 0.5, offy + self.y - 10, self.alpha, self.timer, self.pos_changed, 'right')
+    DrawAllSC('sc_pr', '', text1, self.pos, self.x - ui.menu.sc_pr_width * 0.5, offy + self.y - 10, self.alpha, self.timer, self.pos_changed, 'left')
+    DrawAllSC('sc_pr', '', text2, self.pos, self.x + ui.menu.sc_pr_width * 0.5, offy + self.y - 10, self.alpha, self.timer, self.pos_changed, 'right')
+    local lunatic_color={215,160,255}
+    local normal_color={170,235,255}
     RenderTTF2('sc_pr', 'Spell Practice', self.x, self.x, offy + 23 + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, offy + 23 + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 1.2, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
-    RenderTTF2('sc_pr', sc_pr_menu.difs[self.dif], self.x, self.x, offy + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, offy + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 1, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
+
+    local dif_color=lunatic_color
+    if self.dif==2 then
+        dif_color=normal_color
+    end
+    RenderTTF2('sc_pr', sc_pr_menu.difs[self.dif], self.x, self.x, offy + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, offy + self.y + (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 1, Color(self.alpha * 255, unpack(dif_color)), 'centerpoint')
+    
     RenderTTF('sc_pr', string.format('<-  page %d/%d  ->', self.page + 1, self.npage), self.x, self.x, offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
-    RenderTTF2('sc_pr', 'press c to change difficulty', self.x-200, self.x-200, -30 + offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, -30 + offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 0.6, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
+    RenderTTF2('sc_pr', '*Press C to change difficulty', self.x-200, self.x-200, -30 + offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, -30 + offy + self.y - (ui.menu.sc_pr_line_per_page + 1) * ui.menu.sc_pr_line_height * 0.5, 0.6, Color(self.alpha * 255, unpack(ui.menu.title_color)), 'centerpoint')
 end
+
 ------------------------------------------------------------
 
 simple_menu = Class(object)
