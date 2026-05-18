@@ -7,6 +7,7 @@ local SceneManager = require("foundation.SceneManager")
 local IntersectionDetectionManager = require("foundation.IntersectionDetectionManager")
 local gameEventDispatcher = lstg.globalEventDispatcher
 
+VERSION_SIGNATURE="v1.00"
 ----------------------------------------
 ---ext加强库
 
@@ -156,6 +157,7 @@ end
 --- 设置标题
 function ChangeGameTitle()
     local mod = setting.mod and #setting.mod > 0 and setting.mod
+    mod=mod.." "..VERSION_SIGNATURE
     local ext =
         table.concat(
         {
