@@ -768,6 +768,7 @@ function renseki_bomb1:frame()
 	task.Do(self)
 	--免疫不良状态
 	player.WeakEffectTime=0
+	SetImgState(self,"mul+add",self.al,0,0,0)
 
 	local SetAttraction=function(unit)
 		local d=Dist(unit,self)
@@ -818,8 +819,7 @@ function renseki_bomb1:render()
 	SetViewMode("world")
 	PushRenderTarget("bomb_black")
 	RenderClear(Color(0,0,0,0))
-	SetImgState(self,"mul+add",self.al,0,0,0)
-	object.render(self)
+	-- object.render(self)
 	PopRenderTarget()
 	local x, y = GetScr(self)
     local x1 = x * screen.scale

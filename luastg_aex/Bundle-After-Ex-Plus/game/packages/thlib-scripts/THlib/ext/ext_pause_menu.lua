@@ -222,13 +222,20 @@ function ext.pausemenu:render()
                 Render("pause_gameover", 320, 240, 0, 0.25, 0.25)
                 RenderTTF2("menuttf", "满身疮痍", 320, 320, 240, 240, 1, Color(pm.mask_alph[1] + 15, 200, 200, 225), "center")
                 RenderTTF2("menuttf", "severely wounded", 320, 320, 215, 215, 0.375, Color(pm.mask_alph[1], 100, 100, 175), "center")
+            elseif lstg.var.is_practice then
+                if self.choose then
+                    SetImageState('pause_practiceover', '', Color(pm.mask_alph[1] + 15, 100, 100, 100))
+                else
+                    SetImageState('pause_practiceover', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
+                end
+                Render('pause_practiceover', pm.mask_x[1] + dx, -15 + dy, 0, 0.7, 0.7)
             else
                 if self.choose then
-                        SetImageState('pause_gameover_', '', Color(pm.mask_alph[1] + 15, 100, 100, 100))
-                    else
-                        SetImageState('pause_gameover_', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
-                    end
-                    Render('pause_gameover_', pm.mask_x[1] + dx, -15 + dy, 0, 0.7, 0.7)
+                    SetImageState('pause_gameover_', '', Color(pm.mask_alph[1] + 15, 100, 100, 100))
+                else
+                    SetImageState('pause_gameover_', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
+                end
+                Render('pause_gameover_', pm.mask_x[1] + dx, -15 + dy, 0, 0.7, 0.7)
             end
         else
             --没有现有的文字时高亮处理
@@ -515,6 +522,8 @@ SetImageCenter('pause_pausemenu', 0, 35)
 LoadImage('pause_gameover_', 'pause', 172, 0, 170, 70)
 LoadImageFromFile('pause_gameover', "THlib/UI/game_over.png")
 SetImageCenter('pause_gameover_', 0, 35)
+LoadImage('pause_practiceover', 'pause', 0, 624, 170, 70)
+SetImageCenter('pause_practiceover', 0, 35)
 LoadImage('pause_replyover', 'pause', 352, 0, 162, 70)
 SetImageCenter('pause_replyover', 0, 35)
 LoadImage('pause_Return to Game', 'pause', 0, 80, 245, 60)

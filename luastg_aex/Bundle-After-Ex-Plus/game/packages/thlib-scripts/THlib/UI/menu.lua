@@ -87,6 +87,7 @@ function sc_pr_menu:init(exit_func)
         end
     end
     self.dif = 1
+
     self.layer = LAYER_TOP
     self.group = GROUP_GHOST
     self.alpha = 1
@@ -95,7 +96,8 @@ function sc_pr_menu:init(exit_func)
     self.y = screen.height * 0.5
     self.bound = false
     self.locked = true
-    self.npage = max(int((#_sc_table - 1) / ui.menu.sc_pr_line_per_page) + 1, 1)
+    --应该随着切换难度的时候同样更新
+    self.npage = max(int((self.sc_num[sc_pr_menu.difs[self.dif]] - 1) / ui.menu.sc_pr_line_per_page) + 1, 1)
     self.page = 0
     self.pos = 1
     self.pos_changed = 0
@@ -103,6 +105,7 @@ end
 
 function sc_pr_menu:frame()
     task.Do(self)
+
     if self.locked then
         return
     end
@@ -133,6 +136,8 @@ function sc_pr_menu:frame()
     if GetLastKey() == setting.keys.special then
         PlaySound('select00', 0.3)
         self.dif = self.dif % 2 + 1
+        --应该随着切换难度的时候同样更新
+        self.npage = max(int((self.sc_num[sc_pr_menu.difs[self.dif]] - 1) / ui.menu.sc_pr_line_per_page) + 1, 1)
     end
     self.page = (self.page + self.npage) % self.npage
     if KeyIsPressed 'shoot' then
