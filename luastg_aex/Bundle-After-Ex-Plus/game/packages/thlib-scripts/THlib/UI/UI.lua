@@ -450,7 +450,7 @@ function ui.DrawMusicTTF(ttfname, title, text, content, pos, x, y, alpha, timer,
         yos = (#text + 1) * ui.menu.sc_pr_line_height * 0.5
     else
         yos = (#text - 1) * ui.menu.sc_pr_line_height * 0.5
-        RenderTTF2(ttfname, title, x, x, 450, 450, ui.menu.font_size * 1.2, Color(alpha * 255, unpack(ui.menu.title_color)), "center", "vcenter", "noclip")
+        RenderTTF2(ttfname, title, x, x, 440, 440, 1, Color(alpha * 255, unpack(ui.menu.title_color)), "center", "vcenter", "noclip")
     end
     for i = 1, #text do
         local _x = x + ui.menu.music_item_off
@@ -465,10 +465,10 @@ function ui.DrawMusicTTF(ttfname, title, text, content, pos, x, y, alpha, timer,
                 color[j] = ui.menu.focused_color1[j] * k + ui.menu.focused_color2[j] * (1 - k)
             end
             local xos = ui.menu.shake_range * sin(ui.menu.shake_speed * shake)
-            RenderTTF2(ttfname, text[i], _x + xos, _x + xos, _y - i * ui.menu.sc_pr_line_height + yos, _y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], _x + xos, _x + xos, _y - i * 25 + yos, _y - i * 25 + yos, 0.7, Color(alpha * 255, unpack(color)), align, "vcenter", "noclip")
             ui.DrawManualContent(x, y+20, content, alpha, ui.menu.focused_color1)
         else
-            RenderTTF2(ttfname, text[i], _x, _x, _y - i * ui.menu.sc_pr_line_height + yos, _y - i * ui.menu.sc_pr_line_height + yos, ui.menu.font_size, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
+            RenderTTF2(ttfname, text[i], _x, _x, _y - i * 25 + yos, _y - i * 25 + yos, 0.7, Color(alpha * 255, unpack(ui.menu.unfocused_color)), align, "vcenter", "noclip")
         end
     end
 end

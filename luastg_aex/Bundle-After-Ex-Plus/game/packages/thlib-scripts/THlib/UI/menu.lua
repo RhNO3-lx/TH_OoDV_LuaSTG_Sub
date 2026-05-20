@@ -893,7 +893,7 @@ function musicroom:init(title, item, content, keyslot, offx, offy)
     self.alpha = 0
     self.offx = offx or 0
     self.x = screen.width * 0.5 - screen.width
-    self.y = screen.height * 0.5
+    self.y = screen.height * 0.5 + offy
     self.bound = false
     self.locked = true
     self.title = title
