@@ -213,7 +213,7 @@ function ext.pausemenu:render()
                     SetImageState('pause_replyover', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
                 end
                 Render('pause_replyover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
-            elseif not ext.sc_pr and not lstg.var.is_practice and not lstg.var.allow_continue then
+            elseif not ext.sc_pr and not lstg.var.is_practice then
                 if self.choose then
                     SetImageState('pause_gameover', '', Color(pm.mask_alph[1] + 15, 100, 100, 100))
                 else
@@ -274,7 +274,7 @@ function ext.pausemenu:render()
                 Render('pause_' .. pause_menu_text[i], pm.mask_x[i] + (1 + i) * 10 + dx, -30 - i * 40 + dy, 0, 0.62, 0.62)
             end
         else
-            if not ext.sc_pr and not lstg.var.is_practice and not lstg.var.allow_continue then
+            if not ext.sc_pr and not lstg.var.is_practice then
                 for i = 1, textnumber do
                     local color = {}
                     local offx = 0
@@ -300,7 +300,7 @@ function ext.pausemenu:render()
                     end
                     RenderTTF2('menuttf', pause_menu_text[i], 320 + offx, 320 + offx, -30 - i * 40 + dy, -30 - i * 40 + dy, ui.menu.font_size, color, 'center', "vcenter", "noclip")
                     --Render()
-                    if i == 1 then
+                    if i == 1 and not lstg.var.allow_continue then
                         Render('cross', 320 + offx*0.5, -30 - 40 + dy, 0, 0.62, 0.62)
                     end
                 end
