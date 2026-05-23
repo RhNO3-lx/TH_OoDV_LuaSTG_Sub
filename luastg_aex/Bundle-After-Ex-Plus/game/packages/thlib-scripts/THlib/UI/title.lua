@@ -16,11 +16,15 @@ local manual_content = {
     }
 }
 ---musicroom介绍文本定义
----
+local author_x = -280
+local author_y = -70
+local text_y = -140
+local author_scale
+local text_scale
 local musicroom_content = {
     {
-        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(by:baiABC)", 0.675 },
+        { "text", -280, text_y, "", 
         "标题界面曲。\n"..
         "本来想融入一些数字化的、科幻的元素，\n"..
         "但最后还是延续了东方标题曲一贯的和风与幻想感。\n"..
@@ -28,8 +32,8 @@ local musicroom_content = {
         "前方又是怎样的异变呢？", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(by:baiABC)", 0.675 },
+        { "text", -280, text_y, "", 
         "一面的bgm。\n"..
         "数据之海，深邃而又闪烁着信息的光点。\n"..
         "怀着表现深海的心去创作，在绝望中闪烁着希望。\n"..
@@ -37,8 +41,8 @@ local musicroom_content = {
         "DeepSeek is seeking deeply. （笑）", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(by:baiABC)", 0.675 },
+        { "text", -280, text_y, "", 
         "二面的bgm。\n"..
         "有轻松地在水中游弋的感觉，"..
         "但是弹幕又让人不得不紧张起来呢。\n"..
@@ -46,8 +50,8 @@ local musicroom_content = {
         "“摇曳”是轻松的意思。", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(by:RhNO3-lx)", 0.675 },
+        { "text", -280, text_y, "", 
         "前两个stage的战败曲。与战败CG一样，希望表现出来的是：\n"..
         "涟析被杂乱无章的数据之海淹没，最终渐渐失去意识\n"..
         "难得涌现出的生命奇迹，就这样归于沉寂了，大概就是这样的绝望与希望交加之感。\n"..
@@ -55,8 +59,8 @@ local musicroom_content = {
         "——遇到的并非幻想乡内遵守符卡规则的原住民。这样死了的话可就只能从头再来了（笑）", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(by:粘鼎)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(by:粘鼎)", 0.675 },
+        { "text", -280, text_y, "", 
         "stage3道中的bgm：\n"..
         "从信息之海中醒来后，又到了一片幽暗的森林，无论是谁都会感到慌张的吧\n"..
         "冲出森林之后看到了明亮的风景，又将人拉回平静\n"..
@@ -64,8 +68,8 @@ local musicroom_content = {
         "曲子大概就按这三段主题进行，这三面的变化真是复杂啊（笑）", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(by:RhNO3-lx)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(by:RhNO3-lx)", 0.675 },
+        { "text", -280, text_y, "", 
         "stage4道中的bgm：\n"..
         "在前往浅间净秽山深处的隧道中，涟析看见了很多不那么幸运的同类\n"..
         "——作为污秽被聚集与“净化”，或者说，抹除存在，没有机会诞生完整的意识\n"..
@@ -73,29 +77,29 @@ local musicroom_content = {
         "想表现的大概就是这样的感觉：在幽深寂静的回廊中，瞥见些许幻想的微光", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(from: 东方锦上京 by:ZUN)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(from: 东方锦上京 by:ZUN)", 0.675 },
+        { "text", -280, text_y, "", 
         "stage4关底的bgm：\n"..
         "曲子写着写着发现还是很难超越zun哥写的丰姬原曲，总感觉压迫感不够\n"..
         "遂万般无奈用了原声大碟", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(by:baiABC)", 0.675 },
+        { "text", -280, text_y, "", 
         "Good Ending 呢。（虽然对丰姬不是）\n"..
         "很光明的曲子，想体现涟析变得活泼、坚定。\n"..
-        "涟析，欢迎来到幻想乡。\n", 0.600 }
+        "涟析，欢迎来到幻想乡。", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(by:baiABC)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(by:baiABC)", 0.675 },
+        { "text", -280, text_y, "", 
         "被弃用的staff曲。\n"..
         "第一首作的曲子，原本为疮痍曲而作，后来改为staff曲。感谢游玩。\n"..
         "给AI评价了下，是本人所作评分最高的曲子（笑）", 0.600 }
     },
     {
-        { "text", -280, -120, '', "(from:B站 BV1pK411V7N5 by:琴键LILY)", 0.675 },
-        { "text", -280, -180, "", 
+        { "text", -280, author_y, '', "(from:B站 BV1pK411V7N5 by:琴键LILY)", 0.675 },
+        { "text", -280, text_y, "", 
         "这位up主扒了猴哥的谱子，感觉改编的比原版更好听了\n"..
         "很有这样的意境：在万里无云的晴空驰骋，亲手书写着自己的命运与幻想\n"..
         "很适合描绘涟析在幻想乡里开启的崭新旅程", 0.600 }
@@ -503,7 +507,7 @@ function stage_menu:init()
         menu.FlyIn(menu_title, 'left')
         menu.FlyOut(menu_musicroom, 'right')
     end })
-    menu_musicroom = New(musicroom, "music room", menu_items, musicroom_content, '', 0, 0)
+    menu_musicroom = New(musicroom, "music room", menu_items, musicroom_content, '', 0, -20)
     --
     menu_items = {}
     table.insert(menu_items, { 'Resolution', function ()
