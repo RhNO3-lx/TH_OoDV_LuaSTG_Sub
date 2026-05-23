@@ -7,7 +7,7 @@ local SceneManager = require("foundation.SceneManager")
 local IntersectionDetectionManager = require("foundation.IntersectionDetectionManager")
 local gameEventDispatcher = lstg.globalEventDispatcher
 
-VERSION_SIGNATURE="v1.00"
+VERSION_SIGNATURE="v1.01b"
 ----------------------------------------
 ---ext加强库
 
