@@ -5,3 +5,10 @@ v1.01
 微调bomb效果
 解决主线模式无法开始的恶性bug
 调整spellcard practice的排版布局
+
+v1.01a
+紧急修复资源缺失导致的恶性bug
+
+v1.01b
+紧急修复资源错配导致的bug
+调整符卡练习模式与musicroom的排版布局
