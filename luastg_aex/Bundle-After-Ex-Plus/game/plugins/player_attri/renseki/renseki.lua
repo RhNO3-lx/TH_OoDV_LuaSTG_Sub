@@ -14,7 +14,7 @@ function EatCollider:init(player)
 
 	---! 可以访问这个字段来调整碰撞体不透明度
 	self.alpha=0.3
-	SetImageState('EatCollider','mul+add',Color(255*self.alpha,150,120,150))
+	SetImageState('EatCollider','mul+add',Color(255*self.alpha,130,90,130))
 	self.img="EatCollider"
 	self.rect=false
 	self.p=player
@@ -39,15 +39,15 @@ function EatCollider:frame()
 	if IsValid(self.p) then
 		self.x,self.y=self.p.x,self.p.y
 	end
+	if(self.p.protect==0) then 
+		SetImageState('EatCollider','mul+add',Color(255*self.alpha,130,90,130))
+	else
+		SetImageState('EatCollider','mul+add',Color(255*self.alpha,90,110,150))
+	end
 	--self.p.LightRange=misc_ex.approach(self.p.LightRange,self.TargetLightRange,0.1)
 end
 
 function EatCollider:render()
-	if(self.p.protect==0) then 
-		SetImageState('EatCollider','mul+add',Color(255*self.alpha,200,120,230))
-	else
-		SetImageState('EatCollider','mul+add',Color(255*self.alpha,90,140,70))
-	end
 	Render(self.img,self.x,self.y,0,self.imgr/50,self.imgr/50)
 end
 
@@ -590,7 +590,7 @@ function renseki_heal_effect:init(x,y,p)
 	self.x=x
 	self.y=y
 	self.img='renseki_heal_particle'
-	self.layer=LAYER_PLAYER_BULLET+50
+	self.layer=LAYER_PLAYER_BULLET+1
 	self.group=GROUP_GHOST
 	self.hscale=1.0
 	self.vscale=1.0
@@ -621,7 +621,7 @@ function renseki_weaken_effect:init(x,y,p)
 	self.x=x
 	self.y=y
 	self.img='renseki_weaken_particle'
-	self.layer=LAYER_PLAYER_BULLET+50
+	self.layer=LAYER_PLAYER_BULLET+1
 	self.group=GROUP_GHOST
 	self.hscale=0.6
 	self.vscale=0.6
@@ -679,7 +679,7 @@ function renseki_powerup_effect:init(x,y,p)
 	self.x=x
 	self.y=y
 	self.img='renseki_powerup_state'
-	self.layer=LAYER_PLAYER_BULLET+50
+	self.layer=LAYER_PLAYER_BULLET+1
 	self.group=GROUP_GHOST
 	self.hscale=1.0
 	self.vscale=1.0
