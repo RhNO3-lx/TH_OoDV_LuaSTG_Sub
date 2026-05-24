@@ -69,6 +69,8 @@ sc_pr_menu = Class(object)
 
 sc_pr_menu.difs = {"Lunatic", "Normal",}
 
+local dif = 1
+
 function sc_pr_menu:init(exit_func)
     self.sc_num = {}
     self.sc = {}
@@ -86,7 +88,7 @@ function sc_pr_menu:init(exit_func)
             end
         end
     end
-    self.dif = 1
+    self.dif = dif
 
     self.layer = LAYER_TOP
     self.group = GROUP_GHOST
@@ -150,6 +152,7 @@ function sc_pr_menu:frame()
             n=n+self.sc_num[sc_pr_menu.difs[i]]
         end
         if _sc_table[index] and index <= n then
+            dif = self.dif
             if self.exit_func then
                 self.exit_func(index)
             end
