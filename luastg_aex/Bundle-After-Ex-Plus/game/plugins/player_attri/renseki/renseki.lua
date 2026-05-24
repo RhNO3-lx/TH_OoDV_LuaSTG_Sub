@@ -399,6 +399,7 @@ end
 renseki_bullet_main=Class(player_bullet_straight)
 function renseki_bullet_main:init(img,x,y,v,angle,dmg,Powerup)
 	player_bullet_straight.init(self,img,x,y,v,angle,dmg)
+	self.a,self.b=16,16
 
 	self.powerup=Powerup or false
 	if Powerup then
@@ -443,7 +444,7 @@ end
 renseki_bullet_slow=Class(player_bullet_straight)
 function renseki_bullet_slow:init(img,x,y,v,angle,dmg,Powerup)
 	player_bullet_straight.init(self,img,x,y,v,angle,dmg)
-	self.a,self.b=14,14
+	self.a,self.b=16,16
 	self.vscale=0.85
 
 	self.powerup=Powerup or false
@@ -515,7 +516,7 @@ function renseki_bullet_fast:init(img,x,y,v,angle,target,trail,dmg,Powerup)
 	self.target=target
 	self.trail=trail
 	self.dmg=dmg
-
+	self.a,self.b=12,12
 	self.powerup=Powerup or false
 	if Powerup then
 		-- lstg.New(renseki_powerup_bullet_track,self.x,self.y,self)
