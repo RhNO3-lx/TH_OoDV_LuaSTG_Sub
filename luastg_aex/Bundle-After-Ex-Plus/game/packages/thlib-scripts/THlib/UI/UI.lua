@@ -867,7 +867,7 @@ function lstg_ui:drawInfo1()
     SetViewMode("ui")
     if IsValid(lstg.player) then
         if lstg.var.ShowBackground then 
-            PutPlayerUI(PlayerUI.BackGround)
+            --PutPlayerUI(PlayerUI.Background)
             PutPlayerUIBar()
         end
         if lstg.var.ShowLife then

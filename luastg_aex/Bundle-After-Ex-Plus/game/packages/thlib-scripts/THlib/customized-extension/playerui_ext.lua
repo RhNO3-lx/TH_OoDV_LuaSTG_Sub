@@ -5,12 +5,14 @@ PlayerUI={}
 PlayerUI.Life=1
 PlayerUI.Bomb=2
 PlayerUI.Power=3
-PlayerUI.BackGround=4
+PlayerUI.Background=4
 
 lstg.var.ShowLife=true
 lstg.var.ShowBomb=true
 lstg.var.ShowPower=true
 lstg.var.ShowBackground=true
+
+lstg.var.UseLegacyPlayerUI=false
 
 LoadImage('white2', 'misc', 56, 8, 16, 16)
 ---@param tex string @图片名
@@ -38,48 +40,70 @@ end
 ---! 插到UI.lua里使用
 ---! 最好手动创建一个物体来使用，按照图层与渲染统一管理的逻辑来使用它
 function PutPlayerUI(type)
-    SetViewMode("ui")
-    if IsValid(player)~=true then
-        print("warning: playerui_obj is not valid")
-        return
+    if lstg.var.UseLegacyPlayerUI then 
+    
+    else
+        SetViewMode("ui")
+        if IsValid(player)~=true then
+            print("warning: playerui_obj is not valid")
+            return
+        end
+        local attri={}
+        attri.blendmode="mul+add"
+        local a_residual=nil
+        local residual_co=nil
+
+        if type==PlayerUI.Life then
+            attri.alpha=0.75
+            attri.r1=44
+            attri.r2=50
+            attri.c=Color(255*attri.alpha,155,0,70)
+            attri.la=lstg.var.lifeleft*360/lstg.var.LifeMax
+
+            a_residual=lstg.var.chip*360/lstg.var.LifeExtendPoint/lstg.var.LifeMax
+            residual_co=Color(attri.c.a,attri.c.r*0.6,attri.c.g*0.6,attri.c.b*0.6)
+            --print("life.la"..attri.la)
+            
+        elseif type==PlayerUI.Bomb then
+            attri.alpha=0.95
+            attri.r1=44
+            attri.r2=50
+            attri.c=Color(255*attri.alpha,0,70,150)
+            attri.la=lstg.var.bomb*360/lstg.var.LifeMax
+
+            a_residual=lstg.var.chip*360/lstg.var.BombExtendPoint/lstg.var.LifeMax
+            residual_co=Color(attri.c.a,attri.c.r*0.6,attri.c.g*0.6,attri.c.b*0.6)
+
+            --print("bomb.la"..attri.la)
+        elseif type==PlayerUI.Power then
+            attri.alpha=0.5
+            attri.r1=50
+            attri.r2=54
+            attri.c=Color(255*attri.alpha,177,28,24)
+            attri.la=lstg.var.power%lstg.var.PowerExtendPoint*360/lstg.var.PowerExtendPoint
+        elseif type==PlayerUI.Background then
+            attri.alpha=0.15
+            attri.r1=43
+            attri.r2=51
+            attri.c=Color(255*attri.alpha,36,128,215)
+            attri.la=360
+        end
+        ---! 血条边框
+        SetImageState("white2", attri.blendmode, attri.c)
+        local cx,cy=GetPlayerScr()
+        RenderRingEx("white2", cx,cy, 90,attri.la,attri.r1, attri.r2,-1)
+
+        ---！渲染血条雷条不满一格的部分
+        if a_residual~=nil and residual_co~=nil then
+            SetImageState("white2", attri.blendmode, residual_co)
+            RenderRingEx("white2", cx,cy, 90-attri.la,a_residual,attri.r1, attri.r2,-1)
+        end
+        ---! 渲染血条
+        SetViewMode("world")
     end
-    local attri={}
-    attri.blendmode="mul+add"
-    if type==PlayerUI.Life then
-        attri.alpha=0.75
-        attri.r1=44
-        attri.r2=50
-        attri.c=Color(255*attri.alpha,125,0,105)
-        attri.la=lstg.var.lifeleft*360/lstg.var.LifeMax+lstg.var.chip*360/lstg.var.LifeExtendPoint/lstg.var.LifeMax
-        --print("life.la"..attri.la)
-        
-    elseif type==PlayerUI.Bomb then
-        attri.alpha=0.95
-        attri.r1=44
-        attri.r2=50
-        attri.c=Color(255*attri.alpha,0,70,120)
-        attri.la=lstg.var.bomb*360/lstg.var.LifeMax+lstg.var.bombchip*360/lstg.var.BombExtendPoint/lstg.var.LifeMax
-        --print("bomb.la"..attri.la)
-    elseif type==PlayerUI.Power then
-        attri.alpha=0.5
-        attri.r1=50
-        attri.r2=54
-        attri.c=Color(255*attri.alpha,177,28,24)
-        attri.la=lstg.var.power%lstg.var.PowerExtendPoint*360/lstg.var.PowerExtendPoint
-    elseif type==PlayerUI.BackGround then
-        attri.alpha=0.15
-        attri.r1=43
-        attri.r2=51
-        attri.c=Color(255*attri.alpha,36,128,215)
-        attri.la=360
-    end
-    ---! 血条边框
-    SetImageState("white2", attri.blendmode, attri.c)
-    local cx,cy=GetPlayerScr()
-    RenderRingEx("white2", cx,cy, 90,attri.la,attri.r1, attri.r2,-1)
-    SetViewMode("world")
 end
 
+---！渲染节点
 function PutPlayerUIBar()
     SetViewMode("ui")
     if IsValid(player)~=true then
