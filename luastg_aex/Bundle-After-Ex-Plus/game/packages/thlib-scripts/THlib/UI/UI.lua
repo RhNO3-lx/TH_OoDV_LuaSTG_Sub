@@ -745,9 +745,9 @@ function lstg_ui:drawDifficulty()
             local player_scrx,player_scry=GetPlayerScr()
             --print(x,y,player_scrx,player_scry)
             local r=Dist(player_scrx,player_scry,x,y)
-            local sr=70
+            local sr=150
             if r<=sr then
-                OpacityChange=1-(sr-r)/sr*0.9
+                OpacityChange=1-(sr-r)/sr*1.1
             end
         end
         if diff == "Easy" or diff == "Normal" or diff == "Hard" or diff == "Lunatic" or diff == "Extra" then
