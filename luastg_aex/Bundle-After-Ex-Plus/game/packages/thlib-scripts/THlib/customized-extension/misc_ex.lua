@@ -54,14 +54,14 @@ function misc_ex.RandomCoor(mode)
 end
 
 function misc_ex.InitializeSystem()
-    lstg.var.LifeExtendPoint=100
-    lstg.var.BombExtendPoint=100
-    lstg.var.LifechipPoint=30
-    lstg.var.BombchipPoint=30
-    lstg.var.LifeMax=7
-    lstg.var.LifeMax=7
-    lstg.var.PowerMax=400
-    lstg.var.PowerExtendPoint=100
+    -- lstg.var.LifeExtendPoint=100
+    -- lstg.var.BombExtendPoint=100
+    -- lstg.var.LifechipPoint=15
+    -- lstg.var.BombchipPoint=15
+    -- lstg.var.LifeMax=7
+    -- lstg.var.LifeMax=7
+    -- lstg.var.PowerMax=400
+    -- lstg.var.PowerExtendPoint=100
     lstg.var.MinPower=0
     ResetWorld()
     lstg.var.block_shoot=false
@@ -73,6 +73,8 @@ function misc_ex.InitializeSystem()
     lstg.var.allow_continue=false
     PlayerSys.FrozenWhenDead = true
     cl.colorless_init()
+    ext.debug_data.x_speed_update = false   
+	ext.debug_data.x_speed_update_value = 1
 end
 
 function misc_ex.ClearScreen()

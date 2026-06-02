@@ -85,7 +85,7 @@ function GetWorldOffset()
 end
 
 function ChangeWorldTo(w,h,duration,PlaySE,SEName)
-    PlaySE=PlaySE or true
+    if PlaySE==nil then PlaySE=true end
     SEName=SEName or "boon01"
     duration=duration or 180
     PlaySound(SEName, 0.5)

@@ -20,7 +20,7 @@ function boss.ui:init(system, b)
     self.drawtime = true
     self.drawspell = true
     self.needposition = true
-    self.drawpointer = true
+    self.drawpointer = false
     self.drawtimesaver = nil
     self.infobar = boss.infobar(self, self.system)
     self.hpbar = boss.hpbar(self, self.system)

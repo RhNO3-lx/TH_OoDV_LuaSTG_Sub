@@ -6,6 +6,7 @@ local pl=Include 'THlib/player/player.lua'
 local dir= "renseki/"
 
 lstg.var.EatColliderSize={10,18,26,34,44}
+
 ---TODO: 允许自机power低于100
 --#region
 EatCollider=Class(object)
@@ -57,6 +58,7 @@ function EatCollider:colli(other)
 		if other.a >= self.a and lstg.player.protect == 0 then
 			---触发被咬死的miss效果
 			--print("enter")
+			other.EatLifePenality=100
 			item.LifeShrinkCheck(other.EatLifePenality,true,true,50);
 			lstg.New(renseki_hit_effect,self.x,self.y,self)
 		elseif other.a < self.a then

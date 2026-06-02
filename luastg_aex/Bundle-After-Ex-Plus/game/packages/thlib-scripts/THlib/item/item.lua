@@ -11,8 +11,8 @@ lstg.var.collectingitem = 0
 ---! 新增生命与bomb上限定义
 lstg.var.LifeExtendPoint=100
 lstg.var.BombExtendPoint=100
-lstg.var.LifechipPoint=30
-lstg.var.BombchipPoint=30
+lstg.var.LifechipPoint=15
+lstg.var.BombchipPoint=15
 lstg.var.LifeMax=7
 lstg.var.LifeMax=7
 lstg.var.PowerMax=400
@@ -231,7 +231,7 @@ function item_bombchip:init(x, y)
     --    PlaySound('bonus2',0.8)
 end
 function item_bombchip:collect()
-    lstg.var.bombchip = lstg.var.bombchip + 1
+    lstg.var.bombchip = lstg.var.bombchip + lstg.var.BombchipPoint
     ---! added
     BombExtendCheck()
 end
