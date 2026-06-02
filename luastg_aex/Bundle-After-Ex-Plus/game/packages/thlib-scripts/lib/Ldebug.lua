@@ -77,7 +77,7 @@ function M.KeyDownTrigger(vkey)
     end
 end
 
-DEBUG_MODE=true
+DEBUG_MODE=false
 local F1_trigger = function () return false end
 local F3_trigger = function () return false end
 if DEBUG_MODE then
