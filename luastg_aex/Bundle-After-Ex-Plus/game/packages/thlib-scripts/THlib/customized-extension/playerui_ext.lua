@@ -18,7 +18,7 @@ lstg.var.ShowBomb=true
 lstg.var.ShowPower=true
 lstg.var.ShowBackground=true
 
-lstg.var.UseLegacyPlayerUI=true
+lstg.var.UseLegacyPlayerUI=false
 
 LoadImage('white2', 'misc', 56, 8, 16, 16)
 ---@param tex string @图片名
