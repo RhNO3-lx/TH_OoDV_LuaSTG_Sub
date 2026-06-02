@@ -2,10 +2,17 @@
 ---! 调用时机由编辑器内的关卡进程中决定，手动渲染player中的物体
 
 LoadTexture("new_lifebomb","THlib/UI/life-bomb.png")
-LoadImage("new_life","new_lifebomb",100,0,100,100)
-LoadImage("new_bomb","new_lifebomb",0,0,100,100)
+LoadImage("new_life","new_lifebomb",0,0,100,100)
+LoadImage("new_bomb","new_lifebomb",0,100,100,100)
 SetImageState("new_life","mul+add",Color(255,255,255,255))
 SetImageState("new_bomb","mul+add",Color(255,255,255,255))
+
+for i=0,4 do
+    LoadImage("new_life"..i,"new_lifebomb",100*(i+1),0,100,100)
+    LoadImage("new_bomb"..i,"new_lifebomb",100*(i+1),100,100,100)
+    SetImageState("new_life"..i,"mul+add",Color(255,255,255,255))
+    SetImageState("new_bomb"..i,"mul+add",Color(255,255,255,255))
+end
 
 PlayerUI={}
 PlayerUI.Life=1
@@ -18,7 +25,7 @@ lstg.var.ShowBomb=true
 lstg.var.ShowPower=true
 lstg.var.ShowBackground=true
 
-lstg.var.UseLegacyPlayerUI=false
+lstg.var.UseLegacyPlayerUI=true
 
 LoadImage('white2', 'misc', 56, 8, 16, 16)
 ---@param tex string @图片名
@@ -96,12 +103,22 @@ function PutPlayerUI(type)
             for i=1,n do
                 Render("new_life", sx_life+dx*(i-1), sy_life, 0, sc, sc)
             end
+            if n<lstg.var.LifeMax then
+                local n_residual=lstg.var.chip/lstg.var.LifeExtendPoint
+                SetImageState("new_life"..math.floor(n_residual*5),"mul+add",Color(255*OpacityChange,255,255,255))
+                Render("new_life"..math.floor(n_residual*5), sx_life+dx*n, sy_life, 0, sc, sc)
+            end
             DrawText(lstg.var.chip.."%", sx_life+7.5*dx, sy_life+8, Color(255*OpacityChange,255,170,220), Color(105*OpacityChange,0,0,0), 0.75*sc/0.16 )
         elseif type==PlayerUI.Bomb then
             local n=lstg.var.bomb
             SetImageState("new_bomb","mul+add",Color(255*OpacityChange,255,255,255))
             for i=1,n do
                 Render("new_bomb", sx_life+dx*(i-1), sy_life+dy, 0, sc, sc)
+            end
+            if n<lstg.var.LifeMax then
+                local n_residual=lstg.var.bombchip/lstg.var.BombExtendPoint
+                SetImageState("new_bomb"..math.floor(n_residual*5),"mul+add",Color(255*OpacityChange,255,255,255))
+                Render("new_bomb"..math.floor(n_residual*5), sx_life+dx*n, sy_life+dy, 0, sc, sc)
             end
             DrawText(lstg.var.bombchip.."%", sx_life+7.5*dx, sy_life+dy+8, Color(255*OpacityChange,150,230,250), Color(105*OpacityChange,0,0,0), 0.75*sc/0.16 )
         elseif type==PlayerUI.Background then
