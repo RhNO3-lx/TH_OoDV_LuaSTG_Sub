@@ -398,7 +398,7 @@ end
 function item.PlayerInit()
     lstg.var.power = 100
     lstg.var.lifeleft = 2
-    lstg.var.bomb = 3
+    lstg.var.bomb = 2
     lstg.var.bonusflag = 0
     lstg.var.chip = 0
     lstg.var.faith = 0
@@ -421,8 +421,8 @@ function item.PlayerReinit()
     --lstg.var.power = 400
     lstg.var.lifeleft = 2
     lstg.var.chip = 0
-    lstg.var.bomb = 3
-    lstg.var.bomb_chip = 0
+    lstg.var.bomb = 2
+    lstg.var.bombchip = 0
     --lstg.var.block_spell = false
     lstg.var.init_player_data = true
     lstg.var.coun_num = min(9, lstg.var.coun_num + 1)
