@@ -75,12 +75,14 @@ end
 
 function DialogDisplayer:frame()
     task.Do(self)
-
+    local CanSkip=false
     if self.CurrentSentenceIndex<#self.SentenceList then
         if not IsValid(self.CurrentSentence) then
             self.CurrentSentenceIndex=self.CurrentSentenceIndex+1
             local s=self.SentenceList[self.CurrentSentenceIndex]
             self.CurrentSentence=New(DialogSentence,s.text,s.color,s.CanSkip,s.size,s.font,s.align,s.alignv,s.lifetime)
+            CanSkip=s.CanSkip
+            if CanSkip==nil then CanSkip=true end
             local f=s.func or function(self) end
             f(self)
         end
@@ -103,6 +105,10 @@ function DialogDisplayer:frame()
                 Del(self)
             end)
         end
+    end
+
+    if KeyIsDown 'shoot' and CanSkip then
+        Del(self.CurrentSentence)
     end
 end
 
